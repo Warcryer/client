@@ -100,7 +100,7 @@ function NetCard({
   const key = s.bindings[bindTargetOf(net.net)];
   const voice = s.partyMode === "voice" && TALK.has(net.net);
   const how = net.locked
-    ? "Locked open"
+    ? "Locked open: everyone hears you"
     : !net.speak
     ? "Listen only"
     : between(net.net) && !talkHere
