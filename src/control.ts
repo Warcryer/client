@@ -110,6 +110,8 @@ export class ControlClient {
   /** Something in the roster changed; any open roster screen should reload. */
   /** The roster changed. `operationId` is set when the change is inside one operation, null when it may be wider (clans, crests, lounges). */
   onChanged: (operationId: number | null) => void = () => {};
+  /** The alliance's groups changed (decision 64): only the list of groups needs reloading. */
+  onGroups: () => void = () => {};
   /** Something about the operation's text chat. */
   onChat: (e: ChatEvent) => void = () => {};
   private chatN = 0;
@@ -283,6 +285,8 @@ export class ControlClient {
         this.onNetSet(msg as unknown as NetSet);
       } else if (typeof msg.type === "string" && /^(chat|order|ready)(\.|$)/.test(msg.type)) {
         this.onChat(msg as unknown as ChatEvent);
+      } else if (msg.type === "changed" && msg.groups === true) {
+        this.onGroups();
       } else if (msg.type === "changed") {
         this.onChanged(typeof msg.operationId === "number" ? msg.operationId : null);
       } else if (msg.type === "replaced" || msg.type === "signed_out") {

@@ -68,6 +68,7 @@ The leader clicks **Make officer** beside a member, or **Remove officer** to und
 - **Clan net:** you speak to the whole clan with your Clan key. Members only listen. Use it for clan-level orders, not chatter.
 - **Command net (leader only):** you coordinate with the event leader and the other leaders. You count as a senior voice there: while you, the event leader or a deputy speaks, party leaders are made quieter for everyone listening.
 - **Lounge:** between operations everyone in the clan can talk freely there.
+- **Groups:** between operations anyone in the alliance can start or join a small group (see the [members' guide](members.md#groups)). You and your officers can take one of your own members out of a group with the **×** beside their name in the Groups panel; the alliance's log records it. Members of other clans are their own leaders' to manage.
 
 ## Constant parties
 

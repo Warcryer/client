@@ -10,6 +10,8 @@ export type AppState = {
   refreshInfo: () => void;
   /** Goes up whenever the server says the roster changed. Screens reload on it. */
   tick: number;
+  /** Goes up when the alliance's groups change. */
+  groupsTick: number;
   set: NetSet | null;
   control: ControlState;
   select: (target: number | "lounge" | "auto") => void;

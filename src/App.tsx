@@ -59,6 +59,8 @@ export default function App() {
   const [tick, setTick] = useState(0);
   /** Bumped only by changes that may reach beyond one operation: clans, crests, lounges. */
   const [wideTick, setWideTick] = useState(0);
+  /** Bumped when the alliance's groups change: only the Groups panel reloads on it. */
+  const [groupsTick, setGroupsTick] = useState(0);
   const [tab, setTab] = useState<Tab>("voice");
   const [boardOp, setBoardOp] = useState<number | null>(null);
   const [crests, setCrests] = useState<ReadonlyMap<number, number>>(new Map());
@@ -135,6 +137,15 @@ export default function App() {
     let refreshTimer: number | undefined;
     let refreshedAt = 0;
     let wide = false;
+    // Groups come and go often in an evening: a notice reloads the list of groups and nothing else, spread out.
+    let groupsTimer: number | undefined;
+    c.onGroups = () => {
+      if (groupsTimer !== undefined) return;
+      groupsTimer = window.setTimeout(() => {
+        groupsTimer = undefined;
+        setGroupsTick((n) => n + 1);
+      }, 300 + Math.random() * 700);
+    };
     c.onChanged = (operationId) => {
       if (operationId === null) wide = true;
       if (refreshTimer !== undefined) return;
@@ -292,7 +303,7 @@ export default function App() {
 
   return (
     <AppContext.Provider
-      value={{ info, refreshInfo, tick, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
+      value={{ info, refreshInfo, tick, groupsTick, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
     >
       <div className="frame flex h-full flex-col">
         <header className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-gold-dim bg-bg-1/85 px-4 py-2">

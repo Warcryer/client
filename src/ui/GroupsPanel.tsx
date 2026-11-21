@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { t } from "../words";
 import { rpc } from "../api";
-import { useAct, useLoad } from "./app-context";
+import { useAct, useApp, useLoad } from "./app-context";
 import { ClanMark } from "./common";
 import { Help } from "./tips";
 
@@ -23,7 +23,8 @@ const GROUPS_HELP = [
 
 export function GroupsPanel() {
   const act = useAct();
-  const { data, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [], 15_000);
+  const { groupsTick } = useApp();
+  const { data, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [groupsTick], 15_000);
   const [label, setLabel] = useState("");
   const run = (method: string, params: Record<string, unknown> = {}) => void act.run(() => rpc(method, params)).then(reload);
 
