@@ -5,6 +5,15 @@ import type { NetKind } from "./settings";
 
 export type NetGrant = { net: NetKind; label: string; room: string; speak: boolean; token: string; /** Broadcast only: this player (the event leader) may lock it open for a briefing. */ lock?: boolean; /** May write in this net's chat. Absent on a server older than the chat. */ write?: boolean };
 export type OpInfo = { id: number; name: string; state: "planned" | "live" | "ended" };
+/** A group between operations (decision 64), as the control service sends it to everyone in the alliance. */
+export type GroupInfo = {
+  id: number;
+  label: string;
+  name: string;
+  starterId: number | null;
+  members: { userId: number; name: string; classTag: string | null; clanId: number | null; clanTag: string | null; mayRemove?: boolean }[];
+};
+
 export type NetSet = {
   /** The alliance's quick calls by slot, "" for one not in use. Absent on a server before 0.24. */
   calls?: string[];
@@ -110,8 +119,8 @@ export class ControlClient {
   /** Something in the roster changed; any open roster screen should reload. */
   /** The roster changed. `operationId` is set when the change is inside one operation, null when it may be wider (clans, crests, lounges). */
   onChanged: (operationId: number | null) => void = () => {};
-  /** The alliance's groups changed (decision 64): only the list of groups needs reloading. */
-  onGroups: () => void = () => {};
+  /** The alliance's groups as they are now (decision 64), sent whenever they change. */
+  onGroups: (groups: GroupInfo[]) => void = () => {};
   /** Something about the operation's text chat. */
   onChat: (e: ChatEvent) => void = () => {};
   private chatN = 0;
@@ -285,8 +294,8 @@ export class ControlClient {
         this.onNetSet(msg as unknown as NetSet);
       } else if (typeof msg.type === "string" && /^(chat|order|ready)(\.|$)/.test(msg.type)) {
         this.onChat(msg as unknown as ChatEvent);
-      } else if (msg.type === "changed" && msg.groups === true) {
-        this.onGroups();
+      } else if (msg.type === "groups" && Array.isArray(msg.groups)) {
+        this.onGroups(msg.groups as GroupInfo[]);
       } else if (msg.type === "changed") {
         this.onChanged(typeof msg.operationId === "number" ? msg.operationId : null);
       } else if (msg.type === "replaced" || msg.type === "signed_out") {

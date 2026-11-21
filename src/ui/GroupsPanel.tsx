@@ -9,9 +9,10 @@ import { useAct, useApp, useLoad } from "./app-context";
 import { ClanMark } from "./common";
 import { Help } from "./tips";
 
-type GroupMember = { userId: number; name: string; classTag: string | null; clanId: number | null; clanTag: string | null; mayRemove: boolean };
-type Group = { id: number; label: string; name: string; starterId: number | null; members: GroupMember[] };
-type GroupsView = { groups: Group[]; mine: number | null; limits: { perAlliance: number; perGroup: number; label: number } };
+import type { GroupInfo } from "../control";
+
+type GroupsView = { groups: GroupInfo[]; mine: number | null; limits: { perAlliance: number; perGroup: number; label: number } };
+const LIMITS = { perAlliance: 50, perGroup: 50, label: 40 };
 
 // t() where shown.
 const GROUPS_HELP = [
@@ -23,12 +24,21 @@ const GROUPS_HELP = [
 
 export function GroupsPanel() {
   const act = useAct();
-  const { groupsTick } = useApp();
-  const { data, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [groupsTick], 15_000);
+  const { groups: pushed, info } = useApp();
+  // Asked for once when the panel opens; after that the control service sends the list whenever it changes.
+  const { data: loaded, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [], 120_000);
   const [label, setLabel] = useState("");
-  const run = (method: string, params: Record<string, unknown> = {}) => void act.run(() => rpc(method, params)).then(reload);
+  const run = (method: string, params: Record<string, unknown> = {}) => void act.run(() => rpc(method, params)).then(() => !pushed && reload());
 
-  if (!data) return error ? <p className="text-sm text-danger">{error}</p> : null;
+  const groups = pushed ?? loaded?.groups ?? null;
+  if (!groups) return error ? <p className="text-sm text-danger">{error}</p> : null;
+  const limits = loaded?.limits ?? LIMITS;
+  const me = info.user.id;
+  const mineId = groups.find((g) => g.members.some((m) => m.userId === me))?.id ?? null;
+  // Who may take whom out: the server checks it again; this only decides where the × is shown.
+  const leads = info.membership?.status === "active" && (info.membership.role === "leader" || info.membership.role === "officer") ? info.membership.clanId : null;
+  const mayRemove = (m: GroupInfo["members"][number]) => m.userId !== me && (info.user.runsAlliance === true || (leads !== null && m.clanId === leads));
+  const data = { groups, mine: mineId, limits };
   const full = data.groups.length >= data.limits.perAlliance;
   return (
     <section className="panel flex max-h-72 shrink-0 flex-col" aria-label="Groups" data-groups>
@@ -74,7 +84,7 @@ export function GroupsPanel() {
                       <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
                       <span>{m.name}</span>
                       {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
-                      {m.mayRemove && (
+                      {mayRemove(m) && (
                         <button
                           type="button"
                           className="ml-0.5 cursor-pointer text-text-muted hover:text-danger"

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ApiError, type Info } from "../api";
-import type { ControlState, NetSet } from "../control";
+import type { ControlState, GroupInfo, NetSet } from "../control";
 
 export type Tab = "voice" | "roster" | "clan" | "alliance" | "history" | "guides";
 
@@ -10,8 +10,8 @@ export type AppState = {
   refreshInfo: () => void;
   /** Goes up whenever the server says the roster changed. Screens reload on it. */
   tick: number;
-  /** Goes up when the alliance's groups change. */
-  groupsTick: number;
+  /** The alliance's groups as the control service last sent them; null until it has. */
+  groups: GroupInfo[] | null;
   set: NetSet | null;
   control: ControlState;
   select: (target: number | "lounge" | "auto") => void;

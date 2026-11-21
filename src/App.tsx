@@ -5,7 +5,7 @@ import { ApiError, crestUrl, rpc, type ClanSummary, type Info } from "./api";
 import { getToken, signOut } from "./auth";
 import { CONTROL_URLS, isDesktop, SERVER } from "./config";
 import { ClassAsk } from "./ui/ClassAsk";
-import { ControlClient, type ControlState, type NetSet } from "./control";
+import { ControlClient, type ControlState, type GroupInfo, type NetSet } from "./control";
 import { refreshGame, useGame } from "./game";
 import { usePendingInvite } from "./invite";
 import { engine } from "./runtime";
@@ -59,8 +59,8 @@ export default function App() {
   const [tick, setTick] = useState(0);
   /** Bumped only by changes that may reach beyond one operation: clans, crests, lounges. */
   const [wideTick, setWideTick] = useState(0);
-  /** Bumped when the alliance's groups change: only the Groups panel reloads on it. */
-  const [groupsTick, setGroupsTick] = useState(0);
+  /** The alliance's groups as last sent by the control service; null until it first sends them. */
+  const [groups, setGroups] = useState<GroupInfo[] | null>(null);
   const [tab, setTab] = useState<Tab>("voice");
   const [boardOp, setBoardOp] = useState<number | null>(null);
   const [crests, setCrests] = useState<ReadonlyMap<number, number>>(new Map());
@@ -137,15 +137,8 @@ export default function App() {
     let refreshTimer: number | undefined;
     let refreshedAt = 0;
     let wide = false;
-    // Groups come and go often in an evening: a notice reloads the list of groups and nothing else, spread out.
-    let groupsTimer: number | undefined;
-    c.onGroups = () => {
-      if (groupsTimer !== undefined) return;
-      groupsTimer = window.setTimeout(() => {
-        groupsTimer = undefined;
-        setGroupsTick((n) => n + 1);
-      }, 300 + Math.random() * 700);
-    };
+    // Groups come and go often in an evening: the control service sends the whole list, so nobody asks for it.
+    c.onGroups = setGroups;
     c.onChanged = (operationId) => {
       if (operationId === null) wide = true;
       if (refreshTimer !== undefined) return;
@@ -303,7 +296,7 @@ export default function App() {
 
   return (
     <AppContext.Provider
-      value={{ info, refreshInfo, tick, groupsTick, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
+      value={{ info, refreshInfo, tick, groups, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
     >
       <div className="frame flex h-full flex-col">
         <header className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-gold-dim bg-bg-1/85 px-4 py-2">
