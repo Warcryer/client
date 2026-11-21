@@ -44,6 +44,22 @@ fn set_close_to_tray(enabled: bool) {
 }
 
 /// The chat line in the strip got or lost the keyboard by itself: the player clicked in it, or away.
+/// Seconds since the last key or mouse input anywhere on the computer (Windows' GetLastInputInfo). Only how
+/// long, never which input: the app uses it to show the player as away after a quarter of an hour (decision 64).
+#[tauri::command]
+fn idle_seconds() -> u64 {
+    #[cfg(windows)]
+    unsafe {
+        use windows_sys::Win32::System::SystemInformation::GetTickCount;
+        use windows_sys::Win32::UI::Input::KeyboardAndMouse::{GetLastInputInfo, LASTINPUTINFO};
+        let mut info = LASTINPUTINFO { cbSize: std::mem::size_of::<LASTINPUTINFO>() as u32, dwTime: 0 };
+        if GetLastInputInfo(&mut info) != 0 {
+            return u64::from(GetTickCount().wrapping_sub(info.dwTime) / 1000);
+        }
+    }
+    0
+}
+
 #[tauri::command]
 fn chat_typing(on: bool) {
     chat::set_typing(on);
@@ -239,7 +255,8 @@ pub fn run() {
             show_main_window,
             chat_typing,
             chat_done,
-            chat_return
+            chat_return,
+            idle_seconds
         ])
         .run(context)
         .expect("failed to start the app");

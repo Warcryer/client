@@ -6,6 +6,7 @@ import { openChatWindow } from "../strip/publish";
 import { HeadsetIcon } from "./AudioToggles";
 import { ChatPanel } from "./ChatPanel";
 import { GroupsPanel } from "./GroupsPanel";
+import { OnlinePanel } from "./OnlinePanel";
 import { isDesktop } from "../config";
 import type { Member, NetView } from "../engine";
 import { keyLabel } from "../keys";
@@ -168,6 +169,13 @@ function NetCard({
   );
 }
 
+// t() where shown.
+const LOUNGE_CHAT_HELP = [
+  "Text between operations: a channel for your group, your clan's lounge, and the alliance's lounge if it is on. Its lines are read by whoever is in that room.",
+  "Everyone in a room may write in it. Point at a line of your own to remove it; your clan's leader and officers can remove lines in its lounge, and the alliance's admins anywhere.",
+  "A lounge's lines are kept for as long as your alliance's admins keep an operation's, and at least a day. A group's go when the group ends.",
+  "Open as a window: a small window that stays on top of the game. Quick calls go to your group, or to your clan's lounge when you are in none.",
+].join("\n");
 // t() where shown.
 const CHAT_HELP = [
   "Text for this operation. There is a channel for each of your nets, and its lines are read by whoever is on that net.",
@@ -337,7 +345,8 @@ export function VoiceView() {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 gap-4 p-4">
-          <ul className="flex w-72 shrink-0 flex-col gap-2 overflow-y-auto" aria-label="Your nets">
+          <div className="flex w-72 shrink-0 flex-col gap-2 min-h-0">
+          <ul className="flex shrink-0 flex-col gap-2 overflow-y-auto max-h-[60%]" aria-label="Your nets">
             {nets.map((n) => (
               <NetCard
                 key={n.room}
@@ -349,6 +358,9 @@ export function VoiceView() {
               />
             ))}
           </ul>
+          {/* Between operations: who in the alliance has the app open, and the away switch. */}
+          {!op && <OnlinePanel />}
+          </div>
           <div className="flex min-w-0 flex-1 flex-col gap-4">
           <section className="panel flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-4 overflow-y-auto">
             {shown && (
@@ -388,11 +400,11 @@ export function VoiceView() {
           {/* Between operations: the alliance's groups, to start, join or leave one. */}
           {!op && <GroupsPanel />}
           {/* The operation's text chat: the same lines the chat window shows over the game. */}
-          {op && (
-            <section className="panel flex h-64 shrink-0 flex-col" aria-label="Chat" data-chat-panel>
+          {(op || chatView.between) && chatView.channels.length > 0 && (
+            <section className={`panel flex ${op ? "h-64" : "h-56"} shrink-0 flex-col`} aria-label="Chat" data-chat-panel>
               <div className="flex items-center gap-2 border-b border-line px-3 py-1.5">
                 <h2 className="title text-sm text-gold">Chat</h2>
-                <Help text={t(CHAT_HELP)} />
+                <Help text={op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)} />
                 {isDesktop && (
                   <button type="button" className="ml-auto cursor-pointer text-xs text-text-muted hover:text-gold" onClick={openChatWindow} data-chat-window>
                     Open as a window over the game

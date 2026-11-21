@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ApiError, type Info } from "../api";
-import type { ControlState, GroupInfo, NetSet } from "../control";
+import type { ControlState, GroupInfo, NetSet, PresenceEntry } from "../control";
 
 export type Tab = "voice" | "roster" | "clan" | "alliance" | "history" | "guides";
 
@@ -12,6 +12,12 @@ export type AppState = {
   tick: number;
   /** The alliance's groups as the control service last sent them; null until it has. */
   groups: GroupInfo[] | null;
+  /** Who in the alliance has the app open, by player (decision 64, step 1b); null until the control service has said. */
+  presence: ReadonlyMap<number, PresenceEntry> | null;
+  /** This player shows as away: by their own switch, or because the computer has been idle. */
+  away: boolean;
+  awayByHand: boolean;
+  setAwayByHand: (away: boolean) => void;
   set: NetSet | null;
   control: ControlState;
   select: (target: number | "lounge" | "auto") => void;

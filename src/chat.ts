@@ -16,6 +16,10 @@ export type ChatLineView = { id: number; userId: number | null; name: string; ta
 export type ChatView = {
   /** The operation the chat belongs to; null when not in one. */
   operation: { id: number; name: string } | null;
+  /** Between operations: the channels are the player's lounges and group (decision 64). */
+  between: boolean;
+  /** Between operations: rooms where this player may remove others' lines. */
+  modRooms: string[];
   channels: ChatChannel[];
   lines: Record<string, ChatLineView[]>;
   unread: Record<string, boolean>;
@@ -41,9 +45,9 @@ export type ChatView = {
   called: { id: number; name: string; text: string; own: boolean } | null;
 };
 
-const EMPTY: ChatView = { operation: null, channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, ready: null, tally: null, calls: [], called: null };
+const EMPTY: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, ready: null, tally: null, calls: [], called: null };
 /** Tabs in the order a player reaches for them: their own party first, the orders last and always in sight. */
-const ORDER: NetKind[] = ["party", "reserve", "clan", "command", "broadcast"];
+const ORDER: NetKind[] = ["party", "reserve", "clan", "command", "broadcast", "group", "lounge"];
 const KEEP = 300;
 
 let view: ChatView = EMPTY;
@@ -140,13 +144,16 @@ export const chat = {
   /** A net set arrived: the channels are the operation's nets in it. `me` is the player's own number. */
   onNetSet(next: NetSet, me: number | null) {
     const op = next.operation && !next.lounge ? { id: next.operation.id, name: next.operation.name } : null;
-    const channels: ChatChannel[] = op
+    // Between operations the lounges and the group have channels too (decision 64): the group first, then the
+    // clan's lounge, then the alliance's.
+    const between = !op && next.lounge === true;
+    const channels: ChatChannel[] = op || between
       ? next.nets
-          .filter((n) => n.room.startsWith("op-"))
+          .filter((n) => (op ? n.room.startsWith("op-") : n.room.startsWith("lounge-")))
           .map((n) => ({ room: n.room, net: n.net, label: n.label, write: n.write === true }))
-          .sort((a, b) => ORDER.indexOf(a.net) - ORDER.indexOf(b.net))
+          .sort((a, b) => ORDER.indexOf(a.net) - ORDER.indexOf(b.net) || (a.room.startsWith("lounge-alliance") ? 1 : 0) - (b.room.startsWith("lounge-alliance") ? 1 : 0))
       : [];
-    const sameOp = op !== null && view.operation?.id === op.id;
+    const sameOp = (op !== null && view.operation?.id === op.id) || (between && view.between);
     const had = new Set(sameOp ? view.channels.map((c) => c.room) : []);
     const lines: Record<string, ChatLineView[]> = {};
     const unread: Record<string, boolean> = {};
@@ -163,6 +170,8 @@ export const chat = {
     if (watching && !channels.some((c) => c.room === watching)) watching = null;
     set({
       operation: op,
+      between,
+      modRooms: between ? (next.chat?.modRooms ?? []) : [],
       channels,
       lines,
       unread,
@@ -198,7 +207,7 @@ export const chat = {
   mute: (userId: number, on: boolean) => control?.muteWriter(userId, on),
   /** Sends the quick call in that slot (1 to 8) into the player's party. Outside an operation, or for a slot not in use, nothing. */
   call(slot: number) {
-    if (view.operation && view.calls[slot - 1]) control?.call(slot);
+    if ((view.operation || view.between) && view.calls[slot - 1]) control?.call(slot);
   },
   /** Pins an order for the whole operation; empty clears it. */
   order: (text: string) => control?.setOrder(text),

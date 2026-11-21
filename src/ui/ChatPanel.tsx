@@ -114,7 +114,7 @@ export function ChatPanel({
   }, [running]);
   const left = (endsAt: number | undefined) => (endsAt === undefined ? "" : `${Math.max(0, Math.ceil((endsAt - Date.now()) / 1000))} s`);
 
-  if (!view.operation || !channel) {
+  if ((!view.operation && !view.between) || !channel) {
     return (
       <div className={`flex min-h-0 flex-1 items-center justify-center px-3 text-center text-text-muted ${compact ? "text-[12px]" : "text-sm"}`} data-chat="none">
         {t("The chat is for operations. It opens here when you are in one.")}
@@ -130,8 +130,11 @@ export function ChatPanel({
   // Pinning an order is done from the channel the organisers give their orders on.
   const canPin = view.organises && channel.net === "broadcast" && !cannot;
   const pinning = pin && canPin;
-  // Quick calls go to the party (or Reserve), so that is where they are offered for a click. Keys work on any tab.
-  const canCall = (channel.net === "party" || channel.net === "reserve") && !cannot && view.calls.some(Boolean);
+  // Quick calls go to the party (or Reserve); between operations to the group, or the clan's lounge without one
+  // (the server's callRoom). That is where they are offered for a click. Keys work on any tab.
+  const find = (test: (c: (typeof view.channels)[number]) => boolean) => view.channels.find(test)?.room;
+  const callTarget = find((c) => c.net === "party") ?? find((c) => c.net === "reserve") ?? find((c) => c.net === "group") ?? find((c) => c.room.startsWith("lounge-clan-"));
+  const canCall = channel.room === callTarget && !cannot && view.calls.some(Boolean);
   const offered = callsOpen && canCall;
   const tally = view.tally;
   const answer = (ready: boolean) => {
@@ -206,7 +209,7 @@ export function ChatPanel({
               <span className={`font-semibold ${own ? "text-gold-bright" : "text-gold"}`}>{l.name}</span>
               {l.tag && !compact && <span className="text-[11px] text-text-muted"> [{l.tag}]</span>}{" "}
               {l.quick ? <span className="font-semibold text-gold-bright">▸ {l.text}</span> : l.text}
-              {(own || view.moderates) && (
+              {(own || view.moderates || view.modRooms.includes(channel.room)) && (
                 <span className="ml-2 hidden gap-2 align-middle text-[11px] group-hover:inline-flex group-focus-within:inline-flex">
                   <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={`Remove this line of ${l.name}`}>
                     remove

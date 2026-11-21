@@ -35,7 +35,11 @@ export type NetSet = {
  * alliance allows it (`readyCheck`), ask whether everyone is ready. `order` and `ready` are how things stand
  * as the net set is sent; changes after that come as events. The last four are absent on a server before 0.23.
  */
-export type ChatInfo = { moderates: boolean; muted: boolean; mutedIds?: number[]; organises?: boolean; readyCheck?: boolean; order?: ChatOrder | null; ready?: ReadyAsk | null };
+export type ChatInfo = { moderates: boolean; muted: boolean; mutedIds?: number[]; organises?: boolean; readyCheck?: boolean; order?: ChatOrder | null; ready?: ReadyAsk | null; /** Between operations: rooms where this player may remove others' lines. */ modRooms?: string[] };
+/** One player of the alliance with the app open (decision 64, step 1b). */
+export type PresenceEntry = { userId: number; name: string; classTag: string | null; clanId: number | null; clanTag: string | null; where: "lounge" | "operation"; groupId: number | null; away: boolean };
+/** Who is online: the whole list (`full`), or what changed since the last. */
+export type PresenceUpdate = { full?: boolean; set: PresenceEntry[]; gone: number[] };
 /** The order pinned on the operation. */
 export type ChatOrder = { text: string; by: string; at: string };
 /** A ready check this player is asked to answer. `endsAt` is the server's clock, in milliseconds. */
@@ -121,6 +125,8 @@ export class ControlClient {
   onChanged: (operationId: number | null) => void = () => {};
   /** The alliance's groups as they are now (decision 64), sent whenever they change. */
   onGroups: (groups: GroupInfo[]) => void = () => {};
+  /** Who in the alliance has the app open, and what changed in that. */
+  onPresence: (update: PresenceUpdate) => void = () => {};
   /** Something about the operation's text chat. */
   onChat: (e: ChatEvent) => void = () => {};
   private chatN = 0;
@@ -156,6 +162,13 @@ export class ControlClient {
   }
   answerReady(id: number, ready: boolean) {
     this.send({ type: "ready.answer", id, ready });
+  }
+  private away = false;
+  /** Tells the alliance this player is away, or back. Shown in the list of who is online; voice is not touched. */
+  setAway(away: boolean) {
+    if (away === this.away) return;
+    this.away = away;
+    this.send({ type: "away", away });
   }
 
   /** Which of the ways in is being used, and how many attempts on it in a row have ended before the server said hello. */
@@ -288,12 +301,15 @@ export class ControlClient {
         }
         // A new connection starts with the headset on, as far as the server knows.
         if (this.headsetOff) ws.send(JSON.stringify({ type: "headset", off: true }));
+        if (this.away) ws.send(JSON.stringify({ type: "away", away: true }));
         this.onState("online");
         this.onHello(msg.user as Me);
       } else if (msg.type === "netset") {
         this.onNetSet(msg as unknown as NetSet);
       } else if (typeof msg.type === "string" && /^(chat|order|ready)(\.|$)/.test(msg.type)) {
         this.onChat(msg as unknown as ChatEvent);
+      } else if (msg.type === "presence" && Array.isArray(msg.set) && Array.isArray(msg.gone)) {
+        this.onPresence({ full: msg.full === true, set: msg.set as PresenceEntry[], gone: msg.gone as number[] });
       } else if (msg.type === "groups" && Array.isArray(msg.groups)) {
         this.onGroups(msg.groups as GroupInfo[]);
       } else if (msg.type === "changed") {

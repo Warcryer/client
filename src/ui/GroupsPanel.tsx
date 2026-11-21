@@ -24,7 +24,7 @@ const GROUPS_HELP = [
 
 export function GroupsPanel() {
   const act = useAct();
-  const { groups: pushed, info } = useApp();
+  const { groups: pushed, info, presence } = useApp();
   // Asked for once when the panel opens; after that the control service sends the list whenever it changes.
   const { data: loaded, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [], 120_000);
   const [label, setLabel] = useState("");
@@ -41,7 +41,7 @@ export function GroupsPanel() {
   const data = { groups, mine: mineId, limits };
   const full = data.groups.length >= data.limits.perAlliance;
   return (
-    <section className="panel flex max-h-72 shrink-0 flex-col" aria-label="Groups" data-groups>
+    <section className="panel flex max-h-60 shrink-0 flex-col" aria-label="Groups" data-groups>
       <div className="flex flex-wrap items-center gap-2 border-b border-line px-3 py-1.5">
         <h2 className="title text-sm text-net-party">Groups</h2>
         <Help text={t(GROUPS_HELP)} />
@@ -80,9 +80,15 @@ export function GroupsPanel() {
                 <span className="text-xs tabular-nums text-text-muted">{g.members.length}</span>
                 <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 text-sm">
                   {g.members.map((m) => (
-                    <li key={m.userId} className="flex items-center gap-1 rounded-sm border border-line px-1.5 py-0.5" data-group-member={m.userId}>
+                    <li
+                      key={m.userId}
+                      className={`flex items-center gap-1 rounded-sm border border-line px-1.5 py-0.5 ${presence && !presence.has(m.userId) ? "opacity-50" : ""}`}
+                      title={presence && !presence.has(m.userId) ? `${m.name} does not have the app open` : undefined}
+                      data-group-member={m.userId}
+                    >
                       <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
-                      <span>{m.name}</span>
+                      <span className={presence?.get(m.userId)?.away ? "text-text-muted" : ""}>{m.name}</span>
+                      {presence?.get(m.userId)?.away && <span className="text-[11px] text-text-muted" data-group-away>away</span>}
                       {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
                       {mayRemove(m) && (
                         <button

@@ -5,7 +5,7 @@ import { ApiError, crestUrl, rpc, type ClanSummary, type Info } from "./api";
 import { getToken, signOut } from "./auth";
 import { CONTROL_URLS, isDesktop, SERVER } from "./config";
 import { ClassAsk } from "./ui/ClassAsk";
-import { ControlClient, type ControlState, type GroupInfo, type NetSet } from "./control";
+import { ControlClient, type ControlState, type GroupInfo, type NetSet, type PresenceEntry } from "./control";
 import { refreshGame, useGame } from "./game";
 import { usePendingInvite } from "./invite";
 import { engine } from "./runtime";
@@ -42,6 +42,9 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "guides", label: "Guides" },
 ];
 
+/** Idle this long (no key or mouse input on the computer at all), the player shows as away. */
+const AWAY_IDLE_S = 15 * 60;
+
 export default function App() {
   const s = useSettings();
   const eng = useEngine();
@@ -61,6 +64,11 @@ export default function App() {
   const [wideTick, setWideTick] = useState(0);
   /** The alliance's groups as last sent by the control service; null until it first sends them. */
   const [groups, setGroups] = useState<GroupInfo[] | null>(null);
+  /** Who in the alliance has the app open, by player; null until the control service has said. */
+  const [presence, setPresence] = useState<ReadonlyMap<number, PresenceEntry> | null>(null);
+  /** Away: the player's own switch, and Windows saying the computer has been idle (desktop only). */
+  const [awayByHand, setAwayByHand] = useState(false);
+  const [awayIdle, setAwayIdle] = useState(false);
   const [tab, setTab] = useState<Tab>("voice");
   const [boardOp, setBoardOp] = useState<number | null>(null);
   const [crests, setCrests] = useState<ReadonlyMap<number, number>>(new Map());
@@ -139,6 +147,13 @@ export default function App() {
     let wide = false;
     // Groups come and go often in an evening: the control service sends the whole list, so nobody asks for it.
     c.onGroups = setGroups;
+    c.onPresence = (u) =>
+      setPresence((had) => {
+        const next = new Map(u.full ? [] : (had ?? []));
+        for (const id of u.gone) next.delete(id);
+        for (const e of u.set) next.set(e.userId, e);
+        return next;
+      });
     c.onChanged = (operationId) => {
       if (operationId === null) wide = true;
       if (refreshTimer !== undefined) return;
@@ -171,6 +186,7 @@ export default function App() {
       window.clearTimeout(retry.current);
       c.stop();
       control.current = null;
+      setPresence(null);
       chat.attach(null);
       void engine.stop();
     };
@@ -211,6 +227,24 @@ export default function App() {
       chat: { ...chatView, lines: Object.fromEntries(Object.entries(chatView.lines).map(([room, lines]) => [room, lines.slice(-120)])) },
     });
   });
+
+  // Away (decision 64, step 1b): the player's own switch, or the computer idle for a quarter of an hour.
+  const away = awayByHand || awayIdle;
+  useEffect(() => {
+    control.current?.setAway(away);
+  }, [away, state]);
+  useEffect(() => {
+    if (phase !== "running" || !isDesktop) return;
+    // Windows' own count of how long since any key or mouse input: never which keys, only how long ago.
+    const check = () =>
+      void import("@tauri-apps/api/core")
+        .then(({ invoke }) => invoke<number>("idle_seconds"))
+        .then((s) => setAwayIdle(typeof s === "number" && s >= AWAY_IDLE_S))
+        .catch(() => {});
+    check();
+    const timer = window.setInterval(check, 30_000);
+    return () => window.clearInterval(timer);
+  }, [phase]);
 
   // An invite link that was opened: once the player is signed in and set up, the app asks before using it (InviteAsk, below).
   const pendingInvite = usePendingInvite();
@@ -296,7 +330,7 @@ export default function App() {
 
   return (
     <AppContext.Provider
-      value={{ info, refreshInfo, tick, groups, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
+      value={{ info, refreshInfo, tick, groups, presence, away, awayByHand, setAwayByHand, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
     >
       <div className="frame flex h-full flex-col">
         <header className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-gold-dim bg-bg-1/85 px-4 py-2">
