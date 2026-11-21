@@ -7,6 +7,7 @@ import { checkForUpdate, installUpdate, useUpdate } from "../update";
 import { CALL_TARGETS, setSettings, useSettings, type BindTarget, type CallTarget, type InputSource, type NetKind } from "../settings";
 import { chat } from "../chat";
 import { useApp } from "./app-context";
+import { LanguageSettings } from "./Language";
 import { DevicePickers, KeyBind, MicTest, netName, NET_TEXT, openInBrowser, PartyMode } from "./common";
 import { MyCharacters } from "./MyCharacters";
 import { ProfileForm } from "./NameStep";
@@ -137,6 +138,11 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           <button type="button" className="btn btn-quiet text-sm" onClick={onClose}>Close</button>
         </div>
 
+        {info.translation && (
+          <Group title="Language">
+            <LanguageSettings />
+          </Group>
+        )}
         <Group title="Devices">
           <DevicePickers />
           <MicTest />

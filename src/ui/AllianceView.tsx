@@ -6,6 +6,7 @@ import { useState } from "react";
 import { rpc, type AllianceView as AllianceData, type PlanState } from "../api";
 import { DISCORD_HELP, DiscordSetup } from "./DiscordSetup";
 import { CHAT_SETTINGS_HELP, ChatSettings } from "./ChatSettings";
+import { TRANSLATE_SETTINGS_HELP, TranslateSettings } from "./Language";
 import { QUICK_CALLS_HELP, QuickCalls } from "./QuickCalls";
 import { PointsSettingsSection } from "./Points";
 import { ItemsSection } from "./Loot";
@@ -340,6 +341,12 @@ export function AllianceView() {
       {data.chat && (
         <Section title="Chat" help={t(CHAT_SETTINGS_HELP)}>
           <ChatSettings settings={data.chat} choices={data.chatKeepChoices ?? [0, 7, 30, 365]} onChange={reload} />
+        </Section>
+      )}
+
+      {data.translate && (
+        <Section title="Chat translation" help={t(TRANSLATE_SETTINGS_HELP)}>
+          <TranslateSettings settings={data.translate} onChange={reload} />
         </Section>
       )}
 

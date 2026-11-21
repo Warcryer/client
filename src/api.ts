@@ -52,6 +52,9 @@ export type Info = {
     /** Class and level band chosen from the alliance's lists; null until chosen. */
     className: string | null;
     levelBand: string | null;
+    /** The language the player reads (a code of `translation.languages`; null: not chosen), and whether the chat is translated into it. Absent on a server before 0.38. */
+    lang?: string | null;
+    chatTranslate?: boolean;
     /** Runs the service itself. Inside an alliance it counts only in the one they are a member of. */
     isAdmin: boolean;
     isAllianceAdmin: boolean;
@@ -63,6 +66,8 @@ export type Info = {
   pendingApprovals: number;
   /** Players asking to join a party this player leads. */
   joinRequests: JoinRequest[];
+  /** Chat translation (server decision 66): the languages there are, by code, each under its own name; whether the service has it, and whether the player's alliance allows it. Absent on a server before 0.38. */
+  translation?: { languages: Record<string, string>; available: boolean; allianceOn: boolean };
   /** Operations waiting for this player's "coming" or "cannot come". Absent on servers older than the sign-up feature. */
   openSignups?: { opId: number; name: string; startsAt: string | null; state: OpState }[];
 };
@@ -187,7 +192,9 @@ export type OpOptions = { clans: ClanSummary[]; users: { id: number; name: strin
 export type AllianceUser = { id: number; name: string; clanId: number | null; clanTag: string | null; banned: boolean; isAdmin: boolean; isAllianceAdmin: boolean; isOwner?: boolean };
 /** A player banned from the alliance. `id` names the ban for lifting it. */
 export type Ban = { id: string; name: string; at: string };
-export type AllianceView = { plan?: PlanState | null; alliance?: AllianceInfo | null; bans?: Ban[]; loungeOn?: boolean; /** Admins may speak to the whole alliance between operations (decision 64). */ broadcastOn?: boolean; clans: ClanSummary[]; users: AllianceUser[]; /** Whether the alliance's own Discord announcements are set up. */ discord?: boolean; discordRole?: string | null; /** Minutes before an operation's start that Discord is reminded; 0: never. */ remindMinutes?: number; remindChoices?: number[]; /** The operations' text chat: who may write beyond those who may speak, and how long lines are kept. */ chat?: { clanAll: boolean; operationAll: boolean; readyCheck?: boolean; keepDays: number }; /** The alliance's quick calls by slot, and their limits. Absent on a server before 0.24. */ calls?: string[]; callLimits?: { slots: number; max: number }; chatKeepChoices?: number[] };
+/** How chat translation stands for an alliance, as its admins see it. */
+export type TranslateSettingsData = { available: boolean; on: boolean; glossary: string; month: number; cap: number };
+export type AllianceView = { /** Chat translation. Absent on a server before 0.38. */ translate?: TranslateSettingsData; plan?: PlanState | null; alliance?: AllianceInfo | null; bans?: Ban[]; loungeOn?: boolean; /** Admins may speak to the whole alliance between operations (decision 64). */ broadcastOn?: boolean; clans: ClanSummary[]; users: AllianceUser[]; /** Whether the alliance's own Discord announcements are set up. */ discord?: boolean; discordRole?: string | null; /** Minutes before an operation's start that Discord is reminded; 0: never. */ remindMinutes?: number; remindChoices?: number[]; /** The operations' text chat: who may write beyond those who may speak, and how long lines are kept. */ chat?: { clanAll: boolean; operationAll: boolean; readyCheck?: boolean; keepDays: number }; /** The alliance's quick calls by slot, and their limits. Absent on a server before 0.24. */ calls?: string[]; callLimits?: { slots: number; max: number }; chatKeepChoices?: number[] };
 
 /** One player's time in voice during an operation. `seconds` is 0 when they never joined. */
 export type AttendanceRow = {

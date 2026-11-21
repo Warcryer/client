@@ -29,6 +29,32 @@ const hhmm = (at: string) => {
   return Number.isNaN(d.getTime()) ? "" : `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 };
 
+/**
+ * What a line says. A line translated for this player (server decision 66) is shown in their language with
+ * a small mark; the mark is a button that puts the line back as it was written, and back again.
+ */
+export function Said({ line, compact }: { line: { text: string; tr?: string; quick?: true }; compact: boolean }) {
+  const [original, setOriginal] = useState(false);
+  const text = line.tr && !original ? line.tr : line.text;
+  return (
+    <>
+      {line.quick ? <span className="font-semibold text-gold-bright">▸ {text}</span> : text}
+      {line.tr && (
+        <button
+          type="button"
+          className={`ml-1.5 cursor-pointer align-baseline uppercase tracking-wider text-text-muted hover:text-gold ${compact ? "text-[9px]" : "text-[10px]"}`}
+          aria-pressed={original}
+          aria-label={original ? "Show the translation" : "Show the line as it was written"}
+          onClick={() => setOriginal(!original)}
+          data-chat-translated={original ? "original" : "translated"}
+        >
+          {original ? "original" : "translated"}
+        </button>
+      )}
+    </>
+  );
+}
+
 export function ChatPanel({
   view,
   act,
@@ -211,7 +237,7 @@ export function ChatPanel({
               {!compact && <span className="text-[11px] tabular-nums text-text-muted">{hhmm(l.at)} </span>}
               <span className={`font-semibold ${own ? "text-gold-bright" : "text-gold"}`}>{l.name}</span>
               {l.tag && !compact && <span className="text-[11px] text-text-muted"> [{l.tag}]</span>}{" "}
-              {l.quick ? <span className="font-semibold text-gold-bright">▸ {l.text}</span> : l.text}
+              <Said line={l} compact={compact} />
               {(own || view.moderates || view.modRooms.includes(channel.room)) && (
                 <span className="ml-2 hidden gap-2 align-middle text-[11px] group-hover:inline-flex group-focus-within:inline-flex">
                   <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={`Remove this line of ${l.name}`}>

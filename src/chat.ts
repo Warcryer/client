@@ -12,7 +12,7 @@ import type { NetKind } from "./settings";
 
 export type ChatChannel = { room: string; net: NetKind; label: string; write: boolean };
 /** `userId` null: a note from the app itself (you were moved here; a line was not sent), not something anyone wrote. */
-export type ChatLineView = { id: number; userId: number | null; name: string; tag: string | null; text: string; at: string; /** Sent as a quick call. */ quick?: true };
+export type ChatLineView = { id: number; userId: number | null; name: string; tag: string | null; text: string; at: string; /** Sent as a quick call. */ quick?: true; /** The line in the player's language, when it was translated for them. */ tr?: string };
 export type ChatView = {
   /** The operation the chat belongs to; null when not in one. */
   operation: { id: number; name: string } | null;
@@ -96,6 +96,10 @@ function onEvent(e: ChatEvent) {
     const known = new Set(e.lines.map((l) => l.id));
     const later = (view.lines[e.room] ?? []).filter((l) => l.userId !== null && !known.has(l.id) && l.id > (e.lines.at(-1)?.id ?? 0));
     set({ ...view, lines: { ...view.lines, [e.room]: [...e.lines, ...later, ...notes].slice(-KEEP) } });
+  } else if (e.type === "chat.translated") {
+    // The line is on screen already, as written; this is the same line in the player's language.
+    const had = view.lines[e.room];
+    if (had?.some((l) => l.id === e.id)) set({ ...view, lines: { ...view.lines, [e.room]: had.map((l) => (l.id === e.id ? { ...l, tr: e.text } : l)) } });
   } else if (e.type === "chat.removed") {
     const had = view.lines[e.room];
     if (had?.some((l) => l.id === e.id)) set({ ...view, lines: { ...view.lines, [e.room]: had.filter((l) => l.id !== e.id) } });

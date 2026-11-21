@@ -1,6 +1,7 @@
 // The chat of an operation that has ended, read back on its board by the
 // players who were on those nets. Loaded only when asked for.
 
+import { Said } from "./ChatPanel";
 import { useState } from "react";
 import { rpc } from "../api";
 import type { NetKind } from "../settings";
@@ -8,7 +9,7 @@ import { t } from "../words";
 import { Help } from "./tips";
 import { NET_TEXT } from "./net-style";
 
-type Record = { keepDays: number; channels: { room: string; net: NetKind; label: string; lines: { id: number; name: string; tag: string | null; text: string; at: string; quick?: true }[] }[] };
+type Record = { keepDays: number; channels: { room: string; net: NetKind; label: string; lines: { id: number; name: string; tag: string | null; text: string; at: string; quick?: true; /** The line in the reader's language, where it was translated while the operation ran. */ tr?: string }[] }[] };
 
 const clock = (iso: string) => new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
@@ -57,7 +58,7 @@ export function ChatRecord({ opId }: { opId: number }) {
               <li key={l.id} className="break-words">
                 <span className="text-[11px] tabular-nums text-text-muted">{clock(l.at)} </span>
                 <span className="font-semibold text-gold">{l.name}</span>{" "}
-                {l.quick ? <span className="font-semibold text-gold-bright">▸ {l.text}</span> : l.text}
+                <Said line={l} compact={false} />
               </li>
             ))}
           </ol>

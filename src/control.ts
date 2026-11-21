@@ -47,12 +47,14 @@ export type ReadyAsk = { id: number; by: string; endsAt: number };
 /** Where a ready check stands. Names only reach those who run the operation. */
 export type ReadyState = { id: number; ready: number; notReady: number; waiting: number; names?: { notReady: string[]; waiting: string[] }; endsAt?: number };
 /** One line of an operation's chat. `room` is its net's room. */
-export type ChatLine = { id: number; room: string; userId: number; name: string; tag: string | null; text: string; at: string; /** Sent as a quick call. */ quick?: true };
+export type ChatLine = { id: number; room: string; userId: number; name: string; tag: string | null; text: string; at: string; /** Sent as a quick call. */ quick?: true; /** In a net's history: the line in this player's language, where it was translated. */ tr?: string };
 /** What the server says about the chat. `n` is the number this app gave a line it sent. */
 export type ChatEvent =
   | { type: "chat"; line: ChatLine; n?: number }
   | { type: "chat.history"; room: string; lines: ChatLine[] }
   | { type: "chat.removed"; room: string; id: number }
+  /** A line's translation into this player's language: it follows the line by a second or so (server decision 66). */
+  | { type: "chat.translated"; room: string; id: number; lang: string; text: string }
   | { type: "chat.refused"; n: number | null; why: string }
   | { type: "order"; order: ChatOrder | null }
   | { type: "ready"; check: ReadyAsk }
