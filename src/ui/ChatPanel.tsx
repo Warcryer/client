@@ -33,6 +33,7 @@ export function ChatPanel({
   view,
   act,
   compact = false,
+  folded = false,
   chatKey,
   onTyping,
   onDone,
@@ -42,6 +43,8 @@ export function ChatPanel({
   act: ChatActions;
   /** The chat window over the game: smaller, no times, nothing that needs a careful mouse. */
   compact?: boolean;
+  /** Folded down on the Voice screen: the order, a ready check and the line to write in stay; the channels and their lines are put away. */
+  folded?: boolean;
   /** The chat window only: what the chat key did last (the native side has put the window in front, or says it could not). */
   chatKey?: { how: string; n: number };
   /** The chat window only: the line got or lost the keyboard. */
@@ -143,7 +146,7 @@ export function ChatPanel({
   };
 
   return (
-    <div className={`flex min-h-0 flex-1 flex-col ${compact ? "text-[13px]" : "text-sm"}`} data-chat={channel.room}>
+    <div className={`flex min-h-0 flex-1 flex-col ${compact ? "text-[13px]" : "text-sm"} ${folded ? "pt-1" : ""}`} data-chat={channel.room}>
       {view.order && (
         <div className={`flex shrink-0 items-baseline gap-2 border-b border-gold-dim/40 px-2 py-0.5 text-net-broadcast transition-colors duration-700 ${flash ? "bg-net-broadcast/20" : ""}`} data-chat-order>
           <span className="min-w-0 flex-1 break-words font-semibold">{view.order.text}</span>
@@ -176,7 +179,7 @@ export function ChatPanel({
           )}
         </div>
       )}
-      <div className="flex shrink-0 flex-wrap items-center gap-1 px-1 pt-1" role="tablist" aria-label="Chat channels">
+      <div className={`shrink-0 flex-wrap items-center gap-1 px-1 pt-1 ${folded ? "hidden" : "flex"}`} role="tablist" aria-label="Chat channels">
         {view.channels.map((c) => (
           <button
             key={c.room}
@@ -197,7 +200,7 @@ export function ChatPanel({
           </button>
         )}
       </div>
-      <ol ref={list} className={`min-h-0 flex-1 overflow-y-auto px-2 py-1 ${compact ? "leading-[19px]" : "leading-6"}`} data-chat-lines aria-live="polite">
+      <ol ref={list} className={`min-h-0 flex-1 overflow-y-auto px-2 py-1 ${compact ? "leading-[19px]" : "leading-6"} ${folded ? "hidden" : ""}`} data-chat-lines aria-live="polite">
         {lines.length === 0 && <li className="text-[12px] italic text-text-muted">Nothing has been written here yet.</li>}
         {lines.map((l) => {
           if (l.userId === null) return <li key={l.id} className="text-[12px] italic text-text-muted" data-chat-note>{t(l.text)}</li>;

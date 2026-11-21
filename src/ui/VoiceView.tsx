@@ -1,21 +1,19 @@
 import { t } from "../words";
-import { SignupPrompts } from "./Signup";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { chat } from "../chat";
 import { openChatWindow } from "../strip/publish";
 import { HeadsetIcon } from "./AudioToggles";
 import { ChatPanel } from "./ChatPanel";
-import { GroupsPanel } from "./GroupsPanel";
-import { OnlinePanel } from "./OnlinePanel";
+import { AroundPanel } from "./AroundPanel";
+import { OperationPanel } from "./OperationPanel";
 import { CallToArms } from "./CallToArms";
 import { isDesktop } from "../config";
 import type { Member, NetView } from "../engine";
 import { keyLabel } from "../keys";
 import { engine } from "../runtime";
 import { bindTargetOf, setSettings, useSettings, type BindTarget, type CallTarget } from "../settings";
-import { rpc } from "../api";
-import { useAct, useApp } from "./app-context";
-import { ClanCrest, ClanMark, Initial, KeyBind, NET_BORDER, netName, NET_TEXT, netTip, NET_VAR, useEngine } from "./common";
+import { useApp } from "./app-context";
+import { ClanCrest, ClanMark, Initial, NET_BORDER, netName, NET_TEXT, netTip, NET_VAR, useEngine } from "./common";
 import { Help } from "./tips";
 
 const STATE_TEXT: Record<NetView["state"], string> = {
@@ -192,12 +190,12 @@ const CHAT_HELP = [
   "Open as a window: a small window that stays on top of the game, where the game's own chat box is. Bind a Chat key in Settings to type in it without leaving the game.",
 ].join("\n");
 
+/** The chat's height when the player has not dragged it, and the limits a drag keeps to. */
+const CHAT_H = { lounge: 208, operation: 256, min: 112, max: 640 };
+
 export function VoiceView() {
-  const { info, set, select, go, notice, refreshInfo } = useApp();
+  const { info, set, go } = useApp();
   const chatView = useSyncExternalStore(chat.subscribe, chat.view);
-  const act = useAct();
-  const answer = (r: { opId: number; partyId: number; userId: number }, accept: boolean) =>
-    void act.run(() => rpc("party.answerJoin", { ...r, accept })).then(refreshInfo);
   const eng = useEngine();
   const s = useSettings();
   const nets = eng.view();
@@ -206,6 +204,11 @@ export function VoiceView() {
   /** The net whose people fill the centre panel; null follows your party or lounge. */
   const [shownRoom, setShownRoom] = useState<string | null>(null);
   const [openMember, setOpenMember] = useState<string | null>(null);
+  /** A narrow window keeps the right-hand panel behind a button: whether it is out now. */
+  const [aroundOut, setAroundOut] = useState(false);
+  /** The chat's height while it is being dragged. */
+  const [dragH, setDragH] = useState<number | null>(null);
+  const drag = useRef<{ y: number; h: number } | null>(null);
 
   // Playback permission can change without an engine event.
   useEffect(() => {
@@ -221,15 +224,7 @@ export function VoiceView() {
 
   const shown = nets.find((n) => n.room === shownRoom) ?? home;
 
-  // Speaking nets with no key yet: a new leader is prompted to bind theirs.
   const voiceMode = s.partyMode === "voice";
-  const unbound = [
-    ...new Set(
-      nets
-        .filter((n) => n.speak && s.bindings[bindTargetOf(n.net)] === null && !(voiceMode && TALK.has(n.net)))
-        .map((n) => bindTargetOf(n.net)),
-    ),
-  ];
   const hints = [...new Set(nets.filter((n) => n.speak).map((n) => bindTargetOf(n.net)))].filter((t) => s.bindings[t] !== null) as Exclude<BindTarget, "muteAll" | "deafen" | "broadcastLock" | "chat" | "ready" | CallTarget>[];
 
   // What the footer says when it has no key to list for the nets on screen.
@@ -244,47 +239,21 @@ export function VoiceView() {
   const keyHints = [...new Set(hints.map((t) => s.bindings[t] as number))].map((code) => ({ code, targets: hints.filter((t) => s.bindings[t] === code) }));
   // Nets your mic is open on right now.
   const onAir = nets.filter((n) => n.live).map((n) => (between(n.net) || n.net === "party" ? n.label : netName(n.net)));
+  // Between operations the Party key goes to the room you talk in: your group, or a lounge.
+  const partyKeyGoesTo = op ? netName("party") : nets.find((n) => n.room === loungeRoom)?.net === "group" ? "Group" : "Lounge";
 
-  const hasLive = set?.operations.some((o) => o.state === "live") ?? false;
-  const where = op ? String(op.id) : "lounge";
+  const hasChat = (op || chatView.between) && chatView.channels.length > 0;
+  const folded = s.chatFolded;
+  // As the player dragged it; otherwise two fifths of the column, up to a height that suits where they are.
+  const chatSet = dragH ?? s.chatHeight;
+  const chatStyle = chatSet !== null ? { flexBasis: Math.max(CHAT_H.min, Math.min(CHAT_H.max, chatSet)), flexGrow: 0 } : { flexBasis: "42%", flexGrow: 0, maxHeight: op ? CHAT_H.operation : CHAT_H.lounge };
+  const chatBox = useRef<HTMLElement>(null);
+  const unread = chatView.channels.some((c) => chatView.unread[c.room]);
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex flex-wrap items-center gap-3 px-4 pt-3">
-        <span className="text-text-muted">You are in</span>
-        {set && set.operations.length > 0 ? (
-          <select
-            className="field w-auto"
-            value={where}
-            aria-label="Where you are"
-            onChange={(e) => {
-              // Picking the lounge during a live operation is a deliberate choice to sit it out.
-              if (e.target.value === "lounge") select(hasLive ? "lounge" : "auto");
-              else select(Number(e.target.value));
-            }}
-          >
-            <option value="lounge">Lounge</option>
-            {set.operations.map((o) => (
-              <option key={o.id} value={o.id}>{o.name} ({o.state === "live" ? "live" : "planned"})</option>
-            ))}
-          </select>
-        ) : (
-          <span className="font-medium">{op ? op.name : "the lounge"}</span>
-        )}
-        <Help text={t("Between operations you are in your clan's lounge. A live operation pulls you onto its nets by itself and returns you when it ends.\nIf operations are listed here, pick the lounge to sit one out, or a planned operation to form up early.")} />
-        {op && (
-          <span className={`text-xs uppercase tracking-wider ${op.state === "live" ? "text-net-party" : "text-gold"}`}>
-            {op.state === "live" ? "Live" : "Planned"}
-          </span>
-        )}
-        {op && (
-          <button type="button" className="ml-auto text-text-muted hover:text-gold cursor-pointer" onClick={() => go("roster", op.id)}>
-            Open the roster board
-          </button>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2 px-4 pt-3 empty:hidden">
+      {/* Faults keep a bar of their own; everything that only waits for an answer is on the line under the header. */}
+      <div className="flex flex-col gap-2 px-3 pt-3 empty:hidden">
         {eng.audioBlocked && (
           <div className="panel flex items-center gap-3 px-3 py-2 border-danger">
             <span>Your browser is holding the sound back until you click.</span>
@@ -295,33 +264,6 @@ export function VoiceView() {
           <div className="panel flex items-center gap-3 px-3 py-2 border-danger" role="alert">
             <span>Microphone problem: {eng.micError}. You can listen but not speak.</span>
             <button type="button" className="btn text-sm" onClick={() => void engine.startMic().catch(() => {})}>Try again</button>
-          </div>
-        )}
-        {notice && <div className="panel px-3 py-2 text-gold-bright border-gold-bright" role="status">{notice}</div>}
-        {info.joinRequests.map((r) => (
-          <div key={`${r.opId}-${r.userId}`} className="panel flex flex-wrap items-center gap-3 px-3 py-2 border-gold" role="status">
-            <span>
-              <span className="font-semibold">{r.name}</span>
-              {r.classTag && <span className="ml-1 text-xs text-gold">{r.classTag}</span>} asks to join{" "}
-              <span className="font-semibold text-net-party">{r.partyName}</span>
-            </span>
-            <span className="ml-auto flex gap-2">
-              <button type="button" className="btn text-sm" disabled={act.busy} onClick={() => answer(r, true)}>Accept</button>
-              <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={() => answer(r, false)}>Decline</button>
-            </span>
-          </div>
-        ))}
-        <SignupPrompts />
-        {act.error && <div className="text-danger" role="alert">{act.error}</div>}
-        {unbound.length > 0 && (
-          <div className="panel flex flex-wrap items-center gap-x-5 gap-y-2 px-3 py-2">
-            <span>You can speak here. Bind a key for each:</span>
-            {unbound.map((t) => (
-              <span key={t} className="inline-flex items-center gap-2">
-                <span className={`font-semibold ${NET_TEXT[t]}`}>{t === "party" && !op ? "Lounge" : netName(t)}</span>
-                <KeyBind target={t} label={netName(t)} />
-              </span>
-            ))}
           </div>
         )}
       </div>
@@ -356,83 +298,138 @@ export function VoiceView() {
           </div>
         </div>
       ) : (
-        // Every panel here has a least height it never goes under, and they add up to this row's own least
-        // height. A window too small for that scrolls the screen as a whole; nothing is drawn over anything.
-        <div className="flex min-h-[26rem] flex-1 gap-3 p-3" data-voice-main>
-          {/* With Call to arms opened out in a small window this column is longer than the window: then it scrolls. */}
-          <div className="flex w-72 shrink-0 flex-col gap-2 min-h-0 overflow-y-auto" data-voice-side>
-          {/* The nets take the height they need; short of room, Online gives way first, then this list scrolls. */}
-          <ul className="-m-0.5 flex min-h-24 flex-[0_1_auto] flex-col gap-2 overflow-y-auto p-0.5" aria-label="Your nets">
-            {nets.map((n) => (
-              <NetCard
-                key={n.room}
-                net={n}
-                shown={shown?.room === n.room}
-                onShow={() => setShownRoom(n.room === home?.room ? null : n.room)}
-                talkHere={!between(n.net) || n.room === loungeRoom}
-                onTalkHere={between(n.net) && lounges.length > 1 ? () => engine.setLoungeRoom(n.room) : undefined}
-              />
-            ))}
-          </ul>
-          {/* Between operations: who in the alliance has the app open, and the away switch. */}
-          {!op && <OnlinePanel />}
-          {/* For those who run the alliance: an operation started on the spot. */}
-          {!op && <CallToArms />}
+        // Three zones, one job each (decision 65), and each owns its height, so none can squeeze another:
+        // what you hear on the left, your room and its chat in the middle, your alliance (or the operation)
+        // on the right. Every panel has a least height; a window too small for them scrolls the screen as a
+        // whole, and nothing is drawn over anything.
+        <div className="relative flex min-h-[21rem] flex-1 gap-3 p-3" data-voice-main>
+          <div className="flex w-60 shrink-0 flex-col gap-2 min-h-0 xl:w-72" data-voice-side>
+            <h2 className="px-0.5 text-[11px] uppercase tracking-wider text-text-muted">Your nets</h2>
+            <ul className="-m-0.5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5" aria-label="Your nets">
+              {nets.map((n) => (
+                <NetCard
+                  key={n.room}
+                  net={n}
+                  shown={shown?.room === n.room}
+                  onShow={() => setShownRoom(n.room === home?.room ? null : n.room)}
+                  talkHere={!between(n.net) || n.room === loungeRoom}
+                  onTalkHere={between(n.net) && lounges.length > 1 ? () => engine.setLoungeRoom(n.room) : undefined}
+                />
+              ))}
+            </ul>
           </div>
+
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
-          {/* The room you are in comes first: it keeps its least height whatever is under it, and takes two thirds of any spare. */}
-          <section className="panel flex min-h-[10.5rem] min-w-0 flex-[2_1_10.5rem] flex-col gap-2 overflow-y-auto p-3" aria-label="Your room" data-room>
-            {shown && (
-              <>
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <h1 className={`title min-w-0 break-words ${NET_TEXT[shown.net]}`}>{shown.label}</h1>
-                  <span className="whitespace-nowrap text-text-muted">
-                    {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
-                    {shown.members.length} connected
-                    {shown.members.some((m) => !m.canSpeak) && ` · ${shown.members.filter((m) => m.canSpeak).length} can speak`}
-                  </span>
-                  <Help text={"Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected."} />
-                  {shown.room !== home?.room && (
-                    <button type="button" className="ml-auto text-text-muted hover:text-gold cursor-pointer" onClick={() => setShownRoom(null)}>
-                      Back to {home?.label ?? "your net"}
-                    </button>
+            {/* The room you are in: its heading says where that is. It takes all the height the chat leaves. */}
+            <section className="panel flex min-h-[10.5rem] min-w-0 flex-1 flex-col gap-2 overflow-y-auto p-3" aria-label="Your room" data-room>
+              {shown && (
+                <>
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <h1 className={`title min-w-0 break-words ${NET_TEXT[shown.net]}`}>{shown.label}</h1>
+                    <span className="whitespace-nowrap text-text-muted">
+                      {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
+                      {shown.members.length} connected
+                      {shown.members.some((m) => !m.canSpeak) && ` · ${shown.members.filter((m) => m.canSpeak).length} can speak`}
+                    </span>
+                    <Help text={"Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected."} />
+                    <span className="ml-auto flex items-baseline gap-3">
+                      {shown.room !== home?.room && (
+                        <button type="button" className="text-text-muted hover:text-gold cursor-pointer" onClick={() => setShownRoom(null)}>
+                          Back to {home?.label ?? "your net"}
+                        </button>
+                      )}
+                      {/* Only in a window too narrow for three columns. */}
+                      <button type="button" className="cursor-pointer whitespace-nowrap text-gold hover:text-gold-bright min-[900px]:hidden" aria-expanded={aroundOut} onClick={() => setAroundOut(!aroundOut)} data-around-toggle>
+                        {op ? t("The operation") : t("Groups and who is online")}
+                      </button>
+                    </span>
+                  </div>
+                  <ul className="grid grid-cols-[repeat(auto-fill,minmax(11rem,1fr))] items-start gap-2">
+                    {shown.members.map((m) => (
+                      <MemberCard
+                        key={m.identity}
+                        m={m}
+                        colour={shown.net === "lounge" ? "text-net-party" : NET_TEXT[shown.net]}
+                        open={openMember === m.identity}
+                        onToggle={() => setOpenMember(openMember === m.identity ? null : m.identity)}
+                      />
+                    ))}
+                  </ul>
+                  {shown.net === "reserve" && shown.room === home?.room && <p className="text-text-muted">{t("You are in Reserve until an organiser places you in a party.")}</p>}
+                  {shown.net === "lounge" && shown.members.length <= 1 && shown.state === "connected" && (
+                    <p className="text-text-muted">{t("Nobody else is here yet. Anyone from the clan who opens the app lands in this room.")}</p>
                   )}
-                </div>
-                <ul className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] items-start gap-2">
-                  {shown.members.map((m) => (
-                    <MemberCard
-                      key={m.identity}
-                      m={m}
-                      colour={shown.net === "lounge" ? "text-net-party" : NET_TEXT[shown.net]}
-                      open={openMember === m.identity}
-                      onToggle={() => setOpenMember(openMember === m.identity ? null : m.identity)}
-                    />
-                  ))}
-                </ul>
-                {shown.net === "reserve" && shown.room === home?.room && <p className="text-text-muted">{t("You are in Reserve until an organiser places you in a party.")}</p>}
-                {shown.net === "lounge" && shown.members.length <= 1 && shown.state === "connected" && (
-                  <p className="text-text-muted">{t("Nobody else is here yet. Anyone from the clan who opens the app lands in this room.")}</p>
-                )}
-              </>
-            )}
-          </section>
-          {/* Between operations: the alliance's groups, to start, join or leave one. */}
-          {!op && <GroupsPanel />}
-          {/* The operation's text chat: the same lines the chat window shows over the game. */}
-          {(op || chatView.between) && chatView.channels.length > 0 && (
-            <section className={`panel flex min-h-28 ${op ? "flex-[1_1_16rem]" : "flex-[1_1_12rem]"} flex-col`} aria-label="Chat" data-chat-panel>
-              <div className="flex items-center gap-2 border-b border-line px-3 py-1.5">
-                <h2 className="title text-sm text-gold">Chat</h2>
-                <Help text={op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)} />
-                {isDesktop && (
-                  <button type="button" className="ml-auto cursor-pointer text-xs text-text-muted hover:text-gold" onClick={openChatWindow} data-chat-window>
-                    Open as a window over the game
-                  </button>
-                )}
-              </div>
-              <ChatPanel view={chatView} act={chat} />
+                </>
+              )}
             </section>
-          )}
+            {/* The text chat under the room: the same lines the chat window shows over the game. Its top edge
+                drags to make it taller or shorter, and it folds down to the line you write in. */}
+            {hasChat && (
+              <section
+                className={`panel relative flex flex-col ${folded ? "shrink-0" : "min-h-28 shrink"}`}
+                ref={chatBox}
+                style={folded ? undefined : chatStyle}
+                aria-label="Chat"
+                data-chat-panel
+                data-chat-folded={folded ? "" : undefined}
+              >
+                {!folded && (
+                  <div
+                    className="absolute inset-x-0 -top-2 z-[2] h-3 cursor-row-resize"
+                    role="separator"
+                    aria-orientation="horizontal"
+                    aria-label="Drag to make the chat taller or shorter"
+                    onPointerDown={(e) => {
+                      drag.current = { y: e.clientY, h: chatBox.current?.getBoundingClientRect().height ?? CHAT_H.lounge };
+                      e.currentTarget.setPointerCapture(e.pointerId);
+                    }}
+                    onPointerMove={(e) => {
+                      if (drag.current) setDragH(Math.max(CHAT_H.min, Math.min(CHAT_H.max, drag.current.h + (drag.current.y - e.clientY))));
+                    }}
+                    onPointerUp={() => {
+                      if (drag.current && dragH !== null) setSettings({ chatHeight: dragH });
+                      drag.current = null;
+                      setDragH(null);
+                    }}
+                    onDoubleClick={() => setSettings({ chatHeight: null })}
+                    data-chat-resize
+                  />
+                )}
+                <div className={`flex shrink-0 items-center gap-2 px-3 py-1.5 ${folded ? "" : "border-b border-line"}`}>
+                  <h2 className="title text-sm text-gold">Chat</h2>
+                  <Help text={(op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)) + "\nDrag the chat's top edge to make it taller or shorter. Fold puts its lines away and keeps the line you write in; an order and a ready check still show."} />
+                  {folded && unread && <span className="h-1.5 w-1.5 rounded-full bg-gold-bright" role="img" aria-label="New lines" />}
+                  <span className="ml-auto flex items-center gap-4">
+                    {isDesktop && (
+                      <button type="button" className="cursor-pointer text-xs text-text-muted hover:text-gold" onClick={openChatWindow} data-chat-window>
+                        Open as a window over the game
+                      </button>
+                    )}
+                    <button type="button" className="cursor-pointer text-xs text-text-muted hover:text-gold" aria-expanded={!folded} onClick={() => setSettings({ chatFolded: !folded })} data-chat-fold>
+                      {folded ? "Unfold ▲" : "Fold ▼"}
+                    </button>
+                  </span>
+                </div>
+                <ChatPanel view={chatView} act={chat} folded={folded} />
+              </section>
+            )}
+          </div>
+
+          {/* The alliance right now, or the operation. In a window too narrow for three columns it waits behind
+              a button in the room's heading and comes out over the room. */}
+          <div
+            className={`w-64 shrink-0 flex-col gap-2 min-h-0 xl:w-[19rem] min-[900px]:flex ${
+              aroundOut ? "max-[899px]:absolute max-[899px]:inset-y-3 max-[899px]:right-3 max-[899px]:z-10 max-[899px]:flex max-[899px]:w-72 max-[899px]:bg-bg-0 max-[899px]:shadow-[0_0_0_1px_var(--color-gold-dim),-12px_0_24px_rgb(0_0_0/0.6)]" : "max-[899px]:hidden"
+            }`}
+            data-voice-around
+          >
+            {/* Out over the room in a narrow window: the way to put it back. */}
+            <button type="button" className="shrink-0 cursor-pointer self-end px-1 text-xs text-gold hover:text-gold-bright min-[900px]:hidden" onClick={() => setAroundOut(false)} data-around-close>
+              Close ✕
+            </button>
+            {op ? <OperationPanel /> : <AroundPanel />}
+            {/* For those who run the alliance: an operation started on the spot. */}
+            {!op && <CallToArms />}
           </div>
         </div>
       )}
@@ -445,18 +442,18 @@ export function VoiceView() {
             {targets.map((t, i) => (
               <span key={t}>
                 {i > 0 && " / "}
-                <span className={NET_TEXT[t]}>{t === "party" && !op ? "Lounge" : netName(t)}</span>
+                <span className={NET_TEXT[t]}>{t === "party" ? partyKeyGoesTo : netName(t)}</span>
               </span>
             ))}
           </span>
         ))}
         {s.bindings.muteAll !== null && (
-          <span>
+          <span className="whitespace-nowrap">
             <kbd className="kbd">{keyLabel(s.bindings.muteAll)}</kbd> Mute all
           </span>
         )}
         {s.bindings.deafen !== null && (
-          <span>
+          <span className="whitespace-nowrap">
             <kbd className="kbd">{keyLabel(s.bindings.deafen)}</kbd> Headset
           </span>
         )}

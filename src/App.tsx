@@ -4,14 +4,13 @@ import { chat } from "./chat";
 import { ApiError, crestUrl, rpc, type ClanSummary, type Info } from "./api";
 import { getToken, signOut } from "./auth";
 import { CONTROL_URLS, isDesktop, SERVER } from "./config";
-import { ClassAsk } from "./ui/ClassAsk";
 import { ControlClient, type ControlState, type GroupInfo, type NetSet, type PresenceEntry } from "./control";
 import { refreshGame, useGame } from "./game";
 import { usePendingInvite } from "./invite";
 import { engine } from "./runtime";
 import { useSettings } from "./settings";
 import { publishStrip } from "./strip/publish";
-import { installUpdate, useUpdate } from "./update";
+import { useUpdate } from "./update";
 import { AppContext, type Tab } from "./ui/app-context";
 import { AllianceView } from "./ui/AllianceView";
 import { AudioToggles } from "./ui/AudioToggles";
@@ -23,6 +22,7 @@ import { InviteAsk } from "./ui/InviteAsk";
 import { LeaderLostBar } from "./ui/LeaderLostBar";
 import { Help } from "./ui/tips";
 import { NameStep } from "./ui/NameStep";
+import { Notices } from "./ui/Notices";
 import { RosterView } from "./ui/RosterView";
 import { SettingsPanel } from "./ui/SettingsPanel";
 import { SignIn } from "./ui/SignIn";
@@ -378,23 +378,8 @@ export default function App() {
           </span>
         </header>
 
-        {(update.phase === "ready" || update.phase === "installing") && (
-          <div className="flex flex-wrap items-center gap-3 border-b border-gold-dim bg-bg-2 px-4 py-2" role="status">
-            <span>
-              Version {update.version} is ready.
-              <span className="ml-2 text-text-muted">
-                {update.phase === "installing"
-                  ? "Installing; the app will restart by itself."
-                  : "Restarting takes a few seconds and drops you from voice while it does."}
-              </span>
-            </span>
-            <button type="button" className="btn text-sm" disabled={update.phase === "installing"} onClick={() => void installUpdate()}>
-              Restart to update
-            </button>
-          </div>
-        )}
-
-        <ClassAsk />
+        {/* Everything that waits for an answer, on one line: see Notices. */}
+        <Notices update={update} />
 
         {eng.broadcastLocked && (
           <div className="flex flex-wrap items-center gap-3 border-b border-net-broadcast bg-bg-2 px-4 py-2" role="alert">

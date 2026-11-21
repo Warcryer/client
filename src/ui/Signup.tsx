@@ -8,7 +8,6 @@ import { useGame } from "../game";
 import { useAct, useApp } from "./app-context";
 import { CharacterFields } from "./CharacterFields";
 import { CharacterLine } from "./MyCharacters";
-import { when } from "./RosterView";
 import { Help } from "./tips";
 
 // t() where shown.
@@ -162,27 +161,3 @@ export function SignupControl({
 
 /** Changing the answer with the short buttons keeps the character and note already given. */
 const keep = (s: Signup | null | undefined) => (s ? { charName: s.charName ?? "", className: s.className ?? "", levelBand: s.levelBand ?? "", note: s.note ?? "" } : {});
-
-/** On the Voice screen: operations still waiting for this player's answer. */
-export function SignupPrompts() {
-  const { info, go, set } = useApp();
-  // Not for the live operation whose nets the player is on: they are there, which is the answer.
-  const here = set?.operation?.state === "live" ? set.operation.id : null;
-  const waiting = (info.openSignups ?? []).filter((o) => o.opId !== here).slice(0, 2);
-  return (
-    <>
-      {waiting.map((o) => (
-        <div key={o.opId} className="panel flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2 border-gold" role="status">
-          <span>
-            <span className="font-semibold text-gold-bright">{o.name}</span>
-            <span className="text-text-muted"> · {o.state === "live" ? "live now" : when(o.startsAt)} · are you coming?</span>
-          </span>
-          <span className="ml-auto flex flex-wrap items-center gap-2">
-            <SignupControl opId={o.opId} status={null} />
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => go("roster", o.opId)}>Open</button>
-          </span>
-        </div>
-      ))}
-    </>
-  );
-}

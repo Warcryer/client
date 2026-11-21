@@ -54,6 +54,9 @@ export type Settings = {
   closeToTray: boolean;
   /** Desktop app: a small always-on-top window that shows who is speaking. */
   strip: boolean;
+  /** The chat under the room on the Voice screen: its height in pixels as the player dragged it (null: as it comes), and folded down to its line. */
+  chatHeight: number | null;
+  chatFolded: boolean;
 };
 
 const DEFAULTS: Settings = {
@@ -80,6 +83,8 @@ const DEFAULTS: Settings = {
   autoUpdate: true,
   closeToTray: false,
   strip: false,
+  chatHeight: null,
+  chatFolded: false,
 };
 
 const KEY = "settings.v1";
