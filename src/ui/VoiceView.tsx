@@ -425,7 +425,7 @@ export function VoiceView() {
           >
             {/* Out over the room in a narrow window: the way to put it back. */}
             <button type="button" className="shrink-0 cursor-pointer self-end px-1 text-xs text-gold hover:text-gold-bright min-[900px]:hidden" onClick={() => setAroundOut(false)} data-around-close>
-              Close ✕
+              Hide ✕
             </button>
             {op ? <OperationPanel /> : <AroundPanel />}
             {/* For those who run the alliance: an operation started on the spot. */}
