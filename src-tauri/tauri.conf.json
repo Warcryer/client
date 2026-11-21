@@ -14,10 +14,10 @@
       {
         "label": "main",
         "title": "Warcryer",
-        "width": 1100,
-        "height": 720,
-        "minWidth": 820,
-        "minHeight": 560,
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 600,
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --autoplay-policy=no-user-gesture-required --use-fake-ui-for-media-stream",
         "dragDropEnabled": false
       },

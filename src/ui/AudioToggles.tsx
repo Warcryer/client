@@ -35,24 +35,33 @@ type Props = {
   onHeadset: () => void;
   /** Smaller, for the compact strip. */
   small?: boolean;
+  /** The mic is open on a net right now: it is drawn green. */
+  live?: boolean;
 };
 
 /** Both buttons side by side. Red and crossed out when off. */
-export function AudioToggles({ micOff, headsetOff, onMic, onHeadset, small }: Props) {
+export function AudioToggles({ micOff, headsetOff, onMic, onHeadset, small, live }: Props) {
   const size = small ? 14 : 18;
-  const cls = (off: boolean) =>
+  const cls = (off: boolean, on = false) =>
     `flex shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 ${
       small ? "h-[18px] w-[20px]" : "h-8 w-9 border"
-    } ${off ? `text-danger ${small ? "" : "border-danger/70 bg-danger/10"}` : `text-text-muted hover:text-text ${small ? "" : "border-line hover:border-gold-dim"}`}`;
+    } ${
+      off
+        ? `text-danger ${small ? "" : "border-danger/70 bg-danger/10"}`
+        : on
+          ? small ? "text-net-party" : "text-net-party border-net-party bg-net-party/10"
+          : `text-text-muted hover:text-text ${small ? "" : "border-line hover:border-gold-dim"}`
+    }`;
   return (
     <span className="flex shrink-0 items-center gap-1" data-audio-toggles>
       <button
         type="button"
-        className={cls(micOff)}
+        className={cls(micOff, live === true)}
         onClick={onMic}
         aria-pressed={micOff}
         aria-label={micOff ? t("Mic off: click to turn it on") : t("Mic on: click to turn it off")}
         data-mic-toggle={micOff ? "off" : "on"}
+        data-mic-live={live && !micOff ? "" : undefined}
       >
         <MicIcon off={micOff} size={size} />
       </button>

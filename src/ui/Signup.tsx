@@ -165,8 +165,10 @@ const keep = (s: Signup | null | undefined) => (s ? { charName: s.charName ?? ""
 
 /** On the Voice screen: operations still waiting for this player's answer. */
 export function SignupPrompts() {
-  const { info, go } = useApp();
-  const waiting = (info.openSignups ?? []).slice(0, 2);
+  const { info, go, set } = useApp();
+  // Not for the live operation whose nets the player is on: they are there, which is the answer.
+  const here = set?.operation?.state === "live" ? set.operation.id : null;
+  const waiting = (info.openSignups ?? []).filter((o) => o.opId !== here).slice(0, 2);
   return (
     <>
       {waiting.map((o) => (

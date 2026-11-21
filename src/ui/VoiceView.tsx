@@ -100,7 +100,7 @@ function NetCard({
   const key = s.bindings[bindTargetOf(net.net)];
   const voice = s.partyMode === "voice" && TALK.has(net.net);
   const how = net.locked
-    ? "Locked open: everyone hears you"
+    ? "Locked open"
     : !net.speak
     ? "Listen only"
     : between(net.net) && !talkHere
@@ -121,51 +121,57 @@ function NetCard({
   // A clan's own rooms carry its crest.
   const clanRoom = /^lounge-clan(?:net)?-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
   const clanId = clanRoom ? Number(clanRoom[1] ?? clanRoom[2]) : null;
+  const canTalkHere = onTalkHere !== undefined && !talkHere;
+  // Two lines, always: the name and how many are on it, then who is speaking and how you speak. A long
+  // name is cut, not wrapped (the room's own heading shows it whole), so the list keeps its height
+  // whatever the nets are called and whoever talks.
   return (
     <li
-      className={`panel border-l-4 ${NET_BORDER[net.net]} px-3 py-2 flex flex-col gap-1 ${net.live || shown ? "bg-bg-2" : ""}`}
+      className={`panel shrink-0 border-l-4 ${NET_BORDER[net.net]} flex flex-col gap-0.5 px-2.5 py-1.5 ${net.live || shown ? "bg-bg-2" : ""}`}
       // Glows in the net's colour while your mic is open on it.
       style={net.live ? { boxShadow: `0 0 0 1px ${NET_VAR[net.net]}, 0 0 16px -4px ${NET_VAR[net.net]}` } : undefined}
+      data-net={net.net}
     >
       <div className="flex items-center gap-1">
         <button type="button" className="flex min-w-0 flex-1 items-center gap-2 text-left cursor-pointer" onClick={onShow} aria-pressed={shown}>
-          <ClanCrest clanId={clanId} size={18} />
-          <span className={`title min-w-0 break-words text-sm ${NET_TEXT[net.net]}`}>{net.label}</span>
-          {net.label !== netName(net.net) && net.net !== "lounge" && <span className="text-xs text-text-muted">{netName(net.net)}</span>}
-          <span className="ml-auto text-xs text-text-muted tabular-nums">{net.members.length}</span>
+          <ClanCrest clanId={clanId} size={16} />
+          {/* What kind of net it is (a party, a group) is said by its colour here and in words over the room. */}
+          <span className={`title min-w-0 truncate text-xs tracking-[0.06em] ${NET_TEXT[net.net]}`}>{net.label}</span>
+          <span className="ml-auto shrink-0 text-xs text-text-muted tabular-nums">{net.members.length}</span>
         </button>
         <Help text={help} />
       </div>
       {net.state !== "connected" ? (
-        <span className={`text-xs ${net.state === "relinking" ? "text-gold" : "text-danger"}`} data-net-state={net.state}>{STATE_TEXT[net.state]}</span>
+        <span className={`min-h-5 text-xs ${net.state === "relinking" ? "text-gold" : "text-danger"}`} data-net-state={net.state}>{STATE_TEXT[net.state]}</span>
       ) : (
-        <div className={`min-h-5 truncate transition-opacity duration-150 ${net.lowered ? "opacity-50" : ""}`}>
-          {net.live && <span className={`font-semibold ${NET_TEXT[net.net]}`}>You </span>}
-          {net.speakers.map((sp, i) => (
-            <span key={sp.identity} className="mr-1 inline-flex items-center gap-1 align-middle">
-              {i > 0 && <span>,</span>}
-              {sp.name}
-              <span className="text-xs text-text-muted"><ClanMark clanId={sp.clanId} tag={sp.clanTag} size={14} /></span>
+        <div className="flex min-h-5 items-center gap-2 text-xs text-text-muted">
+          <span className={`min-w-0 flex-1 truncate text-[13px] text-text transition-opacity duration-150 ${net.lowered ? "opacity-50" : ""}`} data-net-speakers>
+            {net.live && <span className={`font-semibold ${NET_TEXT[net.net]}`}>You </span>}
+            {net.speakers.map((sp, i) => (
+              <span key={sp.identity} className="mr-1 inline-flex items-center gap-1 align-middle">
+                {i > 0 && <span>,</span>}
+                {sp.name}
+                <span className="text-xs text-text-muted"><ClanMark clanId={sp.clanId} tag={sp.clanTag} size={14} /></span>
+              </span>
+            ))}
+            {!net.live && net.speakers.length === 0 && <span className="text-text-muted">Quiet</span>}
+          </span>
+          {net.lowered && <span className="shrink-0 uppercase tracking-wider text-gold" aria-label="Lowered while a higher net is live">Lowered</span>}
+          {canTalkHere ? (
+            <button type="button" className="shrink-0 text-gold hover:text-gold-bright cursor-pointer" onClick={onTalkHere}>Talk here</button>
+          ) : (
+            <span className="shrink-0 whitespace-nowrap" data-net-how>{how}</span>
+          )}
+          {net.canLock && (
+            <span className="flex shrink-0 items-center gap-1">
+              <button type="button" className={`cursor-pointer ${net.locked ? "font-semibold text-net-broadcast" : "text-gold hover:text-gold-bright"}`} onClick={() => engine.setBroadcastLock(!net.locked)}>
+                {net.locked ? "Release" : "Lock open"}
+              </button>
+              <Help text={t("For a briefing. Lock open keeps your mic open on Broadcast without holding a key, so everyone in the operation hears you until you release it.\nIt ends when you click Release, press your Broadcast key or your Mute all key, when the operation ends, and by itself after ten minutes.\nYou can also bind a Broadcast lock key in Settings to switch it without leaving the game.")} />
             </span>
-          ))}
-          {!net.live && net.speakers.length === 0 && <span className="text-text-muted">Quiet</span>}
+          )}
         </div>
       )}
-      <div className="flex items-center text-xs text-text-muted">
-        <span>{how}</span>
-        {net.lowered && <span className="ml-auto uppercase tracking-wider text-gold" aria-label="Lowered while a higher net is live">Lowered</span>}
-        {onTalkHere && !talkHere && (
-          <button type="button" className="ml-auto text-gold hover:text-gold-bright cursor-pointer" onClick={onTalkHere}>Talk here</button>
-        )}
-        {net.canLock && net.state === "connected" && (
-          <span className="ml-auto flex items-center gap-1">
-            <button type="button" className={`cursor-pointer ${net.locked ? "font-semibold text-net-broadcast" : "text-gold hover:text-gold-bright"}`} onClick={() => engine.setBroadcastLock(!net.locked)}>
-              {net.locked ? "Release" : "Lock open"}
-            </button>
-            <Help text={t("For a briefing. Lock open keeps your mic open on Broadcast without holding a key, so everyone in the operation hears you until you release it.\nIt ends when you click Release, press your Broadcast key or your Mute all key, when the operation ends, and by itself after ten minutes.\nYou can also bind a Broadcast lock key in Settings to switch it without leaving the game.")} />
-          </span>
-        )}
-      </div>
     </li>
   );
 }
@@ -233,6 +239,11 @@ export function VoiceView() {
     : voiceMode && speakNets.every((n) => TALK.has(n.net)) ? "Voice activation is on."
     : Object.values(s.bindings).some((code) => code !== null) ? "The keys you have bound are for other nets. Open Settings to bind one for these."
     : "No keys bound. Open Settings to bind them.";
+
+  // Two nets on one key (Party and Reserve share theirs by default) are one entry, not the key twice.
+  const keyHints = [...new Set(hints.map((t) => s.bindings[t] as number))].map((code) => ({ code, targets: hints.filter((t) => s.bindings[t] === code) }));
+  // Nets your mic is open on right now.
+  const onAir = nets.filter((n) => n.live).map((n) => (between(n.net) || n.net === "party" ? n.label : netName(n.net)));
 
   const hasLive = set?.operations.some((o) => o.state === "live") ?? false;
   const where = op ? String(op.id) : "lounge";
@@ -345,9 +356,13 @@ export function VoiceView() {
           </div>
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1 gap-4 p-4">
-          <div className="flex w-72 shrink-0 flex-col gap-2 min-h-0">
-          <ul className="flex shrink-0 flex-col gap-2 overflow-y-auto max-h-[60%]" aria-label="Your nets">
+        // Every panel here has a least height it never goes under, and they add up to this row's own least
+        // height. A window too small for that scrolls the screen as a whole; nothing is drawn over anything.
+        <div className="flex min-h-[26rem] flex-1 gap-3 p-3" data-voice-main>
+          {/* With Call to arms opened out in a small window this column is longer than the window: then it scrolls. */}
+          <div className="flex w-72 shrink-0 flex-col gap-2 min-h-0 overflow-y-auto" data-voice-side>
+          {/* The nets take the height they need; short of room, Online gives way first, then this list scrolls. */}
+          <ul className="-m-0.5 flex min-h-24 flex-[0_1_auto] flex-col gap-2 overflow-y-auto p-0.5" aria-label="Your nets">
             {nets.map((n) => (
               <NetCard
                 key={n.room}
@@ -364,17 +379,19 @@ export function VoiceView() {
           {/* For those who run the alliance: an operation started on the spot. */}
           {!op && <CallToArms />}
           </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <section className="panel flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-4 overflow-y-auto">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
+          {/* The room you are in comes first: it keeps its least height whatever is under it, and takes two thirds of any spare. */}
+          <section className="panel flex min-h-[10.5rem] min-w-0 flex-[2_1_10.5rem] flex-col gap-2 overflow-y-auto p-3" aria-label="Your room" data-room>
             {shown && (
               <>
-                <div className="flex flex-wrap items-baseline gap-3">
-                  <h1 className={`title ${NET_TEXT[shown.net]}`}>{shown.label}</h1>
-                  <span className="text-text-muted">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h1 className={`title min-w-0 break-words ${NET_TEXT[shown.net]}`}>{shown.label}</h1>
+                  <span className="whitespace-nowrap text-text-muted">
+                    {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
                     {shown.members.length} connected
                     {shown.members.some((m) => !m.canSpeak) && ` · ${shown.members.filter((m) => m.canSpeak).length} can speak`}
                   </span>
-                  <Help text={"Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick another player to set your own volume for them, or mute them. Only you are affected."} />
+                  <Help text={"Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected."} />
                   {shown.room !== home?.room && (
                     <button type="button" className="ml-auto text-text-muted hover:text-gold cursor-pointer" onClick={() => setShownRoom(null)}>
                       Back to {home?.label ?? "your net"}
@@ -396,7 +413,6 @@ export function VoiceView() {
                 {shown.net === "lounge" && shown.members.length <= 1 && shown.state === "connected" && (
                   <p className="text-text-muted">{t("Nobody else is here yet. Anyone from the clan who opens the app lands in this room.")}</p>
                 )}
-                <p className="mt-auto pt-2 text-xs text-text-muted">Click a net to see who is on it. Click a player to set your own volume for them.</p>
               </>
             )}
           </section>
@@ -404,7 +420,7 @@ export function VoiceView() {
           {!op && <GroupsPanel />}
           {/* The operation's text chat: the same lines the chat window shows over the game. */}
           {(op || chatView.between) && chatView.channels.length > 0 && (
-            <section className={`panel flex ${op ? "h-64" : "h-56"} shrink-0 flex-col`} aria-label="Chat" data-chat-panel>
+            <section className={`panel flex min-h-28 ${op ? "flex-[1_1_16rem]" : "flex-[1_1_12rem]"} flex-col`} aria-label="Chat" data-chat-panel>
               <div className="flex items-center gap-2 border-b border-line px-3 py-1.5">
                 <h2 className="title text-sm text-gold">Chat</h2>
                 <Help text={op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)} />
@@ -421,12 +437,17 @@ export function VoiceView() {
         </div>
       )}
 
-      <footer className="flex flex-wrap items-center gap-x-5 gap-y-1 border-t border-line bg-bg-1/85 px-4 py-2 text-xs text-text-muted">
+      <footer className="flex shrink-0 flex-wrap items-center gap-x-5 gap-y-1 border-t border-line bg-bg-1/85 px-4 py-2 text-xs text-text-muted">
         {hints.length === 0 && s.bindings.muteAll === null && s.bindings.deafen === null && <span>{idleHint}</span>}
-        {hints.map((t) => (
-          <span key={t}>
-            <kbd className="kbd">{keyLabel(s.bindings[t] as number)}</kbd>{" "}
-            <span className={NET_TEXT[t]}>{t === "party" && !op ? "Lounge" : netName(t)}</span>
+        {keyHints.map(({ code, targets }) => (
+          <span key={code} className="whitespace-nowrap" data-key-hint>
+            <kbd className="kbd">{keyLabel(code)}</kbd>{" "}
+            {targets.map((t, i) => (
+              <span key={t}>
+                {i > 0 && " / "}
+                <span className={NET_TEXT[t]}>{t === "party" && !op ? "Lounge" : netName(t)}</span>
+              </span>
+            ))}
           </span>
         ))}
         {s.bindings.muteAll !== null && (
@@ -442,7 +463,17 @@ export function VoiceView() {
         {(hints.length > 0 || s.bindings.muteAll !== null || s.bindings.deafen !== null) && (
           <Help text={"Your keys. Hold a net's key to speak on it; the game still receives the key.\nMute all: press once to silence your mic on every net, press again to restore it.\nHeadset: press once to hear no one (your mic goes off too), again to hear everyone."} />
         )}
-        {!isDesktop && <span className="ml-auto">Browser mode: keys only work while this tab has focus.</span>}
+        <span className="ml-auto flex min-w-0 items-center gap-x-5">
+          {/* Where your mic is open. The header's mic turns green with it; here is on which net. */}
+          {onAir.length > 0 && (
+            <span className="flex min-w-0 items-center gap-1.5 font-semibold uppercase tracking-wider text-net-party" aria-label={`Your mic is open on ${onAir.join(", ")}`} data-on-air>
+              <span className="pulse h-2 w-2 shrink-0 rounded-full bg-net-party" />
+              <span className="shrink-0">On air</span>
+              <span className="min-w-0 truncate font-normal normal-case tracking-normal text-text-muted">{onAir.join(", ")}</span>
+            </span>
+          )}
+          {!isDesktop && <span className="whitespace-nowrap">Browser mode: keys only work while this tab has focus.</span>}
+        </span>
       </footer>
     </div>
   );

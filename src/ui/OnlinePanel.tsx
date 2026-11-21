@@ -46,7 +46,7 @@ export function OnlinePanel() {
       </div>
     );
   return (
-    <section className="panel flex min-h-0 flex-col gap-2 px-3 py-2" aria-label="Online" data-online-panel>
+    <section className="panel flex min-h-[5.5rem] [flex-shrink:100000] flex-col gap-2 px-3 py-2" aria-label="Online" data-online-panel>
       <div className="flex items-center gap-2">
         <h2 className="title text-sm text-gold">Online</h2>
         <span className="text-xs tabular-nums text-text-muted">{all.length}</span>

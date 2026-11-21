@@ -320,7 +320,7 @@ export default function App() {
   if (!info.user.nameSet) return <NameStep onSaved={refreshInfo} />;
   if (!s.wizardDone) return <Wizard />;
 
-  // Nets your mic is open on right now, for the header's indicator.
+  // Nets your mic is open on right now: the header's mic turns green.
   const onAir = eng.view().filter((n) => n.live).map((n) => (n.net === "lounge" || n.net === "party" || n.net === "group" ? n.label : netName(n.net)));
 
   const go = (next: Tab, opId?: number) => {
@@ -333,16 +333,16 @@ export default function App() {
       value={{ info, refreshInfo, tick, groups, presence, away, awayByHand, setAwayByHand, set, control: state, select: (t) => control.current?.select(t), tab, go, boardOp, notice, crests }}
     >
       <div className="frame flex h-full flex-col">
-        <header className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-gold-dim bg-bg-1/85 px-4 py-2">
+        <header className="flex items-center gap-x-4 border-b border-gold-dim bg-bg-1/85 px-4 py-2" data-header>
           <Wordmark />
-          <nav className="flex gap-1" aria-label="Screens">
+          <nav className="flex shrink-0 gap-0.5" aria-label="Screens">
             {TABS.filter((x) => (x.id !== "alliance" || info.user.runsAlliance) && (x.id !== "history" || info.user.runsAlliance || info.membership?.status === "active")).map((x) => (
               <button
                 key={x.id}
                 type="button"
                 aria-current={tab === x.id ? "page" : undefined}
                 onClick={() => go(x.id)}
-                className={`border-b-2 px-3 py-1 cursor-pointer transition-colors duration-150 ${
+                className={`whitespace-nowrap border-b-2 px-2.5 py-1 cursor-pointer transition-colors duration-150 ${
                   tab === x.id ? "border-gold text-gold-bright" : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
@@ -359,34 +359,22 @@ export default function App() {
               </button>
             ))}
           </nav>
-          <span className="ml-auto flex items-center gap-3">
-            {/* Its room is kept whether or not the mic is open, so the header never grows a row as you talk
-                (with voice activation that would be every few words) and nothing below it jumps. */}
-            <span
-              className={`flex w-48 items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-net-party ${onAir.length > 0 ? "" : "invisible"}`}
-              aria-label={onAir.length > 0 ? `Your mic is open on ${onAir.join(", ")}` : undefined}
-              aria-hidden={onAir.length === 0}
-              title={onAir.length > 0 ? onAir.join(", ") : undefined}
-              data-on-air
-            >
-              <span className={`h-2 w-2 shrink-0 rounded-full bg-net-party ${onAir.length > 0 ? "pulse" : ""}`} />
-              <span className="shrink-0">On air</span>
-              <span className="min-w-0 truncate font-normal normal-case tracking-normal text-text-muted">{onAir.join(", ")}</span>
-            </span>
+          {/* One row at every size the window allows: the tabs keep their width, the names on the right give way. */}
+          <span className="ml-auto flex min-w-0 items-center gap-2.5">
             {state !== "online" && (
-              <span className="flex items-center gap-1 text-xs text-danger">
+              <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xs text-danger">
                 Server link lost, retrying…
                 <Help text="The link that delivers roster changes dropped. Your voice keeps working, and it reconnects by itself." />
               </span>
             )}
-            {info.alliance && <span className="hidden text-text-muted md:inline" data-alliance-name>{info.alliance.name}</span>}
-            <AudioToggles micOff={eng.muteAll} headsetOff={eng.deafened} onMic={() => engine.toggleMuteAll()} onHeadset={() => engine.toggleDeafen()} />
-            <Help text="The mic and the headset. Click either to turn it off or on; red and crossed out means off. With the headset off you hear no one and your mic is off too. The Mute all and Headset keys in Settings do the same from inside the game. While your headset is off, the others in your nets see it beside your name; your mic being off is not shown." />
-            <span className="text-text-muted">
-              {info.user.name}
-              {info.user.classTag && <span className="ml-1 text-gold">{info.user.classTag}</span>}
+            {info.alliance && <span className="hidden min-w-0 truncate text-text-muted min-[1180px]:inline" data-alliance-name>{info.alliance.name}</span>}
+            <AudioToggles micOff={eng.muteAll} headsetOff={eng.deafened} live={onAir.length > 0} onMic={() => engine.toggleMuteAll()} onHeadset={() => engine.toggleDeafen()} />
+            <Help text="The mic and the headset. Click either to turn it off or on; red and crossed out means off. The mic turns green while it is open; the line at the foot of the Voice screen says on which net. With the headset off you hear no one and your mic is off too. The Mute all and Headset keys in Settings do the same from inside the game. While your headset is off, the others in your nets see it beside your name; your mic being off is not shown." />
+            <span className="flex min-w-0 items-baseline text-text-muted" data-me>
+              <span className="truncate">{info.user.name}</span>
+              {info.user.classTag && <span className="ml-1 shrink-0 text-gold">{info.user.classTag}</span>}
             </span>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setShowSettings(true)}>Settings</button>
+            <button type="button" className="btn btn-quiet shrink-0 px-3 py-1 text-sm" onClick={() => setShowSettings(true)}>Settings</button>
           </span>
         </header>
 

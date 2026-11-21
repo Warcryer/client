@@ -19,7 +19,7 @@ const GROUPS_HELP = [
   "A group is a small room for a few of you between operations: a dungeon, farming, crafting, or just a chat. Anyone in the alliance can start one, and anyone in the alliance can join it, whatever their clan.",
   "In a group your Party key and voice go to the group, and you still hear your clan's lounge underneath, quieter. Click Talk here on the lounge to speak there instead. How loud the lounge stays is in Settings.",
   "You are in one group at a time. A group ends when its last player leaves, or when none of its players has had the app open for ten minutes. A live operation still pulls you onto its nets, and you come back to your group when it ends.",
-  "A clan's leader and officers can take their own members out of a group, and the alliance's admins anyone. Nothing about a group is kept, and time in one counts for nothing.",
+  "Click a group's row to see its players one by one. A clan's leader and officers can take their own members out of a group there, and the alliance's admins anyone. Nothing about a group is kept, and time in one counts for nothing.",
 ].join("\n");
 
 export function GroupsPanel() {
@@ -28,6 +28,8 @@ export function GroupsPanel() {
   // Asked for once when the panel opens; after that the control service sends the list whenever it changes.
   const { data: loaded, error, reload } = useLoad(() => rpc<GroupsView>("groups.list"), [], 120_000);
   const [label, setLabel] = useState("");
+  /** The group whose row is opened out: its players as cards, with the way to take one out. */
+  const [openId, setOpenId] = useState<number | null>(null);
   const run = (method: string, params: Record<string, unknown> = {}) => void act.run(() => rpc(method, params)).then(() => !pushed && reload());
 
   const groups = pushed ?? loaded?.groups ?? null;
@@ -41,12 +43,12 @@ export function GroupsPanel() {
   const data = { groups, mine: mineId, limits };
   const full = data.groups.length >= data.limits.perAlliance;
   return (
-    <section className="panel flex max-h-60 shrink-0 flex-col" aria-label="Groups" data-groups>
-      <div className="flex flex-wrap items-center gap-2 border-b border-line px-3 py-1.5">
+    <section className="panel flex max-h-44 min-h-[5.25rem] flex-[0_1_auto] flex-col" aria-label="Groups" data-groups>
+      <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
         <h2 className="title text-sm text-net-party">Groups</h2>
         <Help text={t(GROUPS_HELP)} />
         <form
-          className="ml-auto flex items-center gap-2"
+          className="ml-auto flex min-w-0 items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             run("groups.start", { label: label.trim() });
@@ -54,7 +56,7 @@ export function GroupsPanel() {
           }}
         >
           <input
-            className="field w-44 py-1 text-sm"
+            className="field w-44 min-w-0 py-1 text-sm"
             value={label}
             maxLength={data.limits.label}
             placeholder="Name it (optional)"
@@ -62,7 +64,7 @@ export function GroupsPanel() {
             onChange={(e) => setLabel(e.target.value)}
             data-group-label
           />
-          <button type="submit" className="btn px-3 py-1 text-sm" disabled={act.busy || full} data-group-start>
+          <button type="submit" className="btn shrink-0 whitespace-nowrap px-3 py-1 text-sm" disabled={act.busy || full} data-group-start>
             Start a group
           </button>
         </form>
@@ -71,55 +73,78 @@ export function GroupsPanel() {
       {data.groups.length === 0 ? (
         <p className="px-3 py-3 text-sm text-text-muted">{t("No groups yet. Start one for a dungeon, farming or a chat; anyone in the alliance can join it.")}</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-line overflow-y-auto">
+        <ul className="flex min-h-0 flex-col divide-y divide-line overflow-y-auto">
           {data.groups.map((g) => {
             const mine = g.id === data.mine;
+            const open = g.id === openId;
+            const here = (m: GroupInfo["members"][number]) => !presence || presence.has(m.userId);
+            const isAway = (m: GroupInfo["members"][number]) => presence?.get(m.userId)?.away === true;
             return (
-              <li key={g.id} className={`flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 ${mine ? "bg-bg-2" : ""}`} data-group={g.id}>
-                <span className={`font-medium ${mine ? "text-net-party" : "text-text"}`}>{g.name}</span>
-                <span className="text-xs tabular-nums text-text-muted">{g.members.length}</span>
-                <ul className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 text-sm">
-                  {g.members.map((m) => (
-                    <li
-                      key={m.userId}
-                      className={`flex items-center gap-1 rounded-sm border border-line px-1.5 py-0.5 ${presence && !presence.has(m.userId) ? "opacity-50" : ""}`}
-                      title={presence && !presence.has(m.userId) ? `${m.name} does not have the app open` : undefined}
-                      data-group-member={m.userId}
+              // One line per group: its name, how many, and their names as far as they fit. Opened out, the
+              // players are cards. A row's height does not depend on how many are in the group.
+              <li key={g.id} className={`flex shrink-0 flex-col ${mine ? "bg-bg-2" : ""}`} data-group={g.id} data-group-open={open ? "" : undefined}>
+                <div className="flex items-center gap-3 px-3 py-1.5">
+                  <button type="button" className="flex min-w-0 flex-1 cursor-pointer items-baseline gap-3 text-left" aria-expanded={open} onClick={() => setOpenId(open ? null : g.id)} data-group-toggle>
+                    <span className={`max-w-[45%] shrink-0 truncate font-medium ${mine ? "text-net-party" : "text-text"}`}>{g.name}</span>
+                    <span className="shrink-0 text-xs tabular-nums text-text-muted">{g.members.length}</span>
+                    {!open && (
+                      <span className="min-w-0 flex-1 truncate text-[13px] text-text-muted">
+                        {g.members.map((m) => (
+                          <span key={m.userId} className={`mr-3 inline-flex items-baseline gap-1 ${here(m) ? "" : "opacity-50"}`} data-group-member={m.userId}>
+                            <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={13} /></span>
+                            <span className={isAway(m) ? "" : "text-text"}>{m.name}</span>
+                            {isAway(m) && <span className="text-[11px]" data-group-away>away</span>}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                    <span className="ml-auto shrink-0 text-[10px] text-text-muted" aria-hidden>{open ? "▲" : "▼"}</span>
+                  </button>
+                  {mine ? (
+                    <button type="button" className="btn btn-quiet shrink-0 px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => run("groups.leave")} data-group-leave>
+                      Leave
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="btn shrink-0 px-3 py-0.5 text-sm"
+                      disabled={act.busy || g.members.length >= data.limits.perGroup}
+                      onClick={() => run("groups.join", { groupId: g.id })}
+                      data-group-join
                     >
-                      <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
-                      <span className={presence?.get(m.userId)?.away ? "text-text-muted" : ""}>{m.name}</span>
-                      {presence?.get(m.userId)?.away && <span className="text-[11px] text-text-muted" data-group-away>away</span>}
-                      {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
-                      {mayRemove(m) && (
-                        <button
-                          type="button"
-                          className="ml-0.5 cursor-pointer text-text-muted hover:text-danger"
-                          aria-label={`Take ${m.name} out of the group`}
-                          title={`Take ${m.name} out of the group`}
-                          disabled={act.busy}
-                          onClick={() => run("groups.remove", { userId: m.userId })}
-                          data-group-remove
-                        >
-                          ×
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                {mine ? (
-                  <button type="button" className="btn btn-quiet px-3 py-1 text-sm" disabled={act.busy} onClick={() => run("groups.leave")} data-group-leave>
-                    Leave
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn px-3 py-1 text-sm"
-                    disabled={act.busy || g.members.length >= data.limits.perGroup}
-                    onClick={() => run("groups.join", { groupId: g.id })}
-                    data-group-join
-                  >
-                    Join
-                  </button>
+                      Join
+                    </button>
+                  )}
+                </div>
+                {open && (
+                  <ul className="flex flex-wrap items-center gap-1.5 px-3 pb-2 text-sm">
+                    {g.members.map((m) => (
+                      <li
+                        key={m.userId}
+                        className={`flex items-center gap-1 rounded-sm border border-line px-1.5 py-0.5 ${here(m) ? "" : "opacity-50"}`}
+                        title={here(m) ? undefined : `${m.name} does not have the app open`}
+                        data-group-member={m.userId}
+                      >
+                        <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
+                        <span className={isAway(m) ? "text-text-muted" : ""}>{m.name}</span>
+                        {isAway(m) && <span className="text-[11px] text-text-muted" data-group-away>away</span>}
+                        {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
+                        {mayRemove(m) && (
+                          <button
+                            type="button"
+                            className="ml-0.5 cursor-pointer text-text-muted hover:text-danger"
+                            aria-label={`Take ${m.name} out of the group`}
+                            title={`Take ${m.name} out of the group`}
+                            disabled={act.busy}
+                            onClick={() => run("groups.remove", { userId: m.userId })}
+                            data-group-remove
+                          >
+                            ×
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </li>
             );
