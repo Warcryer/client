@@ -10,6 +10,7 @@ export const NET_TEXT: Record<NetKind, string> = {
   party: "text-net-party",
   reserve: "text-net-reserve",
   lounge: "text-text",
+  group: "text-net-party",
 };
 
 /** In the app's own words; shown through netName(), which says them the alliance's way. t() where shown. */
@@ -20,6 +21,7 @@ const NET_NAME: Record<NetKind, string> = {
   party: "Party",
   reserve: "Reserve",
   lounge: "Lounge",
+  group: "Group",
 };
 
 /** A net's name as this alliance says it: "Clan" may read "Guild". */

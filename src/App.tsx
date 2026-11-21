@@ -192,7 +192,7 @@ export default function App() {
           label: n.label,
           // The strip has no words of its own: it is told what to call each net. A party goes by its
           // own name; a lounge's full name is too long for the strip's column.
-          short: n.net === "party" ? n.label : n.net === "lounge" && n.room.startsWith("lounge-alliance") ? t("Alliance") : netName(n.net),
+          short: n.net === "party" || n.net === "group" ? n.label : n.net === "lounge" && n.room.startsWith("lounge-alliance") ? t("Alliance") : netName(n.net),
           you: n.live,
           lowered: n.lowered,
           speakers: n.speakers.map((sp) => {
@@ -283,7 +283,7 @@ export default function App() {
   if (!s.wizardDone) return <Wizard />;
 
   // Nets your mic is open on right now, for the header's indicator.
-  const onAir = eng.view().filter((n) => n.live).map((n) => (n.net === "lounge" || n.net === "party" ? n.label : netName(n.net)));
+  const onAir = eng.view().filter((n) => n.live).map((n) => (n.net === "lounge" || n.net === "party" || n.net === "group" ? n.label : netName(n.net)));
 
   const go = (next: Tab, opId?: number) => {
     setTab(next);

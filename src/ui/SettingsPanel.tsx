@@ -221,6 +221,20 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           <p className="text-xs text-text-muted">
             {t("Order: Broadcast, Command, Clan, Party. On Command, the event leader, deputies and clan leaders also lower the party leaders. Nothing is ever muted by this, only made quieter.")}
           </p>
+          <label className="flex items-center gap-3 text-text-muted">
+            Your lounge while you are in a group
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={s.loungeUnderGroup}
+              aria-label="Volume of your lounge while you are in a group"
+              onChange={(e) => setSettings({ loungeUnderGroup: Number(e.target.value) })}
+              data-lounge-under-group
+            />
+            <span className="tabular-nums text-text w-10">{s.loungeUnderGroup === 0 ? "Off" : `${Math.round(s.loungeUnderGroup * 100)}%`}</span>
+          </label>
         </Group>
 
         <Group title="Sounds">

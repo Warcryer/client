@@ -89,7 +89,7 @@ export type NetView = {
 /** How long the mic stays open after a push-to-talk key is released, so word endings are not clipped. */
 const RELEASE_TAIL_MS = 200;
 /** Lower number = higher priority. A live net lowers every net below it for the listener. */
-const PRIORITY: Record<NetKind, number> = { broadcast: 0, command: 1, clan: 2, party: 3, reserve: 3, lounge: 4 };
+const PRIORITY: Record<NetKind, number> = { broadcast: 0, command: 1, clan: 2, party: 3, reserve: 3, group: 3, lounge: 4 };
 /** A net counts as live for this long after its last speaker closes their mic, so gaps between words do not pump the volume. */
 const LIVE_HOLD_MS = 400;
 /**
@@ -179,8 +179,10 @@ export class VoiceEngine {
   private loudPeak = -100;
   private refreshTimer: number | undefined;
   private settings: Settings = getSettings();
-  /** With more than one lounge, the one the player talks in. They hear all of them. */
+  /** With more than one lounge (or a group and a lounge), the one the player talks in. They hear all of them. */
   private talkLounge: string | null = null;
+  /** The group the player was last seen in: joining another puts their key back on the group. */
+  private lastGroup: string | null = null;
   private lastVolumeTick = 0;
   /** Volume last set per track, to avoid setting it again and again. */
   private volumeSet = new WeakMap<object, number>();
@@ -582,10 +584,19 @@ export class VoiceEngine {
     return want;
   }
 
-  /** The room the player talks in when in a lounge. */
+  /**
+   * The room the player talks in between operations: their group if they sit in one, unless they chose a
+   * lounge with Talk here; otherwise their first lounge. Joining a group puts the key back on the group.
+   */
   get loungeRoom(): string | null {
-    const lounges = [...this.nets.values()].filter((n) => n.grant.net === "lounge").map((n) => n.grant.room);
-    return this.talkLounge && lounges.includes(this.talkLounge) ? this.talkLounge : (lounges[0] ?? null);
+    const nets = [...this.nets.values()];
+    const group = nets.find((n) => n.grant.net === "group")?.grant.room ?? null;
+    if (group !== this.lastGroup) {
+      this.lastGroup = group;
+      if (group) this.talkLounge = null;
+    }
+    const rooms = [...(group ? [group] : []), ...nets.filter((n) => n.grant.net === "lounge").map((n) => n.grant.room)];
+    return this.talkLounge && rooms.includes(this.talkLounge) ? this.talkLounge : (rooms[0] ?? null);
   }
 
   setLoungeRoom(room: string) {
@@ -626,9 +637,9 @@ export class VoiceEngine {
 
     for (const net of this.nets.values()) {
       if (!net.track) continue;
-      // A lounge is talked in with the Party key, and only the chosen one.
+      // A lounge or a group is talked in with the Party key, and only the chosen one.
       const byKey =
-        net.grant.net === "lounge"
+        net.grant.net === "lounge" || net.grant.net === "group"
           ? net.grant.room === loungeRoom && this.held.has("party")
           : this.held.has(net.grant.net) || (locked && net.grant.net === "broadcast" && net.grant.lock === true);
       const byVoice = net.grant.room === voiceRoom && !keyedHeld && now < this.voiceUntil;
@@ -700,7 +711,9 @@ export class VoiceEngine {
         net.lowered = ducked;
         shownChanged = true;
       }
-      const base = s.netVolume[net.grant.net];
+      // While the player sits in a group, their lounges carry on underneath it, quieter (decision 64).
+      const under = net.grant.net === "lounge" && nets.some((n) => n.grant.net === "group") ? s.loungeUnderGroup : 1;
+      const base = s.netVolume[net.grant.net] * under;
       for (const p of net.room.remoteParticipants.values()) {
         const own = s.playerMuted[p.identity] ? 0 : (s.playerVolume[p.identity] ?? 1);
         const duck = ducked || (seniorLive && !meta(p).senior) ? s.duckLevel : 1;
@@ -784,7 +797,7 @@ export class VoiceEngine {
   }
 
   view(): NetView[] {
-    const order: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "lounge"];
+    const order: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "group", "lounge"];
     return [...this.nets.values()]
       .sort((a, b) => order.indexOf(a.grant.net) - order.indexOf(b.grant.net))
       .map((net) => {

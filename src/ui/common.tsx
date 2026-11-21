@@ -18,6 +18,7 @@ export const NET_BORDER: Record<NetKind, string> = {
   party: "border-l-net-party",
   reserve: "border-l-net-reserve",
   lounge: "border-l-gold-dim",
+  group: "border-l-net-party",
 };
 /** One line on what each net is for, shown behind the net's help icon. t() where shown: through netTip(). */
 const NET_TIP: Record<NetKind, string> = {
@@ -27,6 +28,7 @@ const NET_TIP: Record<NetKind, string> = {
   party: "Party: you and your party talk here.",
   reserve: "Reserve: players without a party, and the organisers placing them.",
   lounge: "Lounge: your clan's room between operations. Everyone in it can talk.",
+  group: "Group: a small room anyone in the alliance can start or join between operations. You still hear your lounge underneath, quieter.",
 };
 /** What a net is for, in the alliance's words. */
 export const netTip = (net: NetKind): string => t(NET_TIP[net]);
@@ -38,6 +40,7 @@ export const NET_VAR: Record<NetKind, string> = {
   party: "var(--color-net-party)",
   reserve: "var(--color-net-reserve)",
   lounge: "var(--color-gold)",
+  group: "var(--color-net-party)",
 };
 
 /** Opens a web address in the system browser (or a new tab, in the browser version). */

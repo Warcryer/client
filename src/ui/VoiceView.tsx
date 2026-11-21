@@ -5,6 +5,7 @@ import { chat } from "../chat";
 import { openChatWindow } from "../strip/publish";
 import { HeadsetIcon } from "./AudioToggles";
 import { ChatPanel } from "./ChatPanel";
+import { GroupsPanel } from "./GroupsPanel";
 import { isDesktop } from "../config";
 import type { Member, NetView } from "../engine";
 import { keyLabel } from "../keys";
@@ -23,7 +24,9 @@ const STATE_TEXT: Record<NetView["state"], string> = {
   disconnected: "Disconnected, retrying…",
 };
 
-const TALK = new Set(["party", "reserve", "lounge"]);
+const TALK = new Set(["party", "reserve", "lounge", "group"]);
+/** Rooms between operations: talked in with the Party key, one at a time, chosen with Talk here. */
+const between = (net: string) => net === "lounge" || net === "group";
 
 /** One player on a net. Clicking someone else opens your own volume and mute for them. */
 function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; open: boolean; onToggle: () => void }) {
@@ -98,7 +101,7 @@ function NetCard({
     ? "Locked open: everyone hears you"
     : !net.speak
     ? "Listen only"
-    : net.net === "lounge" && !talkHere
+    : between(net.net) && !talkHere
       ? "Listening"
       : voice && key === null
         ? "Voice activated"
@@ -107,12 +110,12 @@ function NetCard({
           : "No key bound";
   const howTip = !net.speak
     ? "You can hear this net but not speak on it."
-    : net.net === "lounge" && !talkHere
-      ? "You hear this lounge. Click Talk here to speak in it instead of the other one."
+    : between(net.net) && !talkHere
+      ? "You hear this room. Click Talk here to speak in it instead."
       : key === null && !voice
         ? "Bind a key in Settings to speak here."
         : "Change how you speak in Settings.";
-  const help = [netTip(net.net), howTip, net.lowered ? "Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority." : "", onTalkHere && !talkHere ? "Talk here makes this the lounge your key and voice go to. You keep hearing both." : ""].filter(Boolean).join("\n");
+  const help = [netTip(net.net), howTip, net.lowered ? "Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority." : "", onTalkHere && !talkHere ? "Talk here makes this the room your key and voice go to. You keep hearing the others." : ""].filter(Boolean).join("\n");
   // A clan's own rooms carry its crest.
   const clanRoom = /^lounge-clan-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
   const clanId = clanRoom ? Number(clanRoom[1] ?? clanRoom[2]) : null;
@@ -195,9 +198,9 @@ export function VoiceView() {
     return () => window.clearInterval(t);
   }, []);
 
-  const lounges = nets.filter((n) => n.net === "lounge");
+  const lounges = nets.filter((n) => between(n.net));
   const loungeRoom = eng.loungeRoom;
-  // The net you chat on: your party, Reserve while you have none, or the lounge you picked.
+  // The net you chat on: your party, Reserve while you have none, or the group or lounge you talk in.
   const home =
     nets.find((n) => n.net === "party") ?? nets.find((n) => n.net === "reserve") ?? lounges.find((n) => n.room === loungeRoom) ?? lounges[0] ?? null;
 
@@ -341,8 +344,8 @@ export function VoiceView() {
                 net={n}
                 shown={shown?.room === n.room}
                 onShow={() => setShownRoom(n.room === home?.room ? null : n.room)}
-                talkHere={n.net !== "lounge" || n.room === loungeRoom}
-                onTalkHere={n.net === "lounge" && lounges.length > 1 ? () => engine.setLoungeRoom(n.room) : undefined}
+                talkHere={!between(n.net) || n.room === loungeRoom}
+                onTalkHere={between(n.net) && lounges.length > 1 ? () => engine.setLoungeRoom(n.room) : undefined}
               />
             ))}
           </ul>
@@ -382,6 +385,8 @@ export function VoiceView() {
               </>
             )}
           </section>
+          {/* Between operations: the alliance's groups, to start, join or leave one. */}
+          {!op && <GroupsPanel />}
           {/* The operation's text chat: the same lines the chat window shows over the game. */}
           {op && (
             <section className="panel flex h-64 shrink-0 flex-col" aria-label="Chat" data-chat-panel>

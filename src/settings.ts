@@ -2,18 +2,18 @@
 
 import { useSyncExternalStore } from "react";
 
-export type NetKind = "broadcast" | "command" | "clan" | "party" | "reserve" | "lounge";
+export type NetKind = "broadcast" | "command" | "clan" | "party" | "reserve" | "lounge" | "group";
 /** Highest priority first. */
-export const NET_ORDER: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "lounge"];
-/** What a key can be bound to. A lounge uses the Party key: both are "talk to the people around me". */
+export const NET_ORDER: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "group", "lounge"];
+/** What a key can be bound to. A lounge and a group use the Party key: all three are "talk to the people around me". */
 /** "broadcastLock" is a toggle for the event leader: Broadcast stays open for a briefing without a key held. */
 /** "chat" (trial) puts the keyboard in the chat line of the strip's window; it is not a talk key. */
 /** "ready" answers a ready check "ready" with one press; it does nothing while none is asked. */
 /** "call1" to "call8" send the alliance's quick call in that slot into the party's chat. */
 export type CallTarget = "call1" | "call2" | "call3" | "call4" | "call5" | "call6" | "call7" | "call8";
 export const CALL_TARGETS: CallTarget[] = ["call1", "call2", "call3", "call4", "call5", "call6", "call7", "call8"];
-export type BindTarget = Exclude<NetKind, "lounge"> | "muteAll" | "deafen" | "broadcastLock" | "chat" | "ready" | CallTarget;
-export const bindTargetOf = (net: NetKind): Exclude<NetKind, "lounge"> => (net === "lounge" ? "party" : net);
+export type BindTarget = Exclude<NetKind, "lounge" | "group"> | "muteAll" | "deafen" | "broadcastLock" | "chat" | "ready" | CallTarget;
+export const bindTargetOf = (net: NetKind): Exclude<NetKind, "lounge" | "group"> => (net === "lounge" || net === "group" ? "party" : net);
 export type InputSource = "auto" | "poll" | "hook" | "raw";
 
 export type Settings = {
@@ -42,6 +42,8 @@ export type Settings = {
   ducking: boolean;
   /** How loud a ducked net stays, 0 to 1. */
   duckLevel: number;
+  /** While you sit in a group, how loud your lounges stay underneath it, 0 (not heard) to 1. */
+  loungeUnderGroup: number;
   /** Your own volume for individual players, by their id. Missing means 1. */
   playerVolume: Record<string, number>;
   /** Players you have muted for yourself. */
@@ -66,12 +68,13 @@ const DEFAULTS: Settings = {
   partyMode: "ptt",
   vadThresholdDb: -45,
   vadHoldMs: 400,
-  netVolume: { broadcast: 1, command: 1, clan: 1, party: 1, reserve: 1, lounge: 1 },
+  netVolume: { broadcast: 1, command: 1, clan: 1, party: 1, reserve: 1, lounge: 1, group: 1 },
   cues: true,
   cueVolume: 0.5,
   alwaysAdmin: false,
   ducking: true,
   duckLevel: 0.3,
+  loungeUnderGroup: 0.4,
   playerVolume: {},
   playerMuted: {},
   autoUpdate: true,
