@@ -149,7 +149,7 @@ export const chat = {
     const between = !op && next.lounge === true;
     const channels: ChatChannel[] = op || between
       ? next.nets
-          .filter((n) => (op ? n.room.startsWith("op-") : n.room.startsWith("lounge-")))
+          .filter((n) => (op ? n.room.startsWith("op-") : n.net === "lounge" || n.net === "group"))
           .map((n) => ({ room: n.room, net: n.net, label: n.label, write: n.write === true }))
           .sort((a, b) => ORDER.indexOf(a.net) - ORDER.indexOf(b.net) || (a.room.startsWith("lounge-alliance") ? 1 : 0) - (b.room.startsWith("lounge-alliance") ? 1 : 0))
       : [];

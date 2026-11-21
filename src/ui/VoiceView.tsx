@@ -7,6 +7,7 @@ import { HeadsetIcon } from "./AudioToggles";
 import { ChatPanel } from "./ChatPanel";
 import { GroupsPanel } from "./GroupsPanel";
 import { OnlinePanel } from "./OnlinePanel";
+import { CallToArms } from "./CallToArms";
 import { isDesktop } from "../config";
 import type { Member, NetView } from "../engine";
 import { keyLabel } from "../keys";
@@ -118,7 +119,7 @@ function NetCard({
         : "Change how you speak in Settings.";
   const help = [netTip(net.net), howTip, net.lowered ? "Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority." : "", onTalkHere && !talkHere ? "Talk here makes this the room your key and voice go to. You keep hearing the others." : ""].filter(Boolean).join("\n");
   // A clan's own rooms carry its crest.
-  const clanRoom = /^lounge-clan-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
+  const clanRoom = /^lounge-clan(?:net)?-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
   const clanId = clanRoom ? Number(clanRoom[1] ?? clanRoom[2]) : null;
   return (
     <li
@@ -360,6 +361,8 @@ export function VoiceView() {
           </ul>
           {/* Between operations: who in the alliance has the app open, and the away switch. */}
           {!op && <OnlinePanel />}
+          {/* For those who run the alliance: an operation started on the spot. */}
+          {!op && <CallToArms />}
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-4">
           <section className="panel flex min-h-0 min-w-0 flex-1 flex-col gap-3 p-4 overflow-y-auto">

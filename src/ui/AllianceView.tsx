@@ -34,6 +34,7 @@ function AllianceSelf({
   alliance,
   plan,
   loungeOn,
+  broadcastOn,
   users,
   owner,
   busy,
@@ -42,6 +43,7 @@ function AllianceSelf({
   alliance: { id: number; name: string };
   plan: PlanState | null;
   loungeOn: boolean;
+  broadcastOn: boolean;
   users: { id: number; name: string; isOwner?: boolean }[];
   owner: boolean;
   busy: boolean;
@@ -54,7 +56,7 @@ function AllianceSelf({
   return (
     <Section
       title={alliance.name}
-      help={t("Your alliance: the group that shares one roster. Everything on this screen belongs to it and to nobody else.\nShared lounge: one extra room, between events, that every clan of the alliance sits in together. Off, each clan has only its own lounge.\nThe owner appoints the alliance's admins (in the list of players), can hand the alliance to another player, and can delete it.")}
+      help={t("Your alliance: the group that shares one roster. Everything on this screen belongs to it and to nobody else.\nShared lounge: one extra room, between events, that every clan of the alliance sits in together. Off, each clan has only its own lounge.\nAdmins' broadcast: between operations, the alliance's admins can speak to everyone in the alliance with their Broadcast key, over the lounges and groups, as an event leader does in an operation. Off by default.\nThe owner appoints the alliance's admins (in the list of players), can hand the alliance to another player, and can delete it.")}
     >
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3" data-alliance-self>
         {name === null ? (
@@ -81,6 +83,15 @@ function AllianceSelf({
           </span>
           <ConfirmButton confirm={loungeOn ? "Turn off for everyone?" : t("Let every clan hear each other?")} disabled={busy} onConfirm={() => void call("alliance.setLounge", { on: !loungeOn })}>
             {loungeOn ? "Turn off" : "Turn on"}
+          </ConfirmButton>
+        </span>
+        <span className="flex items-center gap-2" data-broadcast-switch>
+          <span className="text-text-muted">
+            {t("Admins' broadcast between operations is")}{" "}
+            <span className={broadcastOn ? "font-medium text-net-party" : "font-medium text-text"}>{broadcastOn ? "on" : "off"}</span>
+          </span>
+          <ConfirmButton confirm={broadcastOn ? "Turn off for everyone?" : t("Let the admins speak to the whole alliance?")} disabled={busy} onConfirm={() => void call("alliance.setBroadcast", { on: !broadcastOn })}>
+            {broadcastOn ? "Turn off" : "Turn on"}
           </ConfirmButton>
         </span>
         {owner && (
@@ -161,7 +172,7 @@ export function AllianceView() {
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-4 p-4">
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
 
-      {data.alliance && <AllianceSelf alliance={data.alliance} loungeOn={!!data.loungeOn} users={data.users} owner={owner} busy={act.busy} call={call} plan={data.plan ?? null} />}
+      {data.alliance && <AllianceSelf alliance={data.alliance} loungeOn={!!data.loungeOn} broadcastOn={!!data.broadcastOn} users={data.users} owner={owner} busy={act.busy} call={call} plan={data.plan ?? null} />}
 
       <Section title={t("Clans")} help={t("Every player belongs to one clan, and voice follows it: a clan has its own lounge between operations and its own Clan net during them.\nRename changes a clan's name and tag; its members, constant parties, crest and invite links stay. Delete is offered once a clan is empty or has only its leader left.\nCreate the clan here, then appoint its leader. The leader approves members and appoints officers. Appointing a new leader makes the previous one an ordinary member.")}>
         {data.clans.length === 0 && <p className="text-text-muted">{t("No clans yet. Create the first one below, then appoint its leader.")}</p>}
