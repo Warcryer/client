@@ -17,7 +17,7 @@ export function LeaderLostBar({ opId, lost, myId }: { opId: number; lost: Leader
     setBusy(true);
     setError("");
     rpc("party.setLeader", { opId, partyId: lost.partyId, userId })
-      .catch((e: unknown) => setError(e instanceof Error ? e.message : "That did not work."))
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : t("That did not work.")))
       .finally(() => setBusy(false));
   };
   // Only players who are in voice can lead. Yourself first.
@@ -29,7 +29,7 @@ export function LeaderLostBar({ opId, lost, myId }: { opId: number; lost: Leader
       </span>
       {here.map((m) => (
         <button key={m.id} type="button" className="btn text-sm" disabled={busy} onClick={() => pick(m.id)}>
-          {m.id === myId ? "I will" : m.name}
+          {m.id === myId ? t("I will") : m.name}
         </button>
       ))}
       <span className="text-xs text-text-muted">

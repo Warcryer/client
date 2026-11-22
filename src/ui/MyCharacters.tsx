@@ -52,7 +52,7 @@ export function MyCharacters() {
   return (
     <div className="flex flex-col gap-2" data-my-characters>
       <span className="flex items-center gap-1 text-text-muted">
-        Other characters
+        {t("Other characters")}
         <Help
           text={t(
             "Characters you play beside the one on your profile.\nYour clan sees this list on its roster, and an operation's organisers on its board. When you say whether you are coming to an operation, you can pick one of them instead of typing it.\nTick Box for a character you play at the same time as your main, on a second game client.",
@@ -60,23 +60,23 @@ export function MyCharacters() {
         />
       </span>
       {list === null ? (
-        <p className="text-xs text-text-muted">Loading…</p>
+        <p className="text-xs text-text-muted">{t("Loading…")}</p>
       ) : (
         <ul className="flex flex-col gap-1">
-          {list.length === 0 && !form && <li className="text-xs text-text-muted">None listed.</li>}
+          {list.length === 0 && !form && <li className="text-xs text-text-muted">{t("None listed.")}</li>}
           {list.map((c) => (
             <li key={c.id} className="flex flex-wrap items-center gap-2" data-character={c.name}>
               <CharacterLine c={c} />
               <span className="ml-auto flex gap-1">
                 <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => setForm({ id: c.id, name: c.name, className: c.className ?? "", levelBand: c.levelBand ?? "", box: c.box })}>
-                  Change
+                  {t("Change")}
                 </button>
                 <ConfirmButton
-                  confirm="Remove it?"
+                  confirm={t("Remove it?")}
                   disabled={act.busy}
                   onConfirm={() => void act.run(() => rpc("character.remove", { id: c.id })).then((ok) => ok && load())}
                 >
-                  Remove
+                  {t("Remove")}
                 </ConfirmButton>
               </span>
             </li>
@@ -92,16 +92,16 @@ export function MyCharacters() {
           }}
         >
           <label className="flex flex-col gap-1 text-text-muted">
-            Character name
+            {t("Character name")}
             <input className="field max-w-xs" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} maxLength={24} required autoComplete="off" autoFocus />
           </label>
           {game && <CharacterFields game={game} className={form.className} levelBand={form.levelBand} onClass={(v) => setForm({ ...form, className: v })} onLevel={(v) => setForm({ ...form, levelBand: v })} />}
           <label className="flex items-center gap-2 text-text-muted">
             <input type="checkbox" checked={form.box} onChange={(e) => setForm({ ...form, box: e.target.checked })} />
-            Box: I play it at the same time as my main
+            {t("Box: I play it at the same time as my main")}
           </label>
           <div className="flex items-center gap-2">
-            <button className="btn text-sm" disabled={act.busy || !form.name.trim()}>{form.id ? "Save character" : "Add character"}</button>
+            <button className="btn text-sm" disabled={act.busy || !form.name.trim()}>{form.id ? t("Save character") : t("Add character")}</button>
             <button
               type="button"
               className="btn btn-quiet text-sm"
@@ -110,14 +110,14 @@ export function MyCharacters() {
                 act.clear();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </button>
           </div>
         </form>
       ) : (
         list !== null && list.length < max && (
           <div>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setForm({ ...EMPTY })}>Add a character</button>
+            <button type="button" className="btn btn-quiet text-sm" onClick={() => setForm({ ...EMPTY })}>{t("Add a character")}</button>
           </div>
         )
       )}

@@ -1,3 +1,4 @@
+import { t } from "../words";
 import type { GameOptions } from "../api";
 
 /** Class and level pickers, from the alliance's own lists. Classes are grouped by what they do in a party. */
@@ -7,7 +8,7 @@ export function CharacterFields({
   levelBand,
   onClass,
   onLevel,
-  none = "Not chosen",
+  none = t("Not chosen"),
 }: {
   game: GameOptions;
   className: string;
@@ -21,7 +22,7 @@ export function CharacterFields({
   return (
     <div className="flex flex-wrap gap-3">
       {game.classes.length > 0 && <label className="flex flex-col gap-1 text-text-muted">
-        Class
+        {t("Class")}
         <select className="field" value={className} onChange={(e) => onClass(e.target.value)}>
           <option value="">{none}</option>
           {game.roles.map((role) => (
@@ -34,8 +35,8 @@ export function CharacterFields({
       </label>}
       {/* An alliance that keeps no bands is not asked for one. */}
       {game.levelBands.length > 0 && <label className="flex flex-col gap-1 text-text-muted">
-        {game.levelLabel ?? "Level"}
-        <select className="field" value={levelBand} onChange={(e) => onLevel(e.target.value)} aria-label={game.levelLabel ?? "Level"}>
+        {game.levelLabel ?? t("Level")}
+        <select className="field" value={levelBand} onChange={(e) => onLevel(e.target.value)} aria-label={game.levelLabel ?? t("Level")}>
           <option value="">{none}</option>
           {game.levelBands.map((b) => <option key={b} value={b}>{b}</option>)}
         </select>

@@ -102,6 +102,9 @@ export function tx(text: string, parts: Record<string, ReactNode>): ReactNode[] 
 /** Marks a sentence that is written down in one place and shown in another through `t()`: it changes nothing, and tells scripts/i18n.mjs to collect it. */
 export const m = (text: string): string => text;
 
+/** Marks a name for the program that happens to look like a word ("West", a direction a window is dragged in): nobody is shown it, and scripts/i18n.mjs leaves it alone. */
+export const code = <T extends string>(name: T): T => name;
+
 /** A date or a time the way the player's language writes it. */
 export const when = (date: Date | string | number, options: Intl.DateTimeFormatOptions): string => new Date(date).toLocaleString(state.lang === "en" ? undefined : state.lang, options);
 /** A number the way the player's language writes it. */

@@ -13,7 +13,7 @@ import { rpc, type JoinRequest } from "../api";
 import { useGame } from "../game";
 import { bindTargetOf, useSettings, type NetKind } from "../settings";
 import { installUpdate, type useUpdate } from "../update";
-import { t } from "../words";
+import { d, t } from "../words";
 import { useAct, useApp } from "./app-context";
 import { CharacterFields } from "./CharacterFields";
 import { KeyBind, netName, NET_TEXT, useEngine } from "./common";
@@ -43,8 +43,8 @@ function JoinAsk({ r }: { r: JoinRequest }) {
         {r.classTag && <span className="ml-1 text-xs text-gold">{r.classTag}</span>} asks to join <span className="font-semibold text-net-party">{r.partyName}</span>
       </span>
       <span className="flex shrink-0 gap-2">
-        <button type="button" className="btn px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => answer(true)}>Accept</button>
-        <button type="button" className="btn btn-quiet px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => answer(false)}>Decline</button>
+        <button type="button" className="btn px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => answer(true)}>{t("Accept")}</button>
+        <button type="button" className="btn btn-quiet px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => answer(false)}>{t("Decline")}</button>
       </span>
       {act.error && <span className="text-danger" role="alert">{act.error}</span>}
     </Row>
@@ -75,13 +75,13 @@ function ClassAsk({ onLater }: { onLater: () => void }) {
             }}
           >
             <CharacterFields game={game} className={cls} levelBand={band} onClass={setCls} onLevel={setBand} />
-            <button className="btn px-3 py-0.5 text-sm" disabled={act.busy || !cls}>Save</button>
+            <button className="btn px-3 py-0.5 text-sm" disabled={act.busy || !cls}>{t("Save")}</button>
             {act.error && <span className="text-danger" role="alert">{act.error}</span>}
           </form>
         ) : (
-          <button type="button" className="btn shrink-0 px-3 py-0.5 text-sm" onClick={() => setOpen(true)}>Choose class</button>
+          <button type="button" className="btn shrink-0 px-3 py-0.5 text-sm" onClick={() => setOpen(true)}>{t("Choose class")}</button>
         )}
-        <button type="button" className="btn btn-quiet shrink-0 px-3 py-0.5 text-sm" onClick={onLater}>Later</button>
+        <button type="button" className="btn btn-quiet shrink-0 px-3 py-0.5 text-sm" onClick={onLater}>{t("Later")}</button>
       </Row>
     </div>
   );
@@ -101,7 +101,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
   // News first: it is gone again in a few seconds.
   if (notice) items.push({ key: "moved", node: <Row tone="news" mark="moved"><span className="min-w-0 truncate text-gold-bright">{notice}</span></Row> });
 
-  for (const r of info.joinRequests) items.push({ key: `join-${r.opId}-${r.userId}`, node: <JoinAsk r={r} /> });
+  for (const r of info.joinRequests) items.push({ key: t(`join-${d(r.opId)}-${d(r.userId)}`), node: <JoinAsk r={r} /> });
 
   if (update.phase === "ready" || update.phase === "installing") {
     items.push({
@@ -111,11 +111,11 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
           <span className="min-w-0 truncate">
             Version {update.version} is ready.
             <span className="ml-2 text-text-muted">
-              {update.phase === "installing" ? "Installing; the app will restart by itself." : "Restarting takes a few seconds and drops you from voice while it does."}
+              {update.phase === "installing" ? t("Installing; the app will restart by itself.") : t("Restarting takes a few seconds and drops you from voice while it does.")}
             </span>
           </span>
           <button type="button" className="btn shrink-0 px-3 py-0.5 text-sm" disabled={update.phase === "installing"} onClick={() => void installUpdate()}>
-            Restart to update
+            {t("Restart to update")}
           </button>
         </Row>
       ),
@@ -126,17 +126,17 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
   const here = set?.operation?.state === "live" ? set.operation.id : null;
   for (const o of (info.openSignups ?? []).filter((o) => o.opId !== here)) {
     items.push({
-      key: `signup-${o.opId}`,
+      key: t(`signup-${d(o.opId)}`),
       node: (
         <Row mark="signup">
           <span className="min-w-0 truncate">
             {/* Its name opens its board, as Open does: it is what a player clicks first. */}
             <button type="button" className="cursor-pointer font-semibold text-gold-bright hover:underline" onClick={() => go("roster", o.opId)}>{o.name}</button>
-            <span className="text-text-muted"> · {o.state === "live" ? "live now" : when(o.startsAt)} · are you coming?</span>
+            <span className="text-text-muted"> · {o.state === "live" ? t("live now") : when(o.startsAt)} {t("· are you coming?")}</span>
           </span>
           <span className="flex shrink-0 flex-wrap items-center gap-2">
             <SignupControl opId={o.opId} status={null} />
-            <button type="button" className="btn btn-quiet px-3 py-0.5 text-sm" onClick={() => go("roster", o.opId)}>Open</button>
+            <button type="button" className="btn btn-quiet px-3 py-0.5 text-sm" onClick={() => go("roster", o.opId)}>{t("Open")}</button>
           </span>
         </Row>
       ),
@@ -154,10 +154,10 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
       key: "keys",
       node: (
         <Row mark="keys" wrap>
-          <span className="shrink-0">You can speak here. Bind a key for each:</span>
+          <span className="shrink-0">{t("You can speak here. Bind a key for each:")}</span>
           {unbound.map((target) => (
             <span key={target} className="inline-flex shrink-0 items-center gap-2">
-              <span className={`font-semibold ${NET_TEXT[target as NetKind]}`}>{target === "party" && !op ? "Lounge" : netName(target as NetKind)}</span>
+              <span className={`font-semibold ${NET_TEXT[target as NetKind]}`}>{target === "party" && !op ? t("Lounge") : netName(target as NetKind)}</span>
               <KeyBind target={target} label={netName(target as NetKind)} />
             </span>
           ))}
@@ -187,7 +187,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
             type="button"
             className={`ml-auto shrink-0 cursor-pointer whitespace-nowrap rounded-sm border px-2 py-0.5 text-xs ${open ? "border-gold text-gold-bright" : "border-gold-dim text-gold hover:border-gold"}`}
             aria-expanded={open}
-            aria-label={`${more} more waiting for you`}
+            aria-label={t(`${d(more)} more waiting for you`)}
             onClick={() => setOpen(!open)}
             data-notices-more
           >
@@ -197,7 +197,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
       </div>
       {open && more > 0 && (
         <>
-          <button type="button" className="fixed inset-0 z-10 cursor-default" aria-label="Close the list" tabIndex={-1} onClick={() => setOpen(false)} />
+          <button type="button" className="fixed inset-0 z-10 cursor-default" aria-label={t("Close the list")} tabIndex={-1} onClick={() => setOpen(false)} />
           <ul className="absolute inset-x-0 top-full z-20 flex max-h-[60vh] flex-col divide-y divide-line overflow-y-auto border-b border-gold-dim bg-bg-1 shadow-[0_12px_24px_rgb(0_0_0/0.6)]" data-notices-list>
             {items.slice(1).map((it) => (
               <li key={it.key} className="flex items-center px-4 py-2">{it.node}</li>

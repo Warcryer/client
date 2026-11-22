@@ -3,7 +3,7 @@
 // player has seen which clan it is for and said yes: a link alone must never
 // put someone in a clan, or their voice in its lounge.
 
-import { t } from "../words";
+import { d, t } from "../words";
 import { useEffect, useState } from "react";
 import { dropPending, peekPending, redeemPending, type InvitePeek } from "../invite";
 import { ClanCrest } from "./common";
@@ -22,7 +22,7 @@ export function InviteAsk({ onDone }: { onDone: () => void }) {
         const why = e instanceof Error ? e.message : "";
         if (/unknown method/i.test(why)) return setInv(null);
         // A dead link: say why on the Clan screen, as before.
-        dropPending(why || "That invite could not be used.");
+        dropPending(why || t("That invite could not be used."));
         onDone();
       });
     return () => {
@@ -46,8 +46,8 @@ export function InviteAsk({ onDone }: { onDone: () => void }) {
           {inv === null
             ? t("A link you opened asks to add you to a clan. Only accept if you were expecting it.")
             : inv.autoApprove
-              ? `If you join, you are a member of ${clan} at once and your voice goes to its lounge.`
-              : `If you join, your request goes to ${clan}'s leader and officers, who let you in.`}
+              ? t(`If you join, you are a member of ${d(clan)} at once and your voice goes to its lounge.`)
+              : t(`If you join, your request goes to ${d(clan)}'s leader and officers, who let you in.`)}
         </p>
         <div className="flex justify-end gap-2">
           <button
@@ -59,7 +59,7 @@ export function InviteAsk({ onDone }: { onDone: () => void }) {
               onDone();
             }}
           >
-            Not now
+            {t("Not now")}
           </button>
           <button
             type="button"

@@ -30,7 +30,7 @@ export function ProfileForm({ name, className, levelBand, onSaved, submit }: { n
       <label className="flex flex-col gap-1 text-text-muted">
         In-game name
         <input className="field" value={n} onChange={(e) => setN(e.target.value)} maxLength={24} required autoComplete="off" />
-        <span className="text-xs">Exactly as it appears in game, so callers can find you.{game?.nameRule ? ` ${game.nameRule[0].toUpperCase()}${game.nameRule.slice(1)}.` : ""}</span>
+        <span className="text-xs">{t("Exactly as it appears in game, so callers can find you.")}{game?.nameRule ? ` ${game.nameRule[0].toUpperCase()}${game.nameRule.slice(1)}.` : ""}</span>
       </label>
       {game && (game.classes.length > 0 || game.levelBands.length > 0) && (
         <div className="flex flex-col gap-1">
@@ -42,9 +42,9 @@ export function ProfileForm({ name, className, levelBand, onSaved, submit }: { n
         </div>
       )}
       <div className="flex items-center gap-3">
-        <button className="btn" disabled={busy || !n.trim()}>{busy ? "Saving…" : submit}</button>
+        <button className="btn" disabled={busy || !n.trim()}>{busy ? t("Saving…") : submit}</button>
         {error && <span className="text-danger" role="alert">{error}</span>}
-        {saved && !error && <span className="text-net-party" role="status">Saved.</span>}
+        {saved && !error && <span className="text-net-party" role="status">{t("Saved.")}</span>}
       </div>
     </form>
   );
@@ -55,9 +55,9 @@ export function NameStep({ onSaved }: { onSaved: () => void }) {
     <main className="flex h-full items-center justify-center p-6">
       <div className="panel rise w-full max-w-md p-8 flex flex-col gap-5">
         <Wordmark className="text-lg" />
-        <h1 className="title text-gold">Your name</h1>
+        <h1 className="title text-gold">{t("Your name")}</h1>
         <p className="text-text-muted">{t("Welcome. First, confirm the name you play under. Your clan leader approves you by this name.")}</p>
-        <ProfileForm name="" className="" levelBand="" onSaved={onSaved} submit="Confirm name" />
+        <ProfileForm name="" className="" levelBand="" onSaved={onSaved} submit={t("Confirm name")} />
       </div>
     </main>
   );

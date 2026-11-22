@@ -1,3 +1,4 @@
+import { t } from "../words";
 import { useEffect, useState } from "react";
 import { beginSignIn, onSignInLink, redeem } from "../auth";
 import { isDesktop, PRIVACY_URL, SERVER, TERMS_URL } from "../config";
@@ -37,12 +38,12 @@ export function SignIn({ onToken, notice }: { onToken: (token: string) => void; 
           <span className="h-1.5 w-1.5 rotate-45 bg-gold" />
           <span className="h-px flex-1 bg-gradient-to-r from-gold-dim to-transparent" />
         </div>
-        <p className="text-text-muted">Voice that follows the chain of command.</p>
+        <p className="text-text-muted">{t("Voice that follows the chain of command.")}</p>
         {notice && <p className="text-gold" role="status">{notice}</p>}
         {!isDesktop ? (
           <>
-            <a className="btn" href={`${SERVER}/`}>Sign in on the site</a>
-            <p className="text-xs text-text-muted">Sign in with Discord there, then come back to this page.</p>
+            <a className="btn" href={`${SERVER}/`}>{t("Sign in on the site")}</a>
+            <p className="text-xs text-text-muted">{t("Sign in with Discord there, then come back to this page.")}</p>
           </>
         ) : (
           <>
@@ -59,13 +60,13 @@ export function SignIn({ onToken, notice }: { onToken: (token: string) => void; 
                 }
               }}
             >
-              Sign in with Discord
+              {t("Sign in with Discord")}
             </button>
             {waiting && (
               <div className="flex flex-col gap-2 text-left">
-                <p className="text-text-muted">Finish signing in in your browser. This window continues by itself.</p>
+                <p className="text-text-muted">{t("Finish signing in in your browser. This window continues by itself.")}</p>
                 <details>
-                  <summary className="cursor-pointer text-text-muted">Enter code instead</summary>
+                  <summary className="cursor-pointer text-text-muted">{t("Enter code instead")}</summary>
                   <form
                     className="mt-2 flex gap-2"
                     onSubmit={(e) => {
@@ -73,8 +74,8 @@ export function SignIn({ onToken, notice }: { onToken: (token: string) => void; 
                       void finish(code);
                     }}
                   >
-                    <input className="field font-mono text-xs" value={code} onChange={(e) => setCode(e.target.value)} placeholder="Code from the browser page" aria-label="Sign-in code" />
-                    <button className="btn btn-quiet text-sm" disabled={!code.trim()}>Use</button>
+                    <input className="field font-mono text-xs" value={code} onChange={(e) => setCode(e.target.value)} placeholder={t("Code from the browser page")} aria-label={t("Sign-in code")} />
+                    <button className="btn btn-quiet text-sm" disabled={!code.trim()}>{t("Use")}</button>
                   </form>
                 </details>
               </div>
@@ -84,8 +85,8 @@ export function SignIn({ onToken, notice }: { onToken: (token: string) => void; 
         {error && <p className="text-danger" role="alert">{error}</p>}
         <p className="text-xs text-text-muted">
           In beta, and free. By signing in you accept the{" "}
-          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(TERMS_URL)}>terms of use</button>; what is kept about you is in the{" "}
-          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(PRIVACY_URL)}>privacy policy</button>.
+          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(TERMS_URL)}>{t("terms of use")}</button>; what is kept about you is in the{" "}
+          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(PRIVACY_URL)}>{t("privacy policy")}</button>.
         </p>
       </div>
     </main>

@@ -4,6 +4,7 @@
 //
 // The sword is an original drawing made for this project, like the emblem in art/.
 
+import { d, t } from "../words";
 import { useEffect, useId, useRef } from "react";
 
 const VB_W = 1000;
@@ -137,12 +138,12 @@ export function SwordLoader({ progress, className = "" }: { progress: number | n
 
   const lit = progress !== null;
   const reached = (x: number) => lit && (progress ?? 0) * TIP > x;
-  const parts = `sw-parts-${id}`;
+  const parts = t(`sw-parts-${d(id)}`);
   const url = (name: string) => `url(#sw-${name}-${id})`;
 
   return (
     <div className={`relative w-full ${className}`}>
-      <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="block h-auto w-full overflow-visible" role="img" aria-label={lit ? `${Math.round((progress ?? 0) * 100)} percent` : "Working"}>
+      <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="block h-auto w-full overflow-visible" role="img" aria-label={lit ? t(`${d(Math.round((progress ?? 0) * 100))} percent`) : t("Working")}>
         <defs>
           <linearGradient id={`sw-steel-${id}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#6a7180" />

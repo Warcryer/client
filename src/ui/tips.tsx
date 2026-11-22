@@ -4,6 +4,7 @@
 // the single TipLayer at the top of the app, in a fixed position, so it is
 // never clipped by a scrolling panel.
 
+import { t } from "../words";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /**
@@ -13,7 +14,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
  */
 export function Help({ text, className = "" }: { text: string; className?: string }) {
   return (
-    <button type="button" className={`info ${className}`} data-tip={text} aria-label="Help" aria-description={text} onClick={(e) => e.preventDefault()}>
+    <button type="button" className={`info ${className}`} data-tip={text} aria-label={t("Help")} aria-description={text} onClick={(e) => e.preventDefault()}>
       <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
         <g className="info-page">
           <rect x="5.5" y="4" width="9" height="12" />

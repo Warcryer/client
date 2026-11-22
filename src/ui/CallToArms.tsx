@@ -39,19 +39,19 @@ export function CallToArms() {
         aria-haspopup="dialog"
         data-call-to-arms-open
       >
-        <span className="title text-xs">Call to arms</span>
+        <span className="title text-xs">{t("Call to arms")}</span>
       </button>
       {open && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label="Call to arms" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label={t("Call to arms")} onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
           <div className="flex max-h-full w-full max-w-sm flex-col gap-3 overflow-y-auto rounded-sm border border-net-broadcast/70 bg-bg-1 p-4 text-sm shadow-[0_12px_32px_rgb(0_0_0/0.7)]">
             <div className="flex items-center gap-2">
-              <h2 className="title text-sm text-net-broadcast">Call to arms</h2>
+              <h2 className="title text-sm text-net-broadcast">{t("Call to arms")}</h2>
               <Help text={t(CALL_HELP)} />
               <button type="button" className="ml-auto cursor-pointer text-xs text-text-muted hover:text-gold" onClick={() => setOpen(false)} data-call-to-arms-close>
-                Close
+                {t("Close")}
               </button>
             </div>
-            <input className="field py-1" value={name} maxLength={80} placeholder="Call to arms" aria-label={t("Name of the operation")} onChange={(e) => setName(e.target.value)} autoFocus data-call-name />
+            <input className="field py-1" value={name} maxLength={80} placeholder={t("Call to arms")} aria-label={t("Name of the operation")} onChange={(e) => setName(e.target.value)} autoFocus data-call-name />
             <fieldset className="flex flex-col gap-1">
               <legend className="text-xs text-text-muted">{t("Clans")}</legend>
               {(clans ?? []).map((c) => (
@@ -86,7 +86,7 @@ export function CallToArms() {
                   })
               }
             >
-              Start it now
+              {t("Start it now")}
             </ConfirmButton>
           </div>
         </div>

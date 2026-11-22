@@ -55,21 +55,21 @@ export function LanguageSettings() {
   if (!tr) return null;
   const suggested = lang === null ? guess(tr.languages) : null;
   // Why the switch cannot be used right now, said beside it.
-  const why = !tr.available ? "Translation is not available on this server." : info.alliance && !tr.allianceOn ? t("Your alliance's admins have switched chat translation off.") : lang === null ? "Choose your language first." : "";
+  const why = !tr.available ? t("Translation is not available on this server.") : info.alliance && !tr.allianceOn ? t("Your alliance's admins have switched chat translation off.") : lang === null ? t("Choose your language first.") : "";
   return (
     <div className="flex flex-col gap-3" data-language>
       <div className="flex flex-wrap items-center gap-3">
         <label className="flex items-center gap-2 text-text-muted">
-          Your language
+          {t("Your language")}
           <select
             className="field w-auto"
             value={lang ?? ""}
             disabled={act.busy}
-            aria-label="Your language"
+            aria-label={t("Your language")}
             onChange={(e) => save({ lang: e.target.value || null, chatTranslate: e.target.value ? on : false })}
             data-language-pick
           >
-            <option value="">Not chosen</option>
+            <option value="">{t("Not chosen")}</option>
             {Object.entries(tr.languages).map(([code, name]) => (
               <option key={code} value={code}>{name}</option>
             ))}
@@ -85,11 +85,11 @@ export function LanguageSettings() {
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <label className={`flex items-center gap-2 ${why ? "text-text-muted" : ""}`}>
           <input type="checkbox" checked={on && !why} disabled={act.busy || !!why} onChange={(e) => save({ lang, chatTranslate: e.target.checked })} data-language-translate />
-          Translate the chat into my language
+          {t("Translate the chat into my language")}
         </label>
         {why && <span className="text-xs text-text-muted" data-language-why>{why}</span>}
       </div>
-      <p className="text-xs text-text-muted">The app itself is in English for now. Your language is what the chat is translated into.</p>
+      <p className="text-xs text-text-muted">{t("The app itself is in English for now. Your language is what the chat is translated into.")}</p>
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
     </div>
   );
@@ -112,7 +112,7 @@ export function TranslateSettings({ settings, onChange }: { settings: TranslateS
   useEffect(() => setOn(settings.on), [settings.on]);
   useEffect(() => setWords(settings.glossary), [settings.glossary]);
   const send = (patch: { on?: boolean; glossary?: string }) => void act.run(() => rpc("alliance.setTranslate", patch)).then(onChange);
-  if (!settings.available) return <p className="text-sm text-text-muted" data-translate-settings>Translation is not available on this server.</p>;
+  if (!settings.available) return <p className="text-sm text-text-muted" data-translate-settings>{t("Translation is not available on this server.")}</p>;
   const over = settings.month >= settings.cap;
   return (
     <div className="flex flex-col gap-3" data-translate-settings>
@@ -132,7 +132,7 @@ export function TranslateSettings({ settings, onChange }: { settings: TranslateS
       </label>
       <p className={`text-sm ${over ? "text-danger" : "text-text-muted"}`} data-translate-usage>
         <span className="tabular-nums">{settings.month.toLocaleString()}</span> of <span className="tabular-nums">{settings.cap.toLocaleString()}</span> lines translated this month.
-        {over && " The limit is reached: lines stay as written until next month."}
+        {over && t(" The limit is reached: lines stay as written until next month.")}
       </p>
       <label className="flex flex-col gap-1 text-text-muted">
         {t("Your alliance's own words, one per line")}
@@ -141,14 +141,14 @@ export function TranslateSettings({ settings, onChange }: { settings: TranslateS
           value={words}
           maxLength={5000}
           spellCheck={false}
-          placeholder={"soski = soulshots\nCruma = a place, keep it"}
+          placeholder={t("soski = soulshots\nCruma = a place, keep it")}
           onChange={(e) => setWords(e.target.value)}
           data-translate-words
         />
       </label>
       <div className="flex items-center gap-3">
         <button type="button" className="btn text-sm" disabled={act.busy || words === settings.glossary} onClick={() => send({ glossary: words })} data-translate-save>
-          Save the words
+          {t("Save the words")}
         </button>
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
       </div>

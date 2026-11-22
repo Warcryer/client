@@ -1,4 +1,4 @@
-import { t } from "../words";
+import { d, t } from "../words";
 import { useState, useSyncExternalStore } from "react";
 import { rpc } from "../api";
 import { APP_NAME, isDesktop, STATUS_URL, VERSION_TEXT } from "../config";
@@ -63,13 +63,13 @@ function DeleteAccount({ leadsClan, onDeleted }: { leadsClan: boolean; onDeleted
     return (
       <div>
         <button type="button" className="text-xs text-text-muted underline hover:text-danger cursor-pointer" onClick={() => setOpen(true)}>
-          Delete my account
+          {t("Delete my account")}
         </button>
       </div>
     );
   }
   return (
-    <div className="flex flex-col gap-2 border border-danger/60 p-3" role="alertdialog" aria-label="Delete my account">
+    <div className="flex flex-col gap-2 border border-danger/60 p-3" role="alertdialog" aria-label={t("Delete my account")}>
       <p>
         {t("This removes your account from the server for good: your name, your clan membership, your places on rosters and the record of when you were in voice. It cannot be undone. Signing in again later starts from nothing.")}
       </p>
@@ -86,14 +86,14 @@ function DeleteAccount({ leadsClan, onDeleted }: { leadsClan: boolean; onDeleted
             rpc("account.delete")
               .then(onDeleted)
               .catch((e: unknown) => {
-                setError(e instanceof Error ? e.message : "That did not work. Try again.");
+                setError(e instanceof Error ? e.message : t("That did not work. Try again."));
                 setBusy(false);
               });
           }}
         >
-          Delete my account for good
+          {t("Delete my account for good")}
         </button>
-        <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => setOpen(false)}>Keep my account</button>
+        <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => setOpen(false)}>{t("Keep my account")}</button>
       </div>
     </div>
   );
@@ -103,20 +103,20 @@ function DeleteAccount({ leadsClan, onDeleted }: { leadsClan: boolean; onDeleted
 function UpdateStatus() {
   const u = useUpdate();
   const text =
-    u.phase === "checking" ? "Checking…"
-    : u.phase === "current" ? "You have the latest version."
-    : u.phase === "downloading" ? `Downloading version ${u.version}${u.percent === null ? "…" : `: ${u.percent}%`}`
-    : u.phase === "ready" ? `Version ${u.version} is ready to install.`
-    : u.phase === "installing" ? `Installing version ${u.version}; the app will restart by itself.`
-    : u.phase === "failed" ? `Could not check for updates: ${u.message}`
+    u.phase === "checking" ? t("Checking…")
+    : u.phase === "current" ? t("You have the latest version.")
+    : u.phase === "downloading" ? t(`Downloading version ${d(u.version)}${d(u.percent === null ? "…" : `: ${u.percent}%`)}`)
+    : u.phase === "ready" ? t(`Version ${d(u.version)} is ready to install.`)
+    : u.phase === "installing" ? t(`Installing version ${d(u.version)}; the app will restart by itself.`)
+    : u.phase === "failed" ? t(`Could not check for updates: ${d(u.message)}`)
     : "";
   return (
     <div className="flex flex-wrap items-center gap-3">
       {u.phase === "ready" ? (
-        <button type="button" className="btn text-sm" onClick={() => void installUpdate()}>Restart to update</button>
+        <button type="button" className="btn text-sm" onClick={() => void installUpdate()}>{t("Restart to update")}</button>
       ) : (
         <button type="button" className="btn btn-quiet text-sm" disabled={u.phase === "checking" || u.phase === "downloading" || u.phase === "installing"} onClick={() => void checkForUpdate()}>
-          Check for updates
+          {t("Check for updates")}
         </button>
       )}
       <span className="text-xs text-text-muted" role="status">{text}</span>
@@ -129,27 +129,27 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
   const { info, refreshInfo, go } = useApp();
   return (
     <div className="absolute inset-0 z-20 flex justify-end bg-black/60" onClick={onClose}>
-      <aside className="panel h-full w-full max-w-md overflow-y-auto p-6 flex flex-col gap-5" onClick={(e) => e.stopPropagation()} aria-label="Settings">
+      <aside className="panel h-full w-full max-w-md overflow-y-auto p-6 flex flex-col gap-5" onClick={(e) => e.stopPropagation()} aria-label={t("Settings")}>
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-3">
-            <h1 className="title text-gold-bright">Settings</h1>
+            <h1 className="title text-gold-bright">{t("Settings")}</h1>
             <span className="text-xs text-text-muted" data-app-version>Version {VERSION_TEXT}</span>
           </div>
-          <button type="button" className="btn btn-quiet text-sm" onClick={onClose}>Close</button>
+          <button type="button" className="btn btn-quiet text-sm" onClick={onClose}>{t("Close")}</button>
         </div>
 
         {info.translation && (
-          <Group title="Language">
+          <Group title={t("Language")}>
             <LanguageSettings />
           </Group>
         )}
-        <Group title="Devices">
+        <Group title={t("Devices")}>
           <DevicePickers />
           <MicTest />
           <div className="flex flex-wrap gap-x-5 gap-y-1">
-            <Toggle label="Echo cancellation" hint="Stops others hearing themselves through your speakers. Leave on unless you use a headset and hear artefacts." checked={s.echoCancellation} onChange={(v) => setSettings({ echoCancellation: v })} />
-            <Toggle label="Noise suppression" hint="Removes fans, keyboard and background noise. It also runs before voice activation, so key clicks open the mic less often." checked={s.noiseSuppression} onChange={(v) => setSettings({ noiseSuppression: v })} />
-            <Toggle label="Auto gain" hint="Evens out your volume so you are not too quiet or too loud." checked={s.autoGainControl} onChange={(v) => setSettings({ autoGainControl: v })} />
+            <Toggle label={t("Echo cancellation")} hint={t("Stops others hearing themselves through your speakers. Leave on unless you use a headset and hear artefacts.")} checked={s.echoCancellation} onChange={(v) => setSettings({ echoCancellation: v })} />
+            <Toggle label={t("Noise suppression")} hint={t("Removes fans, keyboard and background noise. It also runs before voice activation, so key clicks open the mic less often.")} checked={s.noiseSuppression} onChange={(v) => setSettings({ noiseSuppression: v })} />
+            <Toggle label={t("Auto gain")} hint={t("Evens out your volume so you are not too quiet or too loud.")} checked={s.autoGainControl} onChange={(v) => setSettings({ autoGainControl: v })} />
           </div>
         </Group>
 
@@ -158,8 +158,8 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           {s.partyMode === "voice" && (
             <label className="flex items-center gap-3 text-text-muted">
               <span className="flex items-center gap-1">
-                Keep open after you stop
-                <Help text="How long the mic stays open after you stop speaking, so word endings and short pauses are not cut off." />
+                {t("Keep open after you stop")}
+                <Help text={t("How long the mic stays open after you stop speaking, so word endings and short pauses are not cut off.")} />
               </span>
               <input
                 type="range"
@@ -174,7 +174,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           )}
         </Group>
 
-        <Group title="Keys">
+        <Group title={t("Keys")}>
           <ul className="flex flex-col gap-2">
             {KEYS.map((k) => (
               <li key={k.target} className="flex items-center gap-3">
@@ -186,12 +186,12 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           </ul>
           <QuickCallKeys />
           <p className="text-xs text-text-muted">
-            Keys are never taken from the game: it still receives them. Only keys bound here are looked at.
-            {!isDesktop && " In the browser, keys only work while this tab has focus."}
+            {t("Keys are never taken from the game: it still receives them. Only keys bound here are looked at.")}
+            {!isDesktop && t(" In the browser, keys only work while this tab has focus.")}
           </p>
         </Group>
 
-        <Group title="Volume">
+        <Group title={t("Volume")}>
           {(Object.keys(NET_TEXT) as NetKind[]).map((net) => (
             <label key={net} className="flex items-center gap-3">
               <span className={`w-24 ${NET_TEXT[net]}`}>{netName(net)}</span>
@@ -208,8 +208,8 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           ))}
         </Group>
 
-        <Group title="Priority">
-          <Toggle label="Lower other nets while a higher one is live" hint={t("So a Broadcast or Command call cuts through party chatter. Nothing is muted, only made quieter.")} checked={s.ducking} onChange={(v) => setSettings({ ducking: v })} />
+        <Group title={t("Priority")}>
+          <Toggle label={t("Lower other nets while a higher one is live")} hint={t("So a Broadcast or Command call cuts through party chatter. Nothing is muted, only made quieter.")} checked={s.ducking} onChange={(v) => setSettings({ ducking: v })} />
           <label className="flex items-center gap-3 text-text-muted">
             Lowered nets stay at
             <input
@@ -219,7 +219,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
               step={0.05}
               value={s.duckLevel}
               disabled={!s.ducking}
-              aria-label="Volume of lowered nets"
+              aria-label={t("Volume of lowered nets")}
               onChange={(e) => setSettings({ duckLevel: Number(e.target.value) })}
             />
             <span className="tabular-nums text-text w-10">{Math.round(s.duckLevel * 100)}%</span>
@@ -235,24 +235,24 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
               max={1}
               step={0.05}
               value={s.loungeUnderGroup}
-              aria-label="Volume of your lounge while you are in a group"
+              aria-label={t("Volume of your lounge while you are in a group")}
               onChange={(e) => setSettings({ loungeUnderGroup: Number(e.target.value) })}
               data-lounge-under-group
             />
-            <span className="tabular-nums text-text w-10">{s.loungeUnderGroup === 0 ? "Off" : `${Math.round(s.loungeUnderGroup * 100)}%`}</span>
+            <span className="tabular-nums text-text w-10">{s.loungeUnderGroup === 0 ? t("Off") : `${Math.round(s.loungeUnderGroup * 100)}%`}</span>
           </label>
         </Group>
 
-        <Group title="Sounds">
+        <Group title={t("Sounds")}>
           <Toggle label={t("Play a cue when you are moved to another party")} checked={s.cues} onChange={(v) => setSettings({ cues: v })} />
           <label className="flex items-center gap-3 text-text-muted">
-            Cue volume
+            {t("Cue volume")}
             <input type="range" min={0} max={1} step={0.05} value={s.cueVolume} onChange={(e) => setSettings({ cueVolume: Number(e.target.value) })} />
           </label>
         </Group>
 
         {isDesktop && (
-          <Group title="Key capture">
+          <Group title={t("Key capture")}>
             {SOURCES.map((src) => (
               <label key={src.id} className="flex items-start gap-2">
                 <input type="radio" className="mt-1" checked={s.source === src.id} onChange={() => setSettings({ source: src.id })} />
@@ -263,33 +263,33 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
               </label>
             ))}
             <Toggle
-              label="Always start as administrator (from the next start)"
+              label={t("Always start as administrator (from the next start)")}
               checked={s.alwaysAdmin}
               onChange={(v) => setSettings({ alwaysAdmin: v })}
             />
             <p className="text-xs text-text-muted">
-              This app is running as {foreground?.selfElevated ? "administrator" : "a normal user"}. With Polling you should not need administrator rights.
+              This app is running as {foreground?.selfElevated ? "administrator" : t("a normal user")}. With Polling you should not need administrator rights.
             </p>
           </Group>
         )}
 
         {isDesktop && (
-          <Group title="Window and updates">
+          <Group title={t("Window and updates")}>
             <Toggle
-              label="Keep running in the tray when I close the window"
-              hint="Closing the window then hides it and you stay in voice. Click the tray icon to bring it back; right-click it and choose Quit to leave. Off: closing the window quits."
+              label={t("Keep running in the tray when I close the window")}
+              hint={t("Closing the window then hides it and you stay in voice. Click the tray icon to bring it back; right-click it and choose Quit to leave. Off: closing the window quits.")}
               checked={s.closeToTray}
               onChange={(v) => setSettings({ closeToTray: v })}
             />
             <Toggle
-              label="Show the compact strip"
-              hint="A small window that stays on top of other windows and shows who is speaking, one line per net, so you can see it without switching to the app. Drag it where you like; double-click it to bring the app forward. It sits over a game running in a window or in borderless mode, not over one in exclusive full screen."
+              label={t("Show the compact strip")}
+              hint={t("A small window that stays on top of other windows and shows who is speaking, one line per net, so you can see it without switching to the app. Drag it where you like; double-click it to bring the app forward. It sits over a game running in a window or in borderless mode, not over one in exclusive full screen.")}
               checked={s.strip}
               onChange={(v) => setSettings({ strip: v })}
             />
             <Toggle
-              label="Update automatically"
-              hint="The app asks the server for a newer version when it starts and every few hours. An update found at start installs before you join voice; one found later waits for you to click Restart to update."
+              label={t("Update automatically")}
+              hint={t("The app asks the server for a newer version when it starts and every few hours. An update found at start installs before you join voice; one found later waits for you to click Restart to update.")}
               checked={s.autoUpdate}
               onChange={(v) => setSettings({ autoUpdate: v })}
             />
@@ -297,7 +297,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           </Group>
         )}
 
-        <Group title="Help">
+        <Group title={t("Help")}>
           <div>
             <button
               type="button"
@@ -307,20 +307,20 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
                 go("guides");
               }}
             >
-              Open the guides
+              {t("Open the guides")}
             </button>
-            <button type="button" className="btn btn-quiet ml-2 text-sm" onClick={() => void openInBrowser(STATUS_URL)} data-status-link>Is the service working?</button>
+            <button type="button" className="btn btn-quiet ml-2 text-sm" onClick={() => void openInBrowser(STATUS_URL)} data-status-link>{t("Is the service working?")}</button>
           </div>
           <p className="flex items-center gap-1 text-xs text-text-muted">
-            Point at a scroll like this one for a short explanation.
-            <Help text="Like this. Explanations only appear when you point at a scroll, tab to it, or click it." />
+            {t("Point at a scroll like this one for a short explanation.")}
+            <Help text={t("Like this. Explanations only appear when you point at a scroll, tab to it, or click it.")} />
           </p>
         </Group>
 
-        <Group title="Account">
-          <ProfileForm name={info.user.name} className={info.user.className ?? ""} levelBand={info.user.levelBand ?? ""} onSaved={refreshInfo} submit="Save" />
+        <Group title={t("Account")}>
+          <ProfileForm name={info.user.name} className={info.user.className ?? ""} levelBand={info.user.levelBand ?? ""} onSaved={refreshInfo} submit={t("Save")} />
           <MyCharacters />
-          <div><button type="button" className="btn btn-quiet text-sm" onClick={onSignOut}>Sign out</button></div>
+          <div><button type="button" className="btn btn-quiet text-sm" onClick={onSignOut}>{t("Sign out")}</button></div>
           <DeleteAccount leadsClan={info.membership?.role === "leader" && info.membership.status === "active"} onDeleted={onSignOut} />
         </Group>
 
@@ -338,14 +338,14 @@ function QuickCallKeys() {
   return (
     <div className="flex flex-col gap-2 border-t border-line pt-2" data-call-keys>
       <p className="flex items-center gap-2 font-medium">
-        Quick calls
+        {t("Quick calls")}
         <Help text={t("A quick call is a short line sent into your party's chat with one key, without typing: the others see it in the chat and on their strip, and hear a short sound.\nYour alliance's admins choose the list. Bind a key to the ones you want; the rest stay unused.\nWithout a party your calls go to Reserve. Outside an operation the keys do nothing.")} />
       </p>
       <ul className="flex flex-col gap-2">
         {used.map((c) => (
           <li key={c.target} className="flex items-center gap-3">
             <span className="w-40 truncate text-gold" title={c.text}>{c.text}</span>
-            <KeyBind target={c.target} label={`Quick call: ${c.text}`} />
+            <KeyBind target={c.target} label={t(`Quick call: ${d(c.text)}`)} />
           </li>
         ))}
       </ul>

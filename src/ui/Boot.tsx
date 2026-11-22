@@ -1,3 +1,4 @@
+import { d, t } from "../words";
 import { useEffect, useRef, useState } from "react";
 import { isDesktop } from "../config";
 import { getSettings } from "../settings";
@@ -61,14 +62,14 @@ export function Boot({ children }: { children: React.ReactNode }) {
   const shown = downloading ? (u.phase === "downloading" ? (u.percent ?? 0) / 100 : 1) : fill;
   const caption =
     u.phase === "downloading"
-      ? `Downloading version ${u.version}${u.percent === null ? "…" : `: ${u.percent}%`}`
+      ? t(`Downloading version ${d(u.version)}${d(u.percent === null ? "…" : `: ${u.percent}%`)}`)
       : u.phase === "ready" || u.phase === "installing"
-        ? `Installing version ${u.version}. The app will restart by itself.`
+        ? t(`Installing version ${d(u.version)}. The app will restart by itself.`)
         : checking
-          ? "Checking for updates…"
+          ? t("Checking for updates…")
           : fill < 1
-            ? "Connecting…"
-            : "Ready";
+            ? t("Connecting…")
+            : t("Ready");
 
   return (
     <>
@@ -79,7 +80,7 @@ export function Boot({ children }: { children: React.ReactNode }) {
           className="fixed inset-0 z-50 flex items-center justify-center bg-bg-0 p-6 transition-opacity"
           style={{ opacity: fading ? 0 : 1, transitionDuration: `${FADE_MS}ms`, background: "radial-gradient(ellipse 80% 70% at 50% 45%, #161922 0%, #0b0c0f 75%) #0b0c0f" }}
           role="status"
-          aria-label="Starting"
+          aria-label={t("Starting")}
         >
           <div className="flex w-full max-w-2xl flex-col items-center gap-4 text-center">
             <Wordmark className="text-xl" />

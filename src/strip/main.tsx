@@ -6,6 +6,7 @@
 // in a window that can be sized and made see-through, so that it can sit on
 // the game where the game's own chat box was. A chat key (Settings, Keys)
 // puts the keyboard in its line; Enter sends and gives the keyboard back.
+import { d, t } from "../words";
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { NET_TEXT } from "../ui/net-style";
@@ -185,14 +186,14 @@ function Strip() {
     <button
       type="button"
       className="shrink-0 cursor-pointer px-1 text-text-muted hover:text-text"
-      aria-label={prefs.open ? "Close the chat" : "Open the chat"}
+      aria-label={prefs.open ? t("Close the chat") : t("Open the chat")}
       aria-expanded={prefs.open}
       data-chat-toggle
       onClick={() => change({ open: !prefs.open })}
     >
       {prefs.open ? "▴" : "▾"}
       {!prefs.open && !stale && Object.values(state?.chat?.unread ?? {}).some(Boolean) && (
-        <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-gold-bright align-middle" role="img" aria-label="New lines in the chat" />
+        <span className="ml-0.5 inline-block h-1.5 w-1.5 rounded-full bg-gold-bright align-middle" role="img" aria-label={t("New lines in the chat")} />
       )}
     </button>
   );
@@ -209,7 +210,7 @@ function Strip() {
           onChange={(e) => change({ alpha: Number(e.target.value) })}
           onMouseDown={(e) => e.stopPropagation()}
           className="w-14 shrink-0 cursor-pointer"
-          aria-label="How see-through the chat is"
+          aria-label={t("How see-through the chat is")}
         />
       )}
       {!stale && state?.where && (
@@ -238,13 +239,13 @@ function Strip() {
       onMouseDown={drag}
       onDoubleClick={openMain}
     >
-    <div className="flex min-w-0 flex-1 flex-col" role="status" aria-label="Who is speaking">
-      {state?.locked && !stale && <div className="truncate font-semibold text-net-broadcast">Broadcast locked open</div>}
+    <div className="flex min-w-0 flex-1 flex-col" role="status" aria-label={t("Who is speaking")}>
+      {state?.locked && !stale && <div className="truncate font-semibold text-net-broadcast">{t("Broadcast locked open")}</div>}
       {lines.length === 0 ? (
         <div className="flex items-center gap-2">
           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${stale || !state?.where ? "bg-line" : state.muted || state.deafened ? "bg-danger" : "bg-net-party"}`} />
           <span className="min-w-0 flex-1 truncate text-text-muted">
-            {stale || !state ? "Waiting for the app…" : !state.where ? "Not in voice" : state.deafened ? `Headset off · ${state.where}` : state.muted ? `Mic muted · ${state.where}` : `Quiet · ${state.where}`}
+            {stale || !state ? t("Waiting for the app…") : !state.where ? t("Not in voice") : state.deafened ? t(`Headset off · ${d(state.where)}`) : state.muted ? t(`Mic muted · ${d(state.where)}`) : t(`Quiet · ${d(state.where)}`)}
           </span>
         </div>
       ) : (
@@ -254,7 +255,7 @@ function Strip() {
               {line.short}
             </span>
             <span className="min-w-0 flex-1 truncate">
-              {line.you && <span className={`mr-1 font-semibold ${NET_TEXT[line.net]}`}>You</span>}
+              {line.you && <span className={`mr-1 font-semibold ${NET_TEXT[line.net]}`}>{t("You")}</span>}
               {line.speakers.map((sp, n) => (
                 <span key={`${sp.name}-${n}`} className="mr-1.5 inline-flex items-center gap-1 align-middle">
                   {sp.crest ? <img src={sp.crest} alt="" className="h-3.5 w-3.5 object-contain" /> : sp.tag ? <span className="text-[11px] text-text-muted">[{sp.tag}]</span> : null}
@@ -273,15 +274,15 @@ function Strip() {
     )}
     {!prefs.open && chatNow.called && (
       <div className="truncate px-2 leading-[22px]" data-strip-call>
-        <span className="font-semibold text-gold">{chatNow.called.own ? "You" : chatNow.called.name}</span>{" "}
+        <span className="font-semibold text-gold">{chatNow.called.own ? t("You") : chatNow.called.name}</span>{" "}
         <span className="font-semibold text-gold-bright">▸ {chatNow.called.text}</span>
       </div>
     )}
     {!prefs.open && chatNow.ready && (
       <div className="flex items-center gap-2 px-2 leading-[22px]" data-strip-ready>
         <span className="min-w-0 flex-1 truncate font-semibold text-gold-bright">{chatNow.ready.by}: ready?</span>
-        <button type="button" className="cursor-pointer rounded-sm border border-gold px-1.5 text-[11px] leading-4 text-gold-bright" onClick={() => answer(true)}>Ready</button>
-        <button type="button" className="cursor-pointer rounded-sm border border-line px-1.5 text-[11px] leading-4 text-text-muted" onClick={() => answer(false)}>Not</button>
+        <button type="button" className="cursor-pointer rounded-sm border border-gold px-1.5 text-[11px] leading-4 text-gold-bright" onClick={() => answer(true)}>{t("Ready")}</button>
+        <button type="button" className="cursor-pointer rounded-sm border border-line px-1.5 text-[11px] leading-4 text-text-muted" onClick={() => answer(false)}>{t("Not")}</button>
       </div>
     )}
     {!prefs.open && (
@@ -314,7 +315,7 @@ function Close({ channel }: { channel: React.RefObject<BroadcastChannel | null> 
     <button
       type="button"
       className="shrink-0 cursor-pointer px-1 text-text-muted hover:text-text"
-      aria-label="Close the strip"
+      aria-label={t("Close the strip")}
       onClick={() => channel.current?.postMessage({ type: "close" } satisfies FromStrip)}
     >
       ×

@@ -7,6 +7,7 @@
 // passes it on to the chat window (the strip), which has no connection of its
 // own.
 
+import { t } from "./words";
 import type { ChatEvent, ChatOrder, ControlClient, NetSet, ReadyAsk, ReadyState } from "./control";
 import type { NetKind } from "./settings";
 
@@ -168,7 +169,7 @@ export const chat = {
       unread[c.room] = had.has(c.room) ? (view.unread[c.room] ?? false) : false;
       if (!had.has(c.room)) {
         control?.askHistory(c.room);
-        if (sameOp && (c.net === "party" || c.net === "reserve") && next.notice?.kind === "moved") lines[c.room] = [note("You were moved here.")];
+        if (sameOp && (c.net === "party" || c.net === "reserve") && next.notice?.kind === "moved") lines[c.room] = [note(t("You were moved here."))];
       }
     }
     if (watching && !channels.some((c) => c.room === watching)) watching = null;

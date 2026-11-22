@@ -35,19 +35,19 @@ export function Wizard() {
         {eng.micError && (
           <p className="text-danger" role="alert">
             The microphone could not be opened ({eng.micError}). Allow microphone access, then{" "}
-            <button type="button" className="underline cursor-pointer" onClick={() => void engine.startMic().catch(() => {})}>try again</button>.
+            <button type="button" className="underline cursor-pointer" onClick={() => void engine.startMic().catch(() => {})}>{t("try again")}</button>.
           </p>
         )}
 
         {step === 0 && (
           <>
-            <p className="text-text-muted">Choose what you speak into and what you listen on. You can change both later in Settings.</p>
+            <p className="text-text-muted">{t("Choose what you speak into and what you listen on. You can change both later in Settings.")}</p>
             <DevicePickers />
           </>
         )}
         {step === 1 && (
           <>
-            <p className="text-text-muted">Speak and watch the bar move. The test records three seconds and plays them back, so you hear what others will.</p>
+            <p className="text-text-muted">{t("Speak and watch the bar move. The test records three seconds and plays them back, so you hear what others will.")}</p>
             <MicTest />
           </>
         )}
@@ -61,11 +61,11 @@ export function Wizard() {
         )}
 
         <div className="flex justify-between">
-          <button type="button" className="btn btn-quiet" disabled={step === 0} onClick={() => setStep(step - 1)}>Back</button>
+          <button type="button" className="btn btn-quiet" disabled={step === 0} onClick={() => setStep(step - 1)}>{t("Back")}</button>
           {step < STEPS.length - 1 ? (
-            <button type="button" className="btn" onClick={() => setStep(step + 1)}>Continue</button>
+            <button type="button" className="btn" onClick={() => setStep(step + 1)}>{t("Continue")}</button>
           ) : (
-            <button type="button" className="btn" disabled={!ready} onClick={() => setSettings({ wizardDone: true })}>Finish</button>
+            <button type="button" className="btn" disabled={!ready} onClick={() => setSettings({ wizardDone: true })}>{t("Finish")}</button>
           )}
         </div>
       </div>

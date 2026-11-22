@@ -5,7 +5,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ChatChannel, ChatLineView, ChatView } from "../chat";
-import { t } from "../words";
+import { d, t } from "../words";
 import { NET_TEXT } from "./net-style";
 
 export type ChatActions = {
@@ -44,7 +44,7 @@ export function Said({ line, compact }: { line: { text: string; tr?: string; qui
           type="button"
           className={`ml-1.5 cursor-pointer align-baseline uppercase tracking-wider text-text-muted hover:text-gold ${compact ? "text-[9px]" : "text-[10px]"}`}
           aria-pressed={original}
-          aria-label={original ? "Show the translation" : "Show the line as it was written"}
+          aria-label={original ? t("Show the translation") : t("Show the line as it was written")}
           onClick={() => setOriginal(!original)}
           data-chat-translated={original ? "original" : "translated"}
         >
@@ -155,7 +155,7 @@ export function ChatPanel({
     input.current?.blur();
     onDone?.(sent);
   };
-  const cannot = view.muted ? t("Your writing is switched off for this operation. You can still read.") : !channel.write ? "You read here. You do not write here." : "";
+  const cannot = view.muted ? t("Your writing is switched off for this operation. You can still read.") : !channel.write ? t("You read here. You do not write here.") : "";
   // Pinning an order is done from the channel the organisers give their orders on.
   const canPin = view.organises && channel.net === "broadcast" && !cannot;
   const pinning = pin && canPin;
@@ -178,7 +178,7 @@ export function ChatPanel({
           <span className="min-w-0 flex-1 break-words font-semibold">{view.order.text}</span>
           {!compact && <span className="shrink-0 text-[11px] text-text-muted">{view.order.by}</span>}
           {view.organises && (
-            <button type="button" className="shrink-0 cursor-pointer text-[11px] text-text-muted hover:text-danger" onClick={() => act.order("")} aria-label="Clear the order">
+            <button type="button" className="shrink-0 cursor-pointer text-[11px] text-text-muted hover:text-danger" onClick={() => act.order("")} aria-label={t("Clear the order")}>
               clear
             </button>
           )}
@@ -187,25 +187,25 @@ export function ChatPanel({
       {view.ready && (
         <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-gold-dim/40 bg-gold/10 px-2 py-1" data-ready-ask>
           <span className="font-semibold text-gold-bright">{view.ready.by} asks: ready?</span>
-          <button type="button" className="btn px-2 py-0 text-xs" onClick={() => answer(true)}>Ready</button>
-          <button type="button" className="btn btn-quiet px-2 py-0 text-xs" onClick={() => answer(false)}>Not ready</button>
+          <button type="button" className="btn px-2 py-0 text-xs" onClick={() => answer(true)}>{t("Ready")}</button>
+          <button type="button" className="btn btn-quiet px-2 py-0 text-xs" onClick={() => answer(false)}>{t("Not ready")}</button>
           <span className="ml-auto text-[11px] tabular-nums text-text-muted">{left(view.ready.endsAt)}</span>
         </div>
       )}
       {tally && (
         <div className="flex shrink-0 flex-wrap items-baseline gap-x-3 border-b border-gold-dim/40 px-2 py-0.5 text-[12px]" data-ready-tally={tally.done ? "done" : "running"}>
-          <span className="font-semibold text-gold">Ready check{tally.done ? "" : ` · ${left(tally.endsAt)}`}</span>
+          <span className="font-semibold text-gold">{t("Ready check")}{tally.done ? "" : ` · ${left(tally.endsAt)}`}</span>
           <span className="text-net-party">{tally.ready} ready</span>
           {tally.notReady > 0 && <span className="text-danger">{tally.notReady} not ready{tally.names ? `: ${tally.names.notReady.join(", ")}` : ""}</span>}
           {tally.waiting > 0 && <span className="text-text-muted">{tally.waiting} no answer{tally.names ? `: ${tally.names.waiting.join(", ")}` : ""}</span>}
           {view.organises && !tally.done && (
             <button type="button" className="ml-auto cursor-pointer text-[11px] text-text-muted hover:text-gold" onClick={() => act.readyCheck(false)}>
-              End now
+              {t("End now")}
             </button>
           )}
         </div>
       )}
-      <div className={`shrink-0 flex-wrap items-center gap-1 px-1 pt-1 ${folded ? "hidden" : "flex"}`} role="tablist" aria-label="Chat channels">
+      <div className={`shrink-0 flex-wrap items-center gap-1 px-1 pt-1 ${folded ? "hidden" : "flex"}`} role="tablist" aria-label={t("Chat channels")}>
         {view.channels.map((c) => (
           <button
             key={c.room}
@@ -217,17 +217,17 @@ export function ChatPanel({
             onClick={() => setRoom(c.room)}
           >
             {c.label}
-            {view.unread[c.room] && c.room !== channel.room && <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-gold-bright align-middle" role="img" aria-label="New lines" />}
+            {view.unread[c.room] && c.room !== channel.room && <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-gold-bright align-middle" role="img" aria-label={t("New lines")} />}
           </button>
         ))}
         {view.organises && view.readyCheck && (!tally || tally.done) && (
           <button type="button" className="ml-auto cursor-pointer rounded-sm border border-gold-dim px-2 text-[11px] text-gold hover:border-gold-bright" onClick={() => act.readyCheck(true)} data-ready-start>
-            Ready check
+            {t("Ready check")}
           </button>
         )}
       </div>
       <ol ref={list} className={`min-h-0 flex-1 overflow-y-auto px-2 py-1 ${compact ? "leading-[19px]" : "leading-6"} ${folded ? "hidden" : ""}`} data-chat-lines aria-live="polite">
-        {lines.length === 0 && <li className="text-[12px] italic text-text-muted">Nothing has been written here yet.</li>}
+        {lines.length === 0 && <li className="text-[12px] italic text-text-muted">{t("Nothing has been written here yet.")}</li>}
         {lines.map((l) => {
           if (l.userId === null) return <li key={l.id} className="text-[12px] italic text-text-muted" data-chat-note>{t(l.text)}</li>;
           const own = l.userId === view.me;
@@ -240,12 +240,12 @@ export function ChatPanel({
               <Said line={l} compact={compact} />
               {(own || view.moderates || view.modRooms.includes(channel.room)) && (
                 <span className="ml-2 hidden gap-2 align-middle text-[11px] group-hover:inline-flex group-focus-within:inline-flex">
-                  <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={`Remove this line of ${l.name}`}>
+                  <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={t(`Remove this line of ${d(l.name)}`)}>
                     remove
                   </button>
                   {view.moderates && !own && (
-                    <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.mute(l.userId as number, !off)} aria-label={off ? `Let ${l.name} write again` : `Switch off ${l.name}'s writing`}>
-                      {off ? "let write" : "switch off"}
+                    <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.mute(l.userId as number, !off)} aria-label={off ? t(`Let ${d(l.name)} write again`) : t(`Switch off ${d(l.name)}'s writing`)}>
+                      {off ? t("let write") : t("switch off")}
                     </button>
                   )}
                 </span>
@@ -307,8 +307,8 @@ export function ChatPanel({
           }}
           maxLength={300}
           readOnly={!!cannot}
-          placeholder={cannot || (pinning ? t("The order, pinned for everyone on the operation") : typing && onDone ? "Enter sends, Esc gives up" : `Write to ${channel.label}`)}
-          aria-label="Chat line"
+          placeholder={cannot || (pinning ? t("The order, pinned for everyone on the operation") : typing && onDone ? t("Enter sends, Esc gives up") : t(`Write to ${d(channel.label)}`))}
+          aria-label={t("Chat line")}
           autoComplete="off"
           spellCheck={false}
         />
@@ -320,7 +320,7 @@ export function ChatPanel({
             onClick={() => setCallsOpen(!callsOpen)}
             data-calls-toggle
           >
-            Calls
+            {t("Calls")}
           </button>
         )}
         {canPin && (
@@ -334,7 +334,7 @@ export function ChatPanel({
             }}
             data-chat-pin
           >
-            Pin as order
+            {t("Pin as order")}
           </button>
         )}
       </form>

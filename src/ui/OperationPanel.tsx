@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { rpc } from "../api";
 import { partySizeOf, useGame } from "../game";
-import { t } from "../words";
+import { d, t } from "../words";
 import { useApp } from "./app-context";
 import { Help } from "./tips";
 
@@ -66,18 +66,18 @@ export function WherePicker() {
   const hasLive = set.operations.some((o) => o.state === "live");
   return (
     <div className="flex items-center gap-2 text-sm" data-where>
-      <span className="shrink-0 text-text-muted">You are in</span>
+      <span className="shrink-0 text-text-muted">{t("You are in")}</span>
       <select
         className="field min-w-0 flex-1 py-1"
         value={op ? String(op.id) : "lounge"}
-        aria-label="Where you are"
+        aria-label={t("Where you are")}
         onChange={(e) => {
           // Picking the lounge during a live operation is a deliberate choice to sit it out.
           if (e.target.value === "lounge") select(hasLive ? "lounge" : "auto");
           else select(Number(e.target.value));
         }}
       >
-        <option value="lounge">Lounge</option>
+        <option value="lounge">{t("Lounge")}</option>
         {set.operations.map((o) => (
           <option key={o.id} value={o.id}>{o.name} ({o.state === "live" ? "live" : "planned"})</option>
         ))}
@@ -119,13 +119,13 @@ export function OperationPanel() {
       <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
         <h2 className="title min-w-0 truncate text-sm text-gold">{op.name}</h2>
         <span className={`ml-auto shrink-0 text-xs uppercase tracking-wider ${op.state === "live" ? "text-net-party" : "text-gold"}`} data-op-state>
-          {op.state === "live" ? "Live" : "Planned"}
+          {op.state === "live" ? t("Live") : t("Planned")}
         </span>
       </div>
       <div className="flex shrink-0 flex-col gap-2 border-b border-line px-3 py-2">
         <WherePicker />
         <button type="button" className="btn btn-quiet py-1 text-sm" onClick={() => go("roster", op.id)}>
-          Open the roster board
+          {t("Open the roster board")}
         </button>
       </div>
       {data !== "none" && (
@@ -138,7 +138,7 @@ export function OperationPanel() {
             <Help text={t(PARTIES_HELP)} />
           </div>
           {!glance ? (
-            <p className="px-3 py-2 text-sm text-text-muted">Loading…</p>
+            <p className="px-3 py-2 text-sm text-text-muted">{t("Loading…")}</p>
           ) : parties.length === 0 ? (
             <p className="px-3 py-2 text-sm text-text-muted">{t("No parties yet. They are built on the roster board.")}</p>
           ) : (
@@ -157,9 +157,9 @@ export function OperationPanel() {
                         </span>
                       </span>
                       <span className="truncate text-xs text-text-muted">
-                        {leader ? `led by ${leader}` : "no leader"}
-                        {p.leaderLost && <span className="text-danger"> · leader away</span>}
-                        {mine && " · yours"}
+                        {leader ? t(`led by ${d(leader)}`) : t("no leader")}
+                        {p.leaderLost && <span className="text-danger"> {t("· leader away")}</span>}
+                        {mine && t(" · yours")}
                       </span>
                     </button>
                     {open && <ul className="flex flex-wrap gap-x-3 gap-y-0.5 px-3 pb-2 text-sm">{p.members.map(who)}</ul>}

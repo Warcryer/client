@@ -1,4 +1,4 @@
-import { t } from "../words";
+import { d, t } from "../words";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { chat } from "../chat";
 import { openChatWindow } from "../strip/publish";
@@ -48,7 +48,7 @@ function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; 
           {quiet && <span>{m.muted ? "muted" : `${Math.round(m.volume * 100)}%`}</span>}
           {!m.canSpeak && <span>listening</span>}
           {m.headsetOff && (
-            <span className="flex items-center text-danger" role="img" aria-label={m.self ? "Your headset is off: you hear no one" : `${m.name} has their headset off and hears no one`} data-headset-off>
+            <span className="flex items-center text-danger" role="img" aria-label={m.self ? t("Your headset is off: you hear no one") : t(`${d(m.name)} has their headset off and hears no one`)} data-headset-off>
               <HeadsetIcon off size={15} />
             </span>
           )}
@@ -64,7 +64,7 @@ function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; 
             step={0.05}
             value={m.volume}
             disabled={m.muted}
-            aria-label={`Your volume for ${m.name}`}
+            aria-label={t(`Your volume for ${d(m.name)}`)}
             className="min-w-0 flex-1"
             onChange={(e) => setSettings({ playerVolume: { ...s.playerVolume, [m.identity]: Number(e.target.value) } })}
           />
@@ -73,7 +73,7 @@ function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; 
             className={`btn px-2 py-0.5 text-xs ${m.muted ? "" : "btn-quiet"}`}
             onClick={() => setSettings({ playerMuted: { ...s.playerMuted, [m.identity]: !m.muted } })}
           >
-            {m.muted ? "Unmute" : "Mute"}
+            {m.muted ? t("Unmute") : t("Mute")}
           </button>
         </div>
       )}
@@ -98,23 +98,23 @@ function NetCard({
   const key = s.bindings[bindTargetOf(net.net)];
   const voice = s.partyMode === "voice" && TALK.has(net.net);
   const how = net.locked
-    ? "Locked open: everyone hears you"
+    ? t("Locked open: everyone hears you")
     : !net.speak
-    ? "Listen only"
+    ? t("Listen only")
     : between(net.net) && !talkHere
-      ? "Listening"
+      ? t("Listening")
       : voice && key === null
-        ? "Voice activated"
+        ? t("Voice activated")
         : key !== null
-          ? `Hold ${keyLabel(key)}${voice ? " or just speak" : ""}`
-          : "No key bound";
+          ? t(`Hold ${d(keyLabel(key))}${voice ? " or just speak" : ""}`)
+          : t("No key bound");
   const howTip = !net.speak
-    ? "You can hear this net but not speak on it."
+    ? t("You can hear this net but not speak on it.")
     : between(net.net) && !talkHere
-      ? "You hear this room. Click Talk here to speak in it instead."
+      ? t("You hear this room. Click Talk here to speak in it instead.")
       : key === null && !voice
-        ? "Bind a key in Settings to speak here."
-        : "Change how you speak in Settings.";
+        ? t("Bind a key in Settings to speak here.")
+        : t("Change how you speak in Settings.");
   const help = [netTip(net.net), howTip, net.lowered ? "Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority." : "", onTalkHere && !talkHere ? "Talk here makes this the room your key and voice go to. You keep hearing the others." : ""].filter(Boolean).join("\n");
   // A clan's own rooms carry its crest.
   const clanRoom = /^lounge-clan(?:net)?-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
@@ -144,7 +144,7 @@ function NetCard({
       ) : (
         <div className="flex min-h-5 items-center gap-2 text-xs text-text-muted">
           <span className={`min-w-0 flex-1 truncate text-[13px] text-text transition-opacity duration-150 ${net.lowered ? "opacity-50" : ""}`} data-net-speakers>
-            {net.live && <span className={`font-semibold ${NET_TEXT[net.net]}`}>You </span>}
+            {net.live && <span className={`font-semibold ${NET_TEXT[net.net]}`}>{t("You")} </span>}
             {net.speakers.map((sp, i) => (
               <span key={sp.identity} className="mr-1 inline-flex items-center gap-1 align-middle">
                 {i > 0 && <span>,</span>}
@@ -152,18 +152,18 @@ function NetCard({
                 <span className="text-xs text-text-muted"><ClanMark clanId={sp.clanId} tag={sp.clanTag} size={14} /></span>
               </span>
             ))}
-            {!net.live && net.speakers.length === 0 && <span className="text-text-muted">Quiet</span>}
+            {!net.live && net.speakers.length === 0 && <span className="text-text-muted">{t("Quiet")}</span>}
           </span>
-          {net.lowered && <span className="shrink-0 uppercase tracking-wider text-gold" aria-label="Lowered while a higher net is live">Lowered</span>}
+          {net.lowered && <span className="shrink-0 uppercase tracking-wider text-gold" aria-label={t("Lowered while a higher net is live")}>{t("Lowered")}</span>}
           {canTalkHere ? (
-            <button type="button" className="shrink-0 text-gold hover:text-gold-bright cursor-pointer" onClick={onTalkHere}>Talk here</button>
+            <button type="button" className="shrink-0 text-gold hover:text-gold-bright cursor-pointer" onClick={onTalkHere}>{t("Talk here")}</button>
           ) : (
             <span className="shrink-0 whitespace-nowrap" data-net-how>{how}</span>
           )}
           {net.canLock && (
             <span className="flex shrink-0 items-center gap-1">
               <button type="button" className={`cursor-pointer ${net.locked ? "font-semibold text-net-broadcast" : "text-gold hover:text-gold-bright"}`} onClick={() => engine.setBroadcastLock(!net.locked)}>
-                {net.locked ? "Release" : "Lock open"}
+                {net.locked ? t("Release") : t("Lock open")}
               </button>
               <Help text={t("For a briefing. Lock open keeps your mic open on Broadcast without holding a key, so everyone in the operation hears you until you release it.\nIt ends when you click Release, press your Broadcast key or your Mute all key, when the operation ends, and by itself after ten minutes.\nYou can also bind a Broadcast lock key in Settings to switch it without leaving the game.")} />
             </span>
@@ -230,17 +230,17 @@ export function VoiceView() {
   // What the footer says when it has no key to list for the nets on screen.
   const speakNets = nets.filter((n) => n.speak);
   const idleHint =
-    speakNets.length === 0 ? "You are listening only on these nets."
-    : voiceMode && speakNets.every((n) => TALK.has(n.net)) ? "Voice activation is on."
-    : Object.values(s.bindings).some((code) => code !== null) ? "The keys you have bound are for other nets. Open Settings to bind one for these."
-    : "No keys bound. Open Settings to bind them.";
+    speakNets.length === 0 ? t("You are listening only on these nets.")
+    : voiceMode && speakNets.every((n) => TALK.has(n.net)) ? t("Voice activation is on.")
+    : Object.values(s.bindings).some((code) => code !== null) ? t("The keys you have bound are for other nets. Open Settings to bind one for these.")
+    : t("No keys bound. Open Settings to bind them.");
 
   // Two nets on one key (Party and Reserve share theirs by default) are one entry, not the key twice.
   const keyHints = [...new Set(hints.map((t) => s.bindings[t] as number))].map((code) => ({ code, targets: hints.filter((t) => s.bindings[t] === code) }));
   // Nets your mic is open on right now.
   const onAir = nets.filter((n) => n.live).map((n) => (between(n.net) || n.net === "party" ? n.label : netName(n.net)));
   // Between operations the Party key goes to the room you talk in: your group, or a lounge.
-  const partyKeyGoesTo = op ? netName("party") : nets.find((n) => n.room === loungeRoom)?.net === "group" ? "Group" : "Lounge";
+  const partyKeyGoesTo = op ? netName("party") : nets.find((n) => n.room === loungeRoom)?.net === "group" ? t("Group") : t("Lounge");
 
   const hasChat = (op || chatView.between) && chatView.channels.length > 0;
   const folded = s.chatFolded;
@@ -256,14 +256,14 @@ export function VoiceView() {
       <div className="flex flex-col gap-2 px-3 pt-3 empty:hidden">
         {eng.audioBlocked && (
           <div className="panel flex items-center gap-3 px-3 py-2 border-danger">
-            <span>Your browser is holding the sound back until you click.</span>
-            <button type="button" className="btn text-sm" onClick={() => void engine.unlockAudio()}>Enable audio</button>
+            <span>{t("Your browser is holding the sound back until you click.")}</span>
+            <button type="button" className="btn text-sm" onClick={() => void engine.unlockAudio()}>{t("Enable audio")}</button>
           </div>
         )}
         {eng.micError && (
           <div className="panel flex items-center gap-3 px-3 py-2 border-danger" role="alert">
             <span>Microphone problem: {eng.micError}. You can listen but not speak.</span>
-            <button type="button" className="btn text-sm" onClick={() => void engine.startMic().catch(() => {})}>Try again</button>
+            <button type="button" className="btn text-sm" onClick={() => void engine.startMic().catch(() => {})}>{t("Try again")}</button>
           </div>
         )}
       </div>
@@ -272,12 +272,12 @@ export function VoiceView() {
         <div className="flex flex-1 items-center justify-center p-6">
           <div className="max-w-sm text-center flex flex-col gap-3">
             {!set ? (
-              <p className="text-text-muted">Connecting…</p>
+              <p className="text-text-muted">{t("Connecting…")}</p>
             ) : info.membership?.status === "active" || op ? (
-              <p className="text-text-muted">Connecting to your rooms…</p>
+              <p className="text-text-muted">{t("Connecting to your rooms…")}</p>
             ) : info.membership?.status === "pending" ? (
               <>
-                <h1 className="title text-gold">Waiting for approval</h1>
+                <h1 className="title text-gold">{t("Waiting for approval")}</h1>
                 <p className="text-text-muted">
                   A leader or officer of {info.membership.name} {t("has to approve you. You will land in the clan lounge as soon as they do.")}
                 </p>
@@ -286,7 +286,7 @@ export function VoiceView() {
               <>
                 <h1 className="title text-gold">{t("Join an alliance")}</h1>
                 <p className="text-text-muted">{t("Voice follows your clan. Come in with an invite link from your clan's leader, or start an alliance of your own.")}</p>
-                <div><button type="button" className="btn" onClick={() => go("clan")}>Get started</button></div>
+                <div><button type="button" className="btn" onClick={() => go("clan")}>{t("Get started")}</button></div>
               </>
             ) : (
               <>
@@ -304,8 +304,8 @@ export function VoiceView() {
         // whole, and nothing is drawn over anything.
         <div className="relative flex min-h-[21rem] flex-1 gap-3 p-3" data-voice-main>
           <div className="flex w-60 shrink-0 flex-col gap-2 min-h-0 xl:w-72" data-voice-side>
-            <h2 className="px-0.5 text-[11px] uppercase tracking-wider text-text-muted">Your nets</h2>
-            <ul className="-m-0.5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5" aria-label="Your nets">
+            <h2 className="px-0.5 text-[11px] uppercase tracking-wider text-text-muted">{t("Your nets")}</h2>
+            <ul className="-m-0.5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5" aria-label={t("Your nets")}>
               {nets.map((n) => (
                 <NetCard
                   key={n.room}
@@ -321,7 +321,7 @@ export function VoiceView() {
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3">
             {/* The room you are in: its heading says where that is. It takes all the height the chat leaves. */}
-            <section className="panel flex min-h-[10.5rem] min-w-0 flex-1 flex-col gap-2 overflow-y-auto p-3" aria-label="Your room" data-room>
+            <section className="panel flex min-h-[10.5rem] min-w-0 flex-1 flex-col gap-2 overflow-y-auto p-3" aria-label={t("Your room")} data-room>
               {shown && (
                 <>
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -329,13 +329,13 @@ export function VoiceView() {
                     <span className="whitespace-nowrap text-text-muted">
                       {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
                       {shown.members.length} connected
-                      {shown.members.some((m) => !m.canSpeak) && ` · ${shown.members.filter((m) => m.canSpeak).length} can speak`}
+                      {shown.members.some((m) => !m.canSpeak) && t(` · ${d(shown.members.filter((m) => m.canSpeak).length)} can speak`)}
                     </span>
-                    <Help text={"Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected."} />
+                    <Help text={t("Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected.")} />
                     <span className="ml-auto flex items-baseline gap-3">
                       {shown.room !== home?.room && (
                         <button type="button" className="text-text-muted hover:text-gold cursor-pointer" onClick={() => setShownRoom(null)}>
-                          Back to {home?.label ?? "your net"}
+                          {t("Back to")} {home?.label ?? t("your net")}
                         </button>
                       )}
                       {/* Only in a window too narrow for three columns. */}
@@ -369,7 +369,7 @@ export function VoiceView() {
                 className={`panel relative flex flex-col ${folded ? "shrink-0" : "min-h-28 shrink"}`}
                 ref={chatBox}
                 style={folded ? undefined : chatStyle}
-                aria-label="Chat"
+                aria-label={t("Chat")}
                 data-chat-panel
                 data-chat-folded={folded ? "" : undefined}
               >
@@ -378,7 +378,7 @@ export function VoiceView() {
                     className="absolute inset-x-0 -top-2 z-[2] h-3 cursor-row-resize"
                     role="separator"
                     aria-orientation="horizontal"
-                    aria-label="Drag to make the chat taller or shorter"
+                    aria-label={t("Drag to make the chat taller or shorter")}
                     onPointerDown={(e) => {
                       drag.current = { y: e.clientY, h: chatBox.current?.getBoundingClientRect().height ?? CHAT_H.lounge };
                       e.currentTarget.setPointerCapture(e.pointerId);
@@ -396,17 +396,17 @@ export function VoiceView() {
                   />
                 )}
                 <div className={`flex shrink-0 items-center gap-2 px-3 py-1.5 ${folded ? "" : "border-b border-line"}`}>
-                  <h2 className="title text-sm text-gold">Chat</h2>
-                  <Help text={(op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)) + "\nDrag the chat's top edge to make it taller or shorter. Fold puts its lines away and keeps the line you write in; an order and a ready check still show."} />
-                  {folded && unread && <span className="h-1.5 w-1.5 rounded-full bg-gold-bright" role="img" aria-label="New lines" />}
+                  <h2 className="title text-sm text-gold">{t("Chat")}</h2>
+                  <Help text={(op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)) + t("\nDrag the chat's top edge to make it taller or shorter. Fold puts its lines away and keeps the line you write in; an order and a ready check still show.")} />
+                  {folded && unread && <span className="h-1.5 w-1.5 rounded-full bg-gold-bright" role="img" aria-label={t("New lines")} />}
                   <span className="ml-auto flex items-center gap-4">
                     {isDesktop && (
                       <button type="button" className="cursor-pointer text-xs text-text-muted hover:text-gold" onClick={openChatWindow} data-chat-window>
-                        Open as a window over the game
+                        {t("Open as a window over the game")}
                       </button>
                     )}
                     <button type="button" className="cursor-pointer text-xs text-text-muted hover:text-gold" aria-expanded={!folded} onClick={() => setSettings({ chatFolded: !folded })} data-chat-fold>
-                      {folded ? "Unfold ▲" : "Fold ▼"}
+                      {folded ? t("Unfold ▲") : t("Fold ▼")}
                     </button>
                   </span>
                 </div>
@@ -425,7 +425,7 @@ export function VoiceView() {
           >
             {/* Out over the room in a narrow window: the way to put it back. */}
             <button type="button" className="shrink-0 cursor-pointer self-end px-1 text-xs text-gold hover:text-gold-bright min-[900px]:hidden" onClick={() => setAroundOut(false)} data-around-close>
-              Hide ✕
+              {t("Hide ✕")}
             </button>
             {op ? <OperationPanel /> : <AroundPanel />}
             {/* For those who run the alliance: an operation started on the spot. */}
@@ -458,18 +458,18 @@ export function VoiceView() {
           </span>
         )}
         {(hints.length > 0 || s.bindings.muteAll !== null || s.bindings.deafen !== null) && (
-          <Help text={"Your keys. Hold a net's key to speak on it; the game still receives the key.\nMute all: press once to silence your mic on every net, press again to restore it.\nHeadset: press once to hear no one (your mic goes off too), again to hear everyone."} />
+          <Help text={t("Your keys. Hold a net's key to speak on it; the game still receives the key.\nMute all: press once to silence your mic on every net, press again to restore it.\nHeadset: press once to hear no one (your mic goes off too), again to hear everyone.")} />
         )}
         <span className="ml-auto flex min-w-0 items-center gap-x-5">
           {/* Where your mic is open. The header's mic turns green with it; here is on which net. */}
           {onAir.length > 0 && (
-            <span className="flex min-w-0 items-center gap-1.5 font-semibold uppercase tracking-wider text-net-party" aria-label={`Your mic is open on ${onAir.join(", ")}`} data-on-air>
+            <span className="flex min-w-0 items-center gap-1.5 font-semibold uppercase tracking-wider text-net-party" aria-label={t(`Your mic is open on ${d(onAir.join(", "))}`)} data-on-air>
               <span className="pulse h-2 w-2 shrink-0 rounded-full bg-net-party" />
-              <span className="shrink-0">On air</span>
+              <span className="shrink-0">{t("On air")}</span>
               <span className="min-w-0 truncate font-normal normal-case tracking-normal text-text-muted">{onAir.join(", ")}</span>
             </span>
           )}
-          {!isDesktop && <span className="whitespace-nowrap">Browser mode: keys only work while this tab has focus.</span>}
+          {!isDesktop && <span className="whitespace-nowrap">{t("Browser mode: keys only work while this tab has focus.")}</span>}
         </span>
       </footer>
     </div>

@@ -8,7 +8,7 @@
 // sends both lists whenever they change; nothing here asks for them again.
 
 import { useState } from "react";
-import { t } from "../words";
+import { d, t } from "../words";
 import { rpc } from "../api";
 import type { GroupInfo, PresenceEntry } from "../control";
 import { useAct, useApp, useLoad } from "./app-context";
@@ -103,7 +103,7 @@ export function AroundPanel() {
       <div className="flex shrink-0 items-center gap-2 border-b border-line px-3 py-1.5">
         <h2 className="title min-w-0 truncate text-[13px] tracking-[0.1em] text-gold">{t("Alliance")}</h2>
         {presence && (
-          <span className="whitespace-nowrap text-xs tabular-nums text-text-muted" aria-label={`${all.length} online`} data-online-count>
+          <span className="whitespace-nowrap text-xs tabular-nums text-text-muted" aria-label={t(`${d(all.length)} online`)} data-online-count>
             {all.length}
             <span className="hidden xl:inline"> online</span>
           </span>
@@ -115,10 +115,10 @@ export function AroundPanel() {
             className={`ml-auto shrink-0 cursor-pointer whitespace-nowrap text-xs ${away ? "text-gold-bright" : "text-text-muted hover:text-gold"}`}
             onClick={() => setAwayByHand(!awayByHand)}
             aria-pressed={away}
-            title={away && !awayByHand ? "Shown as away because the computer has been idle" : undefined}
+            title={away && !awayByHand ? t("Shown as away because the computer has been idle") : undefined}
             data-away-toggle
           >
-            {away ? (awayByHand ? "I'm back" : "Away (idle)") : "Set me away"}
+            {away ? (awayByHand ? t("I'm back") : t("Away (idle)")) : t("Set me away")}
           </button>
         )}
       </div>
@@ -131,7 +131,7 @@ export function AroundPanel() {
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         {groups ? (
           <div data-groups>
-            <Heading title="Groups" count={listed.length} open={!shut.has("groups")} onToggle={() => flip("groups")} />
+            <Heading title={t("Groups")} count={listed.length} open={!shut.has("groups")} onToggle={() => flip("groups")} />
             {!shut.has("groups") && (
               <>
                 <form
@@ -146,13 +146,13 @@ export function AroundPanel() {
                     className="field min-w-0 flex-1 py-1 text-sm"
                     value={label}
                     maxLength={limits.label}
-                    placeholder="Name it (optional)"
-                    aria-label="Name for a new group"
+                    placeholder={t("Name it (optional)")}
+                    aria-label={t("Name for a new group")}
                     onChange={(e) => setLabel(e.target.value)}
                     data-group-label
                   />
                   <button type="submit" className="btn shrink-0 whitespace-nowrap px-2.5 py-1 text-sm" disabled={act.busy || full} data-group-start>
-                    Start a group
+                    {t("Start a group")}
                   </button>
                 </form>
                 {act.error && <p className="px-3 pb-2 text-sm text-danger" role="alert">{act.error}</p>}
@@ -172,24 +172,24 @@ export function AroundPanel() {
                               <span className={`truncate font-medium ${mine ? "text-net-party" : "text-text"}`}>{g.name}</span>
                               <span className="truncate text-xs text-text-muted">
                                 <span className="tabular-nums">{g.members.length}</span>
-                                {mine && !open && <span> · you are here</span>}
+                                {mine && !open && <span> {t("· you are here")}</span>}
                                 {!open &&
                                   g.members.map((m, i) => (
                                     <span key={m.userId} className={here(m) ? "" : "opacity-50"} data-group-member={m.userId}>
                                       {i === 0 ? " · " : ", "}
                                       {m.name}
-                                      {isAway(m) && <span data-group-away> (away)</span>}
+                                      {isAway(m) && <span data-group-away> {t("(away)")}</span>}
                                     </span>
                                   ))}
                               </span>
                             </button>
                             {mine ? (
                               <button type="button" className="btn btn-quiet shrink-0 px-2.5 py-0.5 text-sm" disabled={act.busy} onClick={() => run("groups.leave")} data-group-leave>
-                                Leave
+                                {t("Leave")}
                               </button>
                             ) : (
                               <button type="button" className="btn shrink-0 px-2.5 py-0.5 text-sm" disabled={act.busy || g.members.length >= limits.perGroup} onClick={() => run("groups.join", { groupId: g.id })} data-group-join>
-                                Join
+                                {t("Join")}
                               </button>
                             )}
                           </div>
@@ -199,7 +199,7 @@ export function AroundPanel() {
                                 <li
                                   key={m.userId}
                                   className={`flex items-center gap-1 rounded-sm border border-line px-1.5 py-0.5 ${here(m) ? "" : "opacity-50"}`}
-                                  title={here(m) ? undefined : `${m.name} does not have the app open`}
+                                  title={here(m) ? undefined : t(`${d(m.name)} does not have the app open`)}
                                   data-group-member={m.userId}
                                 >
                                   <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
@@ -210,8 +210,8 @@ export function AroundPanel() {
                                     <button
                                       type="button"
                                       className="ml-0.5 cursor-pointer text-text-muted hover:text-danger"
-                                      aria-label={`Take ${m.name} out of the group`}
-                                      title={`Take ${m.name} out of the group`}
+                                      aria-label={t(`Take ${d(m.name)} out of the group`)}
+                                      title={t(`Take ${d(m.name)} out of the group`)}
                                       disabled={act.busy}
                                       onClick={() => run("groups.remove", { userId: m.userId })}
                                       data-group-remove
@@ -236,7 +236,7 @@ export function AroundPanel() {
         )}
         {people(t("In the lounge"), lounge, "lounge")}
         {people(t("In an operation"), busy, "operation")}
-        {people("Away", gone, "away")}
+        {people(t("Away"), gone, "away")}
         {presence && all.length <= 1 && <p className="px-3 py-2 text-xs text-text-muted">{info.alliance ? t("Nobody else from your alliance has the app open right now.") : ""}</p>}
       </div>
     </section>

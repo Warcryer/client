@@ -93,7 +93,7 @@ export default function App() {
     rpc<Info>("me")
       .then(setInfo)
       .catch((e) => {
-        if (e instanceof ApiError && e.status === 401) return leave(isDesktop ? "You were signed out. Sign in again to continue." : "");
+        if (e instanceof ApiError && e.status === 401) return leave(isDesktop ? t("You were signed out. Sign in again to continue.") : "");
         // The server could not be reached. Keep trying rather than sitting on "Connecting…" for good.
         window.clearTimeout(retry.current);
         retry.current = window.setTimeout(() => refreshInfoRef.current(), 4000);
@@ -130,10 +130,10 @@ export default function App() {
         engine.cue("moved");
         setNotice(
           next.notice.kind === "leader"
-            ? `You now lead ${next.notice.party ?? t("your party")}. You are on Command: bind a Command key if you have not.`
+            ? t(`You now lead ${d(next.notice.party ?? t("your party"))}. You are on Command: bind a Command key if you have not.`)
             : next.notice.party
-              ? `You were moved to ${next.notice.party}.`
-              : "You were moved to Reserve.",
+              ? t(`You were moved to ${d(next.notice.party)}.`)
+              : t("You were moved to Reserve."),
         );
         window.clearTimeout(noticeTimer);
         noticeTimer = window.setTimeout(() => setNotice(""), next.notice.kind === "leader" ? 15000 : 8000);
@@ -176,7 +176,7 @@ export default function App() {
         setSet(null);
         return setPhase("replaced");
       }
-      leave(isDesktop ? "You were signed out. Sign in again to continue." : "");
+      leave(isDesktop ? t("You were signed out. Sign in again to continue.") : "");
     };
     engine.onNeedRefresh = () => c.refresh();
     engine.onVoiceDropped = (what) => c.reportVoice(what);
@@ -297,7 +297,7 @@ export default function App() {
       <main className="flex h-full items-center justify-center p-6">
         <div className="panel max-w-sm p-8 flex flex-col gap-4 text-center">
           <Wordmark className="text-lg" />
-          <p>This account connected from somewhere else, so this one was disconnected.</p>
+          <p>{t("This account connected from somewhere else, so this one was disconnected.")}</p>
           <div>
             <button
               type="button"
@@ -307,7 +307,7 @@ export default function App() {
                 setAttempt((n) => n + 1);
               }}
             >
-              Reconnect here
+              {t("Reconnect here")}
             </button>
           </div>
         </div>
@@ -320,7 +320,7 @@ export default function App() {
       <main className="flex h-full items-center justify-center p-6">
         <div className="flex w-full max-w-md flex-col items-center gap-3 text-center" role="status">
           <SwordLoader progress={null} />
-          <p className="text-text-muted">Connecting…</p>
+          <p className="text-text-muted">{t("Connecting…")}</p>
         </div>
       </main>
     );
@@ -343,7 +343,7 @@ export default function App() {
       <div className="frame flex h-full flex-col">
         <header className="flex items-center gap-x-4 border-b border-gold-dim bg-bg-1/85 px-4 py-2" data-header>
           <Wordmark />
-          <nav className="flex shrink-0 gap-0.5" aria-label="Screens">
+          <nav className="flex shrink-0 gap-0.5" aria-label={t("Screens")}>
             {TABS.filter((x) => (x.id !== "alliance" || info.user.runsAlliance) && (x.id !== "history" || info.user.runsAlliance || info.membership?.status === "active")).map((x) => (
               <button
                 key={x.id}
@@ -359,10 +359,10 @@ export default function App() {
                   <span className="ml-2 rounded-sm bg-gold px-1.5 text-xs font-semibold text-bg-0" aria-label={t(`${d(info.joinRequests.length)} asking to join your party`)}>{info.joinRequests.length}</span>
                 )}
                 {x.id === "roster" && (info.openSignups?.length ?? 0) > 0 && (
-                  <span className="ml-2 rounded-sm border border-gold px-1.5 text-xs font-semibold text-gold" aria-label={`${info.openSignups?.length} waiting for your answer`}>?</span>
+                  <span className="ml-2 rounded-sm border border-gold px-1.5 text-xs font-semibold text-gold" aria-label={t(`${d(info.openSignups?.length)} waiting for your answer`)}>?</span>
                 )}
                 {x.id === "clan" && info.pendingApprovals > 0 && (
-                  <span className="ml-2 rounded-sm bg-gold px-1.5 text-xs font-semibold text-bg-0" aria-label={`${info.pendingApprovals} waiting for approval`}>{info.pendingApprovals}</span>
+                  <span className="ml-2 rounded-sm bg-gold px-1.5 text-xs font-semibold text-bg-0" aria-label={t(`${d(info.pendingApprovals)} waiting for approval`)}>{info.pendingApprovals}</span>
                 )}
               </button>
             ))}
@@ -371,18 +371,18 @@ export default function App() {
           <span className="ml-auto flex min-w-0 items-center gap-2.5">
             {state !== "online" && (
               <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-xs text-danger">
-                Server link lost, retrying…
-                <Help text="The link that delivers roster changes dropped. Your voice keeps working, and it reconnects by itself." />
+                {t("Server link lost, retrying…")}
+                <Help text={t("The link that delivers roster changes dropped. Your voice keeps working, and it reconnects by itself.")} />
               </span>
             )}
             {info.alliance && <span className="hidden min-w-0 truncate text-text-muted min-[1180px]:inline" data-alliance-name>{info.alliance.name}</span>}
             <AudioToggles micOff={eng.muteAll} headsetOff={eng.deafened} live={onAir.length > 0} onMic={() => engine.toggleMuteAll()} onHeadset={() => engine.toggleDeafen()} />
-            <Help text="The mic and the headset. Click either to turn it off or on; red and crossed out means off. The mic turns green while it is open; the line at the foot of the Voice screen says on which net. With the headset off you hear no one and your mic is off too. The Mute all and Headset keys in Settings do the same from inside the game. While your headset is off, the others in your nets see it beside your name; your mic being off is not shown." />
+            <Help text={t("The mic and the headset. Click either to turn it off or on; red and crossed out means off. The mic turns green while it is open; the line at the foot of the Voice screen says on which net. With the headset off you hear no one and your mic is off too. The Mute all and Headset keys in Settings do the same from inside the game. While your headset is off, the others in your nets see it beside your name; your mic being off is not shown.")} />
             <span className="flex min-w-0 items-baseline text-text-muted" data-me>
               <span className="truncate">{info.user.name}</span>
               {info.user.classTag && <span className="ml-1 shrink-0 text-gold">{info.user.classTag}</span>}
             </span>
-            <button type="button" className="btn btn-quiet shrink-0 px-3 py-1 text-sm" onClick={() => setShowSettings(true)}>Settings</button>
+            <button type="button" className="btn btn-quiet shrink-0 px-3 py-1 text-sm" onClick={() => setShowSettings(true)}>{t("Settings")}</button>
           </span>
         </header>
 
@@ -393,10 +393,10 @@ export default function App() {
           <div className="flex flex-wrap items-center gap-3 border-b border-net-broadcast bg-bg-2 px-4 py-2" role="alert">
             <span className="pulse h-2 w-2 rounded-full bg-net-broadcast" />
             <span>
-              <span className="font-semibold text-net-broadcast">Broadcast is locked open.</span> {t("Everyone in the operation hears you.")}
+              <span className="font-semibold text-net-broadcast">{t("Broadcast is locked open.")}</span> {t("Everyone in the operation hears you.")}
             </span>
-            <button type="button" className="btn text-sm" onClick={() => engine.setBroadcastLock(false)}>Release</button>
-            <span className="text-xs text-text-muted">Your Broadcast key releases it too. It releases by itself after ten minutes.</span>
+            <button type="button" className="btn text-sm" onClick={() => engine.setBroadcastLock(false)}>{t("Release")}</button>
+            <span className="text-xs text-text-muted">{t("Your Broadcast key releases it too. It releases by itself after ten minutes.")}</span>
           </div>
         )}
         {set?.operation && (set.leaderLost ?? []).map((lost) => <LeaderLostBar key={lost.partyId} opId={set.operation!.id} lost={lost} myId={info.user.id} />)}

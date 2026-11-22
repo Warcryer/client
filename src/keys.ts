@@ -1,3 +1,4 @@
+import { d, t } from "./words";
 // Key codes are Windows virtual-key codes everywhere, so a binding made in the
 // desktop app and one made in the browser fallback mean the same thing.
 // Mouse buttons use their VK values too: middle 0x04, side buttons 0x05 / 0x06.
@@ -53,9 +54,9 @@ export function keyLabel(code: number): string {
   if ((code >= 0x30 && code <= 0x39) || (code >= 0x41 && code <= 0x5a)) {
     return String.fromCharCode(code);
   }
-  if (code >= 0x60 && code <= 0x69) return `Numpad ${code - 0x60}`;
+  if (code >= 0x60 && code <= 0x69) return t(`Numpad ${d(code - 0x60)}`);
   if (code >= 0x70 && code <= 0x87) return `F${code - 0x6f}`;
-  return `Key 0x${code.toString(16).toUpperCase()}`;
+  return t(`Key 0x${d(code.toString(16).toUpperCase())}`);
 }
 
 /** Browser mouse button index -> VK code, or null for left/right click. */

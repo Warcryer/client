@@ -86,8 +86,8 @@ export function SignupControl({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
-        {button("coming", status === "coming" ? "✓ Coming" : "Coming", "border-net-party text-net-party")}
-        {button("out", "Can't come", "border-danger text-danger")}
+        {button("coming", status === "coming" ? t("✓ Coming") : t("Coming"), "border-net-party text-net-party")}
+        {button("out", t("Can't come"), "border-danger text-danger")}
         {full && <Help text={t(SIGNUP_HELP)} />}
         {full && status === "coming" && (
           <span className="text-text-muted">
@@ -99,12 +99,12 @@ export function SignupControl({
         )}
         {full && game && !open && (
           <button type="button" className="btn btn-quiet text-xs px-2 py-0.5" onClick={() => setOpen(true)}>
-            Another character or a note
+            {t("Another character or a note")}
           </button>
         )}
         {full && status !== null && !open && (
           <button type="button" className="text-xs text-text-muted hover:text-text cursor-pointer" disabled={act.busy} onClick={() => send("none", false)}>
-            Clear my answer
+            {t("Clear my answer")}
           </button>
         )}
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
@@ -118,12 +118,12 @@ export function SignupControl({
           }}
         >
           <span className="flex items-center gap-1 text-text-muted">
-            Coming with another character
+            {t("Coming with another character")}
             <Help text={OTHER_HELP} />
           </span>
           {mine.length > 0 && (
             <div className="flex flex-wrap items-center gap-2" data-pick-character>
-              <span className="text-text-muted">From your list:</span>
+              <span className="text-text-muted">{t("From your list:")}</span>
               {mine.map((c) => (
                 <button
                   key={c.id}
@@ -141,17 +141,17 @@ export function SignupControl({
             </div>
           )}
           <label className="flex flex-col gap-1 text-text-muted">
-            Character name
+            {t("Character name")}
             <input className="field max-w-xs" value={charName} onChange={(e) => setCharName(e.target.value)} maxLength={24} autoComplete="off" placeholder={info.user.name} />
           </label>
-          <CharacterFields game={game} className={cls} levelBand={band} onClass={setCls} onLevel={setBand} none="As on my profile" />
+          <CharacterFields game={game} className={cls} levelBand={band} onClass={setCls} onLevel={setBand} none={t("As on my profile")} />
           <label className="flex flex-col gap-1 text-text-muted">
-            Note for the organiser (optional)
+            {t("Note for the organiser (optional)")}
             <input className="field" value={note} onChange={(e) => setNote(e.target.value)} maxLength={120} autoComplete="off" />
           </label>
           <div className="flex items-center gap-2">
-            <button className="btn text-sm" disabled={act.busy}>Sign up</button>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setOpen(false)}>Cancel</button>
+            <button className="btn text-sm" disabled={act.busy}>{t("Sign up")}</button>
+            <button type="button" className="btn btn-quiet text-sm" onClick={() => setOpen(false)}>{t("Cancel")}</button>
           </div>
         </form>
       )}

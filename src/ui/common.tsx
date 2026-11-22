@@ -1,4 +1,4 @@
-import { t } from "../words";
+import { d, t } from "../words";
 import { useEffect, useRef, useState } from "react";
 import { APP_NAME, isDesktop } from "../config";
 import { keyLabel } from "../keys";
@@ -144,7 +144,7 @@ export function Meter({ threshold }: { threshold?: number }) {
     <div
       className="relative h-3 rounded-sm bg-bg-2 border border-line overflow-hidden"
       role="img"
-      aria-label="Microphone level"
+      aria-label={t("Microphone level")}
     >
       <div ref={bar} className="h-full" style={{ width: 0 }} />
       {threshold !== undefined && (
@@ -165,7 +165,7 @@ export function KeyBind({ target, label }: { target: BindTarget; label?: string 
         type="button"
         className={`btn text-sm min-w-28 ${code === null && !capturing ? "btn-quiet" : ""}`}
         disabled={capturing}
-        aria-label={`${label ?? target} key`}
+        aria-label={t(`${d(label ?? target)} key`)}
         onClick={async (e) => {
           // Drop focus so a bound Space or Enter does not click this button again.
           e.currentTarget.blur();
@@ -175,13 +175,13 @@ export function KeyBind({ target, label }: { target: BindTarget; label?: string 
           setSettings({ bindings: { ...s.bindings, [target]: next } });
         }}
       >
-        {capturing ? "Press a key…" : code !== null ? keyLabel(code) : "Bind a key"}
+        {capturing ? t("Press a key…") : code !== null ? keyLabel(code) : t("Bind a key")}
       </button>
       {code !== null && !capturing && (
         <button
           type="button"
           className="px-1 text-text-muted hover:text-danger cursor-pointer"
-          aria-label={`Clear ${label ?? target} key`}
+          aria-label={t(`Clear ${d(label ?? target)} key`)}
           onClick={() => setSettings({ bindings: { ...s.bindings, [target]: null } })}
         >
           ×
@@ -197,20 +197,20 @@ export function DevicePickers() {
   return (
     <div className="flex flex-col gap-3">
       <label className="flex flex-col gap-1 text-text-muted">
-        Microphone
+        {t("Microphone")}
         <select className="field" value={s.inputDeviceId} onChange={(e) => setSettings({ inputDeviceId: e.target.value })}>
-          <option value="">System default</option>
+          <option value="">{t("System default")}</option>
           {inputs.filter((d) => d.deviceId !== "default").map((d) => (
-            <option key={d.deviceId} value={d.deviceId}>{d.label || "Microphone"}</option>
+            <option key={d.deviceId} value={d.deviceId}>{d.label || t("Microphone")}</option>
           ))}
         </select>
       </label>
       <label className="flex flex-col gap-1 text-text-muted">
-        Speakers or headset
+        {t("Speakers or headset")}
         <select className="field" value={s.outputDeviceId} onChange={(e) => setSettings({ outputDeviceId: e.target.value })}>
-          <option value="">System default</option>
+          <option value="">{t("System default")}</option>
           {outputs.filter((d) => d.deviceId !== "default").map((d) => (
-            <option key={d.deviceId} value={d.deviceId}>{d.label || "Output"}</option>
+            <option key={d.deviceId} value={d.deviceId}>{d.label || t("Output")}</option>
           ))}
         </select>
       </label>
@@ -242,9 +242,9 @@ export function MicTest() {
             setState("idle");
           }}
         >
-          {state === "recording" ? "Speak now…" : state === "playing" ? "Playing back…" : "Test: record 3 seconds"}
+          {state === "recording" ? t("Speak now…") : state === "playing" ? t("Playing back…") : t("Test: record 3 seconds")}
         </button>
-        <Help text="Records 3 seconds from your microphone and plays them back through your headset, so you hear what others will." />
+        <Help text={t("Records 3 seconds from your microphone and plays them back through your headset, so you hear what others will.")} />
         {error && <span className="text-danger" role="alert">{error}</span>}
       </div>
     </div>
@@ -259,10 +259,10 @@ export function PartyMode() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
         <label className="flex items-center gap-2">
-          <input type="radio" checked={s.partyMode === "ptt"} onChange={() => setSettings({ partyMode: "ptt" })} /> Push-to-talk
+          <input type="radio" checked={s.partyMode === "ptt"} onChange={() => setSettings({ partyMode: "ptt" })} /> {t("Push-to-talk")}
         </label>
         <label className="flex items-center gap-2">
-          <input type="radio" checked={s.partyMode === "voice"} onChange={() => setSettings({ partyMode: "voice" })} /> Voice activation
+          <input type="radio" checked={s.partyMode === "voice"} onChange={() => setSettings({ partyMode: "voice" })} /> {t("Voice activation")}
         </label>
         <Help text={t("Push-to-talk: your mic is open only while you hold your key.\nVoice activation: your mic opens by itself when you speak. It applies to your party, Reserve and the lounge only; Command, Clan and Broadcast always need a key.\nTo bind a key, click the key button, then press the key or mouse button you want. The game still receives the key.")} />
       </div>
@@ -280,7 +280,7 @@ export function PartyMode() {
             max={-10}
             step={1}
             value={s.vadThresholdDb}
-            aria-label="Voice activation sensitivity"
+            aria-label={t("Voice activation sensitivity")}
             onChange={(e) => setSettings({ vadThresholdDb: Number(e.target.value) })}
           />
           <div className="flex flex-wrap items-center gap-3">
@@ -294,11 +294,11 @@ export function PartyMode() {
                 setMeasuring(false);
               }}
             >
-              {measuring ? "Stay quiet for 5 seconds…" : "Auto"}
+              {measuring ? t("Stay quiet for 5 seconds…") : t("Auto")}
             </button>
-            <Help text="Auto measures the noise in your room for 5 seconds and sets the marker just above it." />
+            <Help text={t("Auto measures the noise in your room for 5 seconds and sets the marker just above it.")} />
             <span className="text-text-muted text-xs">
-              The mic opens when your voice keeps the bar past the marker; a click or a knock is too short to open it. Set it above your background noise and below your voice.
+              {t("The mic opens when your voice keeps the bar past the marker; a click or a knock is too short to open it. Set it above your background noise and below your voice.")}
             </span>
           </div>
         </div>
