@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally with 'tu' (second person singular), as Romanian games and chat apps usually do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "alianță",
+   "note": "Feminine; plural alianțe."
+  },
+  {
+   "en": "clan",
+   "term": "clan",
+   "note": "Neuter; plural clanuri."
+  },
+  {
+   "en": "party",
+   "term": "party",
+   "note": "Neuter; hyphen before endings: party-ul, plural party-uri."
+  },
+  {
+   "en": "constant party",
+   "term": "party fix",
+   "note": "Neuter: party-ul fix, plural party-uri fixe; players also say CP."
+  },
+  {
+   "en": "operation",
+   "term": "operațiune",
+   "note": "Feminine; plural operațiuni."
+  },
+  {
+   "en": "net",
+   "term": "canal",
+   "note": "Neuter; plural canale."
+  },
+  {
+   "en": "Broadcast",
+   "term": "Broadcast",
+   "note": "Net name; not declined; write 'canalul Broadcast'."
+  },
+  {
+   "en": "Command",
+   "term": "Comandă",
+   "note": "Net name; feminine; write 'canalul Comandă'."
+  },
+  {
+   "en": "Reserve",
+   "term": "Rezervă",
+   "note": "Net name; feminine; 'în Rezervă', 'canalul Rezervă'."
+  },
+  {
+   "en": "lounge",
+   "term": "lounge",
+   "note": "Neuter; lounge-ul, plural lounge-uri."
+  },
+  {
+   "en": "group",
+   "term": "grup",
+   "note": "Neuter; plural grupuri."
+  },
+  {
+   "en": "roster board",
+   "term": "roster",
+   "note": "Neuter; roster-ul, plural roster-uri."
+  },
+  {
+   "en": "event leader",
+   "term": "lider de eveniment",
+   "note": "Masculine; plural lideri de eveniment."
+  },
+  {
+   "en": "deputy",
+   "term": "adjunct",
+   "note": "Masculine; plural adjuncți."
+  },
+  {
+   "en": "party leader",
+   "term": "lider de party",
+   "note": "Masculine; plural lideri de party."
+  },
+  {
+   "en": "clan leader",
+   "term": "lider de clan",
+   "note": "Masculine; plural lideri de clan."
+  },
+  {
+   "en": "officer",
+   "term": "ofițer",
+   "note": "Masculine; plural ofițeri."
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin de alianță",
+   "note": "Masculine; plural admini de alianță."
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "Neuter; not declined; abbreviation PTT."
+  },
+  {
+   "en": "voice activation",
+   "term": "activare vocală",
+   "note": "Feminine."
+  },
+  {
+   "en": "headset",
+   "term": "căști",
+   "note": "Feminine plural only: căștile; 'căști oprite' for headset off."
+  },
+  {
+   "en": "quick call",
+   "term": "mesaj rapid",
+   "note": "Neuter; plural mesaje rapide."
+  },
+  {
+   "en": "order",
+   "term": "ordin",
+   "note": "Neuter; plural ordine (not ordinuri)."
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "Neuter; ready check-ul; not otherwise declined."
+  },
+  {
+   "en": "sign-up",
+   "term": "înscriere",
+   "note": "Feminine; plural înscrieri."
+  },
+  {
+   "en": "compact strip",
+   "term": "bară compactă",
+   "note": "Feminine; plural bare compacte."
+  },
+  {
+   "en": "key",
+   "term": "tastă",
+   "note": "Feminine; plural taste; also covers mouse buttons."
+  },
+  {
+   "en": "Call to arms",
+   "term": "Chemare la arme",
+   "note": "Feminine; plural chemări la arme."
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "Invariable; not declined."
+  },
+  {
+   "en": "invite link",
+   "term": "link de invitație",
+   "note": "Neuter; plural linkuri de invitație."
+  },
+  {
+   "en": "Settings",
+   "term": "Setări",
+   "note": "Feminine plural."
+  }
+ ]
+}

@@ -6,7 +6,7 @@
 import { tn } from "../i18n";
 import { useEffect, useRef, useState } from "react";
 import type { ChatChannel, ChatLineView, ChatView } from "../chat";
-import { d, t } from "../words";
+import { d, said, t } from "../words";
 import { NET_TEXT } from "./net-style";
 
 export type ChatActions = {
@@ -217,7 +217,7 @@ export function ChatPanel({
             className={`cursor-pointer rounded-sm px-2 text-[11px] font-semibold uppercase tracking-wider ${c.room === channel.room ? `${NET_TEXT[c.net]} bg-white/10` : "text-text-muted hover:text-text"}`}
             onClick={() => setRoom(c.room)}
           >
-            {c.label}
+            {said(c.say, c.label)}
             {view.unread[c.room] && c.room !== channel.room && <span className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-gold-bright align-middle" role="img" aria-label={t("New lines")} />}
           </button>
         ))}
@@ -308,7 +308,7 @@ export function ChatPanel({
           }}
           maxLength={300}
           readOnly={!!cannot}
-          placeholder={cannot || (pinning ? t("The order, pinned for everyone on the operation") : typing && onDone ? t("Enter sends, Esc gives up") : t(`Write to ${d(channel.label)}`))}
+          placeholder={cannot || (pinning ? t("The order, pinned for everyone on the operation") : typing && onDone ? t("Enter sends, Esc gives up") : t(`Write to ${d(said(channel.say, channel.label))}`))}
           aria-label={t("Chat line")}
           autoComplete="off"
           spellCheck={false}

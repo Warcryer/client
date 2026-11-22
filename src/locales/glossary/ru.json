@@ -1,0 +1,160 @@
+{
+ "address": "Address the player as «вы» (lowercase, neutral-polite), as Russian game and chat app interfaces usually do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "альянс",
+   "note": "masculine"
+  },
+  {
+   "en": "clan",
+   "term": "клан",
+   "note": "masculine"
+  },
+  {
+   "en": "party",
+   "term": "пати",
+   "note": "feminine (наша пати); not declined; plural also пати"
+  },
+  {
+   "en": "constant party",
+   "term": "КП",
+   "note": "short for конст-пати; feminine; not declined; spoken «кэпэ»"
+  },
+  {
+   "en": "operation",
+   "term": "ивент",
+   "note": "masculine; declines normally"
+  },
+  {
+   "en": "net",
+   "term": "канал",
+   "note": "masculine"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Общий",
+   "note": "adjective agreeing with канал (Общий канал); masculine"
+  },
+  {
+   "en": "Command",
+   "term": "Командный",
+   "note": "adjective agreeing with канал; masculine"
+  },
+  {
+   "en": "Reserve",
+   "term": "Резерв",
+   "note": "masculine; «в резерве»"
+  },
+  {
+   "en": "lounge",
+   "term": "комната клана",
+   "note": "feminine; only комната declines"
+  },
+  {
+   "en": "group",
+   "term": "группа",
+   "note": "feminine; keep distinct from пати"
+  },
+  {
+   "en": "roster board",
+   "term": "расстановка",
+   "note": "feminine"
+  },
+  {
+   "en": "event leader",
+   "term": "РЛ",
+   "note": "raid leader; masculine; not declined in writing; spoken «эрэл»"
+  },
+  {
+   "en": "deputy",
+   "term": "зам",
+   "note": "masculine; plural замы"
+  },
+  {
+   "en": "party leader",
+   "term": "ПЛ",
+   "note": "masculine; not declined in writing; spoken «пээл»"
+  },
+  {
+   "en": "clan leader",
+   "term": "КЛ",
+   "note": "masculine; not declined in writing; spoken «каэл»"
+  },
+  {
+   "en": "officer",
+   "term": "офицер",
+   "note": "masculine"
+  },
+  {
+   "en": "alliance admin",
+   "term": "админ альянса",
+   "note": "masculine; only админ declines"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "keep in English, often PTT; neuter; not declined"
+  },
+  {
+   "en": "voice activation",
+   "term": "активация по голосу",
+   "note": "feminine; only активация declines"
+  },
+  {
+   "en": "headset",
+   "term": "наушники",
+   "note": "plural only; headset off = «наушники выкл.»"
+  },
+  {
+   "en": "quick call",
+   "term": "быстрая фраза",
+   "note": "feminine"
+  },
+  {
+   "en": "order",
+   "term": "приказ",
+   "note": "masculine"
+  },
+  {
+   "en": "ready check",
+   "term": "проверка готовности",
+   "note": "feminine; only проверка declines"
+  },
+  {
+   "en": "sign-up",
+   "term": "запись",
+   "note": "feminine (запись на ивент)"
+  },
+  {
+   "en": "compact strip",
+   "term": "оверлей",
+   "note": "masculine"
+  },
+  {
+   "en": "key",
+   "term": "кнопка",
+   "note": "feminine; covers keys and mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Общий сбор",
+   "note": "masculine; both words decline"
+  },
+  {
+   "en": "away",
+   "term": "АФК",
+   "note": "not declined; used as predicate (он АФК)"
+  },
+  {
+   "en": "invite link",
+   "term": "инвайт-ссылка",
+   "note": "feminine; only ссылка declines"
+  },
+  {
+   "en": "Settings",
+   "term": "Настройки",
+   "note": "plural only"
+  }
+ ]
+}

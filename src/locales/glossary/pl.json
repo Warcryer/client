@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally with 'ty' (second person singular), as Polish games and chat apps do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "sojusz",
+   "note": "masculine; also 'ally' in slang"
+  },
+  {
+   "en": "clan",
+   "term": "klan",
+   "note": "masculine"
+  },
+  {
+   "en": "party",
+   "term": "party",
+   "note": "neuter, not declined (w party, do party); abbr. PT"
+  },
+  {
+   "en": "constant party",
+   "term": "stałe party",
+   "note": "neuter, 'party' not declined; abbr. CP"
+  },
+  {
+   "en": "operation",
+   "term": "akcja",
+   "note": "feminine"
+  },
+  {
+   "en": "net",
+   "term": "kanał",
+   "note": "masculine; plural kanały"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Ogólny",
+   "note": "channel name; masculine adjective agreeing with 'kanał'"
+  },
+  {
+   "en": "Command",
+   "term": "Dowództwo",
+   "note": "channel name; neuter"
+  },
+  {
+   "en": "Reserve",
+   "term": "Rezerwa",
+   "note": "channel name; feminine"
+  },
+  {
+   "en": "lounge",
+   "term": "pokój klanowy",
+   "note": "masculine; plural pokoje klanowe"
+  },
+  {
+   "en": "group",
+   "term": "grupa",
+   "note": "feminine"
+  },
+  {
+   "en": "roster board",
+   "term": "tablica składów",
+   "note": "feminine; 'skład' = a party's lineup"
+  },
+  {
+   "en": "event leader",
+   "term": "lider akcji",
+   "note": "masculine; only 'lider' declines"
+  },
+  {
+   "en": "deputy",
+   "term": "zastępca",
+   "note": "masculine noun declined like feminine -a nouns"
+  },
+  {
+   "en": "party leader",
+   "term": "lider party",
+   "note": "masculine; 'party' not declined; abbr. PL"
+  },
+  {
+   "en": "clan leader",
+   "term": "lider klanu",
+   "note": "masculine; abbr. CL"
+  },
+  {
+   "en": "officer",
+   "term": "oficer",
+   "note": "masculine; plural oficerowie"
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin sojuszu",
+   "note": "masculine; plural admini"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "neuter, not declined; abbr. PTT"
+  },
+  {
+   "en": "voice activation",
+   "term": "aktywacja głosowa",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "słuchawki",
+   "note": "plural only; 'headset off' = słuchawki wyłączone"
+  },
+  {
+   "en": "quick call",
+   "term": "szybki komunikat",
+   "note": "masculine"
+  },
+  {
+   "en": "order",
+   "term": "rozkaz",
+   "note": "masculine"
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "masculine; usually not declined"
+  },
+  {
+   "en": "sign-up",
+   "term": "zapis",
+   "note": "masculine; plural zapisy"
+  },
+  {
+   "en": "compact strip",
+   "term": "pasek",
+   "note": "masculine; plural paski"
+  },
+  {
+   "en": "key",
+   "term": "klawisz",
+   "note": "masculine; use 'przycisk' for mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Wezwanie do broni",
+   "note": "neuter"
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "not declined; used as 'jest AFK'"
+  },
+  {
+   "en": "invite link",
+   "term": "link z zaproszeniem",
+   "note": "masculine"
+  },
+  {
+   "en": "Settings",
+   "term": "Ustawienia",
+   "note": "plural only"
+  }
+ ]
+}

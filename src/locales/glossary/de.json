@@ -1,0 +1,165 @@
+{
+ "address": "Address the player informally with \"du\" (lowercase in running text), as German games and chat apps do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "Allianz",
+   "note": "feminine; plural Allianzen"
+  },
+  {
+   "en": "clan",
+   "term": "Clan",
+   "note": "masculine; plural Clans"
+  },
+  {
+   "en": "party",
+   "term": "Party",
+   "note": "feminine; plural Partys; avoid \"Gruppe\" here, it is used for group"
+  },
+  {
+   "en": "constant party",
+   "term": "Stammparty",
+   "note": "feminine; plural Stammpartys"
+  },
+  {
+   "en": "operation",
+   "term": "Event",
+   "note": "neuter; plural Events"
+  },
+  {
+   "en": "net",
+   "term": "Kanal",
+   "note": "masculine; plural Kanäle"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Durchsage",
+   "note": "feminine; name of a channel"
+  },
+  {
+   "en": "Command",
+   "term": "Führung",
+   "note": "feminine; name of a channel"
+  },
+  {
+   "en": "Reserve",
+   "term": "Reserve",
+   "note": "feminine; name of a channel"
+  },
+  {
+   "en": "lounge",
+   "term": "Lounge",
+   "note": "feminine; plural Lounges"
+  },
+  {
+   "en": "group",
+   "term": "Runde",
+   "note": "feminine; plural Runden; keep distinct from Party"
+  },
+  {
+   "en": "roster board",
+   "term": "Aufstellung",
+   "note": "feminine"
+  },
+  {
+   "en": "event leader",
+   "term": "Eventleiter",
+   "note": "masculine; feminine Eventleiterin"
+  },
+  {
+   "en": "deputy",
+   "term": "Stellvertreter",
+   "note": "masculine; feminine Stellvertreterin"
+  },
+  {
+   "en": "party leader",
+   "term": "Partyleiter",
+   "note": "masculine; feminine Partyleiterin"
+  },
+  {
+   "en": "clan leader",
+   "term": "Clanleiter",
+   "note": "masculine; feminine Clanleiterin"
+  },
+  {
+   "en": "officer",
+   "term": "Offizier",
+   "note": "masculine; plural Offiziere; feminine Offizierin"
+  },
+  {
+   "en": "alliance admin",
+   "term": "Allianz-Admin",
+   "note": "masculine; plural Allianz-Admins"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "Push-to-Talk",
+   "note": "neuter; not declined"
+  },
+  {
+   "en": "voice activation",
+   "term": "Sprachaktivierung",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "Headset",
+   "note": "neuter; plural Headsets"
+  },
+  {
+   "en": "quick call",
+   "term": "Schnellruf",
+   "note": "masculine; plural Schnellrufe"
+  },
+  {
+   "en": "order",
+   "term": "Befehl",
+   "note": "masculine; plural Befehle"
+  },
+  {
+   "en": "ready check",
+   "term": "Ready-Check",
+   "note": "masculine; plural Ready-Checks"
+  },
+  {
+   "en": "sign-up",
+   "term": "Anmeldung",
+   "note": "feminine"
+  },
+  {
+   "en": "compact strip",
+   "term": "Kompaktleiste",
+   "note": "feminine"
+  },
+  {
+   "en": "key",
+   "term": "Taste",
+   "note": "feminine; also covers mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Zu den Waffen",
+   "note": "fixed name, not declined; may end with an exclamation mark"
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "not declined; used as a status adjective"
+  },
+  {
+   "en": "invite link",
+   "term": "Einladungslink",
+   "note": "masculine; plural Einladungslinks"
+  },
+  {
+   "en": "Settings",
+   "term": "Einstellungen",
+   "note": "plural only"
+  },
+  {
+   "en": "Voice",
+   "term": "Sprachchat",
+   "note": "the app's main screen, where the player's nets are; not 'Sprache', which is what the Language setting is called"
+  }
+ ]
+}

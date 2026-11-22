@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally with 'tu' (singular verbs, 'tavo'), as Lithuanian games and gaming chat apps usually do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "aljansas",
+   "note": "Masculine."
+  },
+  {
+   "en": "clan",
+   "term": "klanas",
+   "note": "Masculine."
+  },
+  {
+   "en": "party",
+   "term": "grupė",
+   "note": "Feminine. Keep it distinct from 'kambarys' (group)."
+  },
+  {
+   "en": "constant party",
+   "term": "nuolatinė grupė",
+   "note": "Feminine."
+  },
+  {
+   "en": "operation",
+   "term": "eventas",
+   "note": "Masculine; established gamer slang, declined normally (evento, eventai)."
+  },
+  {
+   "en": "net",
+   "term": "kanalas",
+   "note": "Masculine."
+  },
+  {
+   "en": "Broadcast",
+   "term": "Transliacija",
+   "note": "Feminine; capitalized as a net name."
+  },
+  {
+   "en": "Command",
+   "term": "Vadovybė",
+   "note": "Feminine; capitalized as a net name."
+  },
+  {
+   "en": "Reserve",
+   "term": "Rezervas",
+   "note": "Masculine; capitalized as a net name."
+  },
+  {
+   "en": "lounge",
+   "term": "svetainė",
+   "note": "Feminine; usually 'klano svetainė'."
+  },
+  {
+   "en": "group",
+   "term": "kambarys",
+   "note": "Masculine; a voice room, not to be confused with 'grupė' (party)."
+  },
+  {
+   "en": "roster board",
+   "term": "sudėties lenta",
+   "note": "Feminine."
+  },
+  {
+   "en": "event leader",
+   "term": "evento lyderis",
+   "note": "Masculine; feminine form is 'evento lyderė'."
+  },
+  {
+   "en": "deputy",
+   "term": "pavaduotojas",
+   "note": "Masculine; feminine form is 'pavaduotoja'."
+  },
+  {
+   "en": "party leader",
+   "term": "grupės lyderis",
+   "note": "Masculine; feminine form is 'grupės lyderė'."
+  },
+  {
+   "en": "clan leader",
+   "term": "klano lyderis",
+   "note": "Masculine; feminine form is 'klano lyderė'."
+  },
+  {
+   "en": "officer",
+   "term": "oficierius",
+   "note": "Masculine; plural 'oficieriai'."
+  },
+  {
+   "en": "alliance admin",
+   "term": "aljanso adminas",
+   "note": "Masculine; colloquial form of 'administratorius', declined normally."
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "Kept in English and not declined; 'PTT' is also understood."
+  },
+  {
+   "en": "voice activation",
+   "term": "balso aktyvavimas",
+   "note": "Masculine."
+  },
+  {
+   "en": "headset",
+   "term": "ausinės",
+   "note": "Feminine, plural only; 'headset off' is 'ausinės išjungtos'."
+  },
+  {
+   "en": "quick call",
+   "term": "greitoji žinutė",
+   "note": "Feminine; uses the definite adjective form."
+  },
+  {
+   "en": "order",
+   "term": "įsakymas",
+   "note": "Masculine."
+  },
+  {
+   "en": "ready check",
+   "term": "pasiruošimo patikra",
+   "note": "Feminine."
+  },
+  {
+   "en": "sign-up",
+   "term": "registracija",
+   "note": "Feminine."
+  },
+  {
+   "en": "compact strip",
+   "term": "kompaktiška juosta",
+   "note": "Feminine."
+  },
+  {
+   "en": "key",
+   "term": "klavišas",
+   "note": "Masculine; use 'mygtukas' when it is a mouse button."
+  },
+  {
+   "en": "Call to arms",
+   "term": "Visi į kovą",
+   "note": "Fixed phrase, not declined."
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "Not declined; pronounced 'a-ef-ka'."
+  },
+  {
+   "en": "invite link",
+   "term": "pakvietimo nuoroda",
+   "note": "Feminine."
+  },
+  {
+   "en": "Settings",
+   "term": "Nustatymai",
+   "note": "Masculine, plural only."
+  }
+ ]
+}

@@ -92,6 +92,7 @@ How to write:
 
 What must not change:
 - Places in braces are filled in by the app: {0}, {1}, {name}, {n}. Keep every one of them, exactly as written, each once; put it where the grammar of ${ALL[lang]} wants it. Never translate what is inside the braces.
+- What fills a place is put in as it is, in its dictionary form: a player's name, a party's, a net's ("Ignite Blue lounge"), a number. Where the language would have to decline it, build the sentence so that it need not be (a colon before it, or the place as the subject).
 - Keep line breaks (\\n) where they are: each line is a paragraph of a help text.
 - Keep a trailing "…" or ":" and any symbol such as "▲", "▼", "✕", "✓", "·".
 - Text in double quotes inside a sentence that names a button or a setting of the app is translated the same way as that button or setting.

@@ -1,0 +1,160 @@
+{
+ "address": "Use informal \"tu\" throughout, as French games and chat apps like Discord do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "alliance",
+   "note": "Feminine."
+  },
+  {
+   "en": "clan",
+   "term": "clan",
+   "note": "Masculine."
+  },
+  {
+   "en": "party",
+   "term": "groupe",
+   "note": "Masculine. Do not use for the voice room \"group\", which is \"salon\"."
+  },
+  {
+   "en": "constant party",
+   "term": "groupe fixe",
+   "note": "Masculine; plural \"groupes fixes\"."
+  },
+  {
+   "en": "operation",
+   "term": "opération",
+   "note": "Feminine."
+  },
+  {
+   "en": "net",
+   "term": "canal",
+   "note": "Masculine; irregular plural \"canaux\"."
+  },
+  {
+   "en": "Broadcast",
+   "term": "Diffusion",
+   "note": "Feminine; proper name of a net, capitalized."
+  },
+  {
+   "en": "Command",
+   "term": "Commandement",
+   "note": "Masculine; proper name of a net, capitalized."
+  },
+  {
+   "en": "Reserve",
+   "term": "Réserve",
+   "note": "Feminine; proper name of a net, capitalized."
+  },
+  {
+   "en": "lounge",
+   "term": "QG",
+   "note": "Masculine; invariable (\"les QG\"); short for quartier général, as in \"le QG du clan\"."
+  },
+  {
+   "en": "group",
+   "term": "salon",
+   "note": "Masculine. A temporary voice room; never call it \"groupe\", which means a party."
+  },
+  {
+   "en": "roster board",
+   "term": "tableau des groupes",
+   "note": "Masculine."
+  },
+  {
+   "en": "event leader",
+   "term": "lead",
+   "note": "Masculine noun, also used for a woman (\"la lead\"); plural \"leads\"."
+  },
+  {
+   "en": "deputy",
+   "term": "adjoint",
+   "note": "Feminine \"adjointe\"."
+  },
+  {
+   "en": "party leader",
+   "term": "chef de groupe",
+   "note": "Same form for women (\"la chef de groupe\"); plural \"chefs de groupe\"."
+  },
+  {
+   "en": "clan leader",
+   "term": "chef de clan",
+   "note": "Same form for women; plural \"chefs de clan\"."
+  },
+  {
+   "en": "officer",
+   "term": "officier",
+   "note": "Feminine \"officière\"."
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin d'alliance",
+   "note": "Same form for both genders; plural \"admins d'alliance\"."
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "Masculine; invariable; often shortened to PTT."
+  },
+  {
+   "en": "voice activation",
+   "term": "activation vocale",
+   "note": "Feminine."
+  },
+  {
+   "en": "headset",
+   "term": "casque",
+   "note": "Masculine; \"headset off\" = \"casque coupé\"."
+  },
+  {
+   "en": "quick call",
+   "term": "message rapide",
+   "note": "Masculine."
+  },
+  {
+   "en": "order",
+   "term": "consigne",
+   "note": "Feminine."
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "Masculine; invariable."
+  },
+  {
+   "en": "sign-up",
+   "term": "inscription",
+   "note": "Feminine."
+  },
+  {
+   "en": "compact strip",
+   "term": "barre compacte",
+   "note": "Feminine."
+  },
+  {
+   "en": "key",
+   "term": "touche",
+   "note": "Feminine; also covers mouse buttons."
+  },
+  {
+   "en": "Call to arms",
+   "term": "Appel aux armes",
+   "note": "Masculine."
+  },
+  {
+   "en": "away",
+   "term": "absent",
+   "note": "Adjective; agrees: \"absente\", \"absents\". AFK also understood."
+  },
+  {
+   "en": "invite link",
+   "term": "lien d'invitation",
+   "note": "Masculine."
+  },
+  {
+   "en": "Settings",
+   "term": "Paramètres",
+   "note": "Masculine plural."
+  }
+ ]
+}

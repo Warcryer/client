@@ -11,7 +11,7 @@ import { t } from "./words";
 import type { ChatEvent, ChatOrder, ControlClient, NetSet, ReadyAsk, ReadyState } from "./control";
 import type { NetKind } from "./settings";
 
-export type ChatChannel = { room: string; net: NetKind; label: string; write: boolean };
+export type ChatChannel = { room: string; net: NetKind; label: string; /** As NetGrant's: the name's sentence, for said(). */ say?: string; write: boolean };
 /** `userId` null: a note from the app itself (you were moved here; a line was not sent), not something anyone wrote. */
 export type ChatLineView = { id: number; userId: number | null; name: string; tag: string | null; text: string; at: string; /** Sent as a quick call. */ quick?: true; /** The line in the player's language, when it was translated for them. */ tr?: string };
 export type ChatView = {
@@ -155,7 +155,7 @@ export const chat = {
     const channels: ChatChannel[] = op || between
       ? next.nets
           .filter((n) => (op ? n.room.startsWith("op-") : n.net === "lounge" || n.net === "group"))
-          .map((n) => ({ room: n.room, net: n.net, label: n.label, write: n.write === true }))
+          .map((n) => ({ room: n.room, net: n.net, label: n.label, say: n.say, write: n.write === true }))
           .sort((a, b) => ORDER.indexOf(a.net) - ORDER.indexOf(b.net) || (a.room.startsWith("lounge-alliance") ? 1 : 0) - (b.room.startsWith("lounge-alliance") ? 1 : 0))
       : [];
     const sameOp = (op !== null && view.operation?.id === op.id) || (between && view.between);

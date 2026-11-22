@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally as \"sen\" (imperatives like \"Katıl\", \"Bas\"), as Turkish games and Discord do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "ittifak",
+   "note": "Final k softens before vowel suffixes: ittifakı, ittifaka."
+  },
+  {
+   "en": "clan",
+   "term": "klan",
+   "note": ""
+  },
+  {
+   "en": "party",
+   "term": "parti",
+   "note": "Players also say \"pt\"; use \"parti\" in UI."
+  },
+  {
+   "en": "constant party",
+   "term": "sabit parti",
+   "note": ""
+  },
+  {
+   "en": "operation",
+   "term": "operasyon",
+   "note": ""
+  },
+  {
+   "en": "net",
+   "term": "kanal",
+   "note": "Five fixed nets: Yayın, Komuta, Klan, Parti, Yedek."
+  },
+  {
+   "en": "Broadcast",
+   "term": "Yayın",
+   "note": "Proper name of a net; capitalize."
+  },
+  {
+   "en": "Command",
+   "term": "Komuta",
+   "note": "Proper name of a net; capitalize."
+  },
+  {
+   "en": "Reserve",
+   "term": "Yedek",
+   "note": "Proper name of a net; capitalize."
+  },
+  {
+   "en": "lounge",
+   "term": "salon",
+   "note": "Usually as \"klan salonu\"."
+  },
+  {
+   "en": "group",
+   "term": "grup",
+   "note": "Final p softens before vowel suffixes: grubu, gruba."
+  },
+  {
+   "en": "roster board",
+   "term": "kadro panosu",
+   "note": "Compound; inflect the second word: kadro panosunda."
+  },
+  {
+   "en": "event leader",
+   "term": "etkinlik lideri",
+   "note": "Compound; inflect the second word: etkinlik liderine."
+  },
+  {
+   "en": "deputy",
+   "term": "lider yardımcısı",
+   "note": "Short form \"yardımcı\" is fine in tight UI."
+  },
+  {
+   "en": "party leader",
+   "term": "parti lideri",
+   "note": ""
+  },
+  {
+   "en": "clan leader",
+   "term": "klan lideri",
+   "note": ""
+  },
+  {
+   "en": "officer",
+   "term": "yetkili",
+   "note": "Not \"subay\" (military rank)."
+  },
+  {
+   "en": "alliance admin",
+   "term": "ittifak yöneticisi",
+   "note": ""
+  },
+  {
+   "en": "push-to-talk",
+   "term": "bas-konuş",
+   "note": "Hyphenated; Discord's Turkish term."
+  },
+  {
+   "en": "voice activation",
+   "term": "ses etkinliği",
+   "note": "Discord's Turkish term."
+  },
+  {
+   "en": "headset",
+   "term": "kulaklık",
+   "note": "\"Headset off\" = \"kulaklık kapalı\"."
+  },
+  {
+   "en": "quick call",
+   "term": "hızlı mesaj",
+   "note": ""
+  },
+  {
+   "en": "order",
+   "term": "emir",
+   "note": "Drops the i before vowel suffixes: emri, emre."
+  },
+  {
+   "en": "ready check",
+   "term": "hazır kontrolü",
+   "note": ""
+  },
+  {
+   "en": "sign-up",
+   "term": "katılım",
+   "note": "Answers: katılıyorum / katılmıyorum."
+  },
+  {
+   "en": "compact strip",
+   "term": "mini şerit",
+   "note": ""
+  },
+  {
+   "en": "key",
+   "term": "tuş",
+   "note": "For bindings: \"tuş ataması\"."
+  },
+  {
+   "en": "Call to arms",
+   "term": "Silah başına",
+   "note": "Fixed Turkish idiom; usually with \"!\"."
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "Not declined as a status label; if suffixed, use an apostrophe: AFK'ya."
+  },
+  {
+   "en": "invite link",
+   "term": "davet bağlantısı",
+   "note": ""
+  },
+  {
+   "en": "Settings",
+   "term": "Ayarlar",
+   "note": "Always plural."
+  }
+ ]
+}

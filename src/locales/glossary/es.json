@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally as tú, as games and chat apps in Spanish do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "alianza",
+   "note": "feminine"
+  },
+  {
+   "en": "clan",
+   "term": "clan",
+   "note": "masculine; plural clanes"
+  },
+  {
+   "en": "party",
+   "term": "party",
+   "note": "English loan; feminine (la party); plural parties"
+  },
+  {
+   "en": "constant party",
+   "term": "party fija",
+   "note": "feminine; plural parties fijas"
+  },
+  {
+   "en": "operation",
+   "term": "operación",
+   "note": "feminine; plural operaciones"
+  },
+  {
+   "en": "net",
+   "term": "canal",
+   "note": "masculine; plural canales"
+  },
+  {
+   "en": "Broadcast",
+   "term": "General",
+   "note": "name of a canal; masculine (el canal General); not declined"
+  },
+  {
+   "en": "Command",
+   "term": "Mando",
+   "note": "name of a canal; masculine (el canal de Mando)"
+  },
+  {
+   "en": "Reserve",
+   "term": "Reserva",
+   "note": "feminine; capitalized as a canal name"
+  },
+  {
+   "en": "lounge",
+   "term": "sala del clan",
+   "note": "feminine"
+  },
+  {
+   "en": "group",
+   "term": "grupo",
+   "note": "masculine; distinct from party"
+  },
+  {
+   "en": "roster board",
+   "term": "tablero de parties",
+   "note": "masculine"
+  },
+  {
+   "en": "event leader",
+   "term": "líder de operación",
+   "note": "same form for both genders (el/la líder); plural líderes"
+  },
+  {
+   "en": "deputy",
+   "term": "segundo al mando",
+   "note": "feminine segunda al mando; plural segundos al mando"
+  },
+  {
+   "en": "party leader",
+   "term": "líder de party",
+   "note": "same form for both genders; plural líderes de party"
+  },
+  {
+   "en": "clan leader",
+   "term": "líder del clan",
+   "note": "same form for both genders; plural líderes"
+  },
+  {
+   "en": "officer",
+   "term": "oficial",
+   "note": "same form for both genders; plural oficiales"
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin de la alianza",
+   "note": "same form for both genders; plural admins"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "pulsar para hablar",
+   "note": "masculine when used as a noun; not declined; abbreviation PTT is fine"
+  },
+  {
+   "en": "voice activation",
+   "term": "detección de voz",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "auriculares",
+   "note": "masculine plural; 'headset off' = ensordecido"
+  },
+  {
+   "en": "quick call",
+   "term": "aviso rápido",
+   "note": "masculine; plural avisos rápidos"
+  },
+  {
+   "en": "order",
+   "term": "orden",
+   "note": "feminine here (la orden); plural órdenes"
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "English loan; masculine; not declined"
+  },
+  {
+   "en": "sign-up",
+   "term": "inscripción",
+   "note": "feminine; plural inscripciones"
+  },
+  {
+   "en": "compact strip",
+   "term": "barra compacta",
+   "note": "feminine"
+  },
+  {
+   "en": "key",
+   "term": "tecla",
+   "note": "feminine; for mouse buttons use botón"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Llamada a las armas",
+   "note": "feminine"
+  },
+  {
+   "en": "away",
+   "term": "ausente",
+   "note": "adjective; same form for both genders"
+  },
+  {
+   "en": "invite link",
+   "term": "enlace de invitación",
+   "note": "masculine"
+  },
+  {
+   "en": "Settings",
+   "term": "Ajustes",
+   "note": "masculine plural"
+  }
+ ]
+}

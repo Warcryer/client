@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally in the second person singular (εσύ), as Greek games and chat apps do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "συμμαχία",
+   "note": "feminine; plural συμμαχίες"
+  },
+  {
+   "en": "clan",
+   "term": "clan",
+   "note": "neuter (το clan); not declined, written in Latin letters"
+  },
+  {
+   "en": "party",
+   "term": "party",
+   "note": "neuter (το party); not declined, Latin letters"
+  },
+  {
+   "en": "constant party",
+   "term": "σταθερό party",
+   "note": "neuter; only the adjective declines (σταθερά party)"
+  },
+  {
+   "en": "operation",
+   "term": "επιχείρηση",
+   "note": "feminine; plural επιχειρήσεις"
+  },
+  {
+   "en": "net",
+   "term": "κανάλι",
+   "note": "neuter; plural κανάλια"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Γενικό",
+   "note": "neuter, agrees with κανάλι; net name, capitalized"
+  },
+  {
+   "en": "Command",
+   "term": "Διοίκηση",
+   "note": "feminine; net name, capitalized"
+  },
+  {
+   "en": "Reserve",
+   "term": "Εφεδρεία",
+   "note": "feminine; net name, capitalized"
+  },
+  {
+   "en": "lounge",
+   "term": "στέκι",
+   "note": "neuter; plural στέκια"
+  },
+  {
+   "en": "group",
+   "term": "group",
+   "note": "neuter (το group); not declined; keep distinct from party"
+  },
+  {
+   "en": "roster board",
+   "term": "πίνακας σύνθεσης",
+   "note": "masculine; only πίνακας declines"
+  },
+  {
+   "en": "event leader",
+   "term": "επικεφαλής",
+   "note": "common gender (ο/η); not declined"
+  },
+  {
+   "en": "deputy",
+   "term": "υπαρχηγός",
+   "note": "common gender (ο/η); plural υπαρχηγοί"
+  },
+  {
+   "en": "party leader",
+   "term": "αρχηγός party",
+   "note": "common gender (ο/η); only αρχηγός declines"
+  },
+  {
+   "en": "clan leader",
+   "term": "αρχηγός clan",
+   "note": "common gender (ο/η); only αρχηγός declines"
+  },
+  {
+   "en": "officer",
+   "term": "αξιωματικός",
+   "note": "common gender (ο/η); plural αξιωματικοί"
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin συμμαχίας",
+   "note": "common gender (ο/η admin); admin not declined"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "neuter (το push-to-talk); not declined"
+  },
+  {
+   "en": "voice activation",
+   "term": "ενεργοποίηση με φωνή",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "ακουστικά",
+   "note": "neuter plural; 'headset off' = ακουστικά κλειστά"
+  },
+  {
+   "en": "quick call",
+   "term": "γρήγορο μήνυμα",
+   "note": "neuter; plural γρήγορα μηνύματα"
+  },
+  {
+   "en": "order",
+   "term": "εντολή",
+   "note": "feminine; plural εντολές"
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "neuter (το ready check); not declined"
+  },
+  {
+   "en": "sign-up",
+   "term": "δήλωση συμμετοχής",
+   "note": "feminine; plural δηλώσεις συμμετοχής"
+  },
+  {
+   "en": "compact strip",
+   "term": "μικρή μπάρα",
+   "note": "feminine; plural μικρές μπάρες"
+  },
+  {
+   "en": "key",
+   "term": "πλήκτρο",
+   "note": "neuter; plural πλήκτρα; also covers mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Στα όπλα!",
+   "note": "fixed exclamation; not declined"
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "not declined; used as status label"
+  },
+  {
+   "en": "invite link",
+   "term": "link πρόσκλησης",
+   "note": "neuter (το link); link not declined"
+  },
+  {
+   "en": "Settings",
+   "term": "Ρυθμίσεις",
+   "note": "feminine plural"
+  }
+ ]
+}

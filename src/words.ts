@@ -35,6 +35,15 @@ export const t = (text: string): string => {
 };
 
 /**
+ * A name the server made, in the player's language: `say` is the sentence the server made it from, `label`
+ * what it reads in English in the alliance's words. A name people chose comes without a sentence and stays.
+ */
+export const said = (say: string | undefined, label: string): string => {
+  const other = catalogue();
+  return (say !== undefined && other && translate(other, say)) || label;
+};
+
+/**
  * Marks a word that is meant in the app's own sense and must stay as written: where an admin
  * chooses what a "clan" is called, the row has to say "clan" whatever they have chosen.
  */

@@ -7,7 +7,7 @@
 // set and apply() makes the connections match it: new rooms are joined first,
 // old ones left afterwards, so a move has no silent gap.
 
-import { d, t } from "./words";
+import { d, said, t } from "./words";
 import {
   AudioPresets,
   ConnectionState,
@@ -831,7 +831,7 @@ export class VoiceEngine {
                 : "reconnecting";
         return {
           net: net.grant.net,
-          label: net.grant.label,
+          label: said(net.grant.say, net.grant.label),
           room: net.grant.room,
           state,
           speak: net.grant.speak && !!net.track,

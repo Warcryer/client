@@ -1,0 +1,160 @@
+{
+ "address": "Address the player informally as \"você\" (with third-person verb forms), as Brazilian games and chat apps do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "aliança",
+   "note": "feminine"
+  },
+  {
+   "en": "clan",
+   "term": "clã",
+   "note": "masculine; plural clãs"
+  },
+  {
+   "en": "party",
+   "term": "party",
+   "note": "feminine (a party); plural parties"
+  },
+  {
+   "en": "constant party",
+   "term": "party fixa",
+   "note": "feminine; plural parties fixas"
+  },
+  {
+   "en": "operation",
+   "term": "operação",
+   "note": "feminine; plural operações"
+  },
+  {
+   "en": "net",
+   "term": "canal",
+   "note": "masculine; plural canais"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Geral",
+   "note": "name of a net: o canal Geral"
+  },
+  {
+   "en": "Command",
+   "term": "Comando",
+   "note": "masculine; o canal Comando"
+  },
+  {
+   "en": "Reserve",
+   "term": "Reserva",
+   "note": "feminine; na Reserva"
+  },
+  {
+   "en": "lounge",
+   "term": "lounge",
+   "note": "masculine; plural lounges"
+  },
+  {
+   "en": "group",
+   "term": "grupo",
+   "note": "masculine"
+  },
+  {
+   "en": "roster board",
+   "term": "quadro de escalação",
+   "note": "masculine"
+  },
+  {
+   "en": "event leader",
+   "term": "líder do evento",
+   "note": "same form for both genders (o/a líder); plural líderes"
+  },
+  {
+   "en": "deputy",
+   "term": "vice-líder",
+   "note": "same form for both genders; plural vice-líderes"
+  },
+  {
+   "en": "party leader",
+   "term": "líder da party",
+   "note": "same form for both genders; plural líderes"
+  },
+  {
+   "en": "clan leader",
+   "term": "líder do clã",
+   "note": "same form for both genders; plural líderes"
+  },
+  {
+   "en": "officer",
+   "term": "oficial",
+   "note": "same form for both genders; plural oficiais"
+  },
+  {
+   "en": "alliance admin",
+   "term": "admin da aliança",
+   "note": "same form for both genders; plural admins"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "masculine; invariable"
+  },
+  {
+   "en": "voice activation",
+   "term": "detecção de voz",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "headset",
+   "note": "masculine; plural headsets"
+  },
+  {
+   "en": "quick call",
+   "term": "mensagem rápida",
+   "note": "feminine; plural mensagens rápidas"
+  },
+  {
+   "en": "order",
+   "term": "ordem",
+   "note": "feminine; plural ordens"
+  },
+  {
+   "en": "ready check",
+   "term": "ready check",
+   "note": "masculine; invariable"
+  },
+  {
+   "en": "sign-up",
+   "term": "confirmação de presença",
+   "note": "feminine; plural confirmações de presença"
+  },
+  {
+   "en": "compact strip",
+   "term": "barra compacta",
+   "note": "feminine"
+  },
+  {
+   "en": "key",
+   "term": "tecla",
+   "note": "feminine; also covers mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Convocação",
+   "note": "feminine; plural convocações"
+  },
+  {
+   "en": "away",
+   "term": "AFK",
+   "note": "invariable; used as adjective"
+  },
+  {
+   "en": "invite link",
+   "term": "link de convite",
+   "note": "masculine; plural links de convite"
+  },
+  {
+   "en": "Settings",
+   "term": "Configurações",
+   "note": "feminine plural"
+  }
+ ]
+}

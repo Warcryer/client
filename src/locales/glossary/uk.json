@@ -1,0 +1,160 @@
+{
+ "address": "Address the player with the polite plural 'ви', in lowercase, as Ukrainian apps such as Discord and Telegram do; keep the tone friendly and short.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "альянс",
+   "note": "masculine"
+  },
+  {
+   "en": "clan",
+   "term": "клан",
+   "note": "masculine"
+  },
+  {
+   "en": "party",
+   "term": "паті",
+   "note": "not declined; usually feminine (наша паті)"
+  },
+  {
+   "en": "constant party",
+   "term": "конст",
+   "note": "masculine slang; plural консти"
+  },
+  {
+   "en": "operation",
+   "term": "івент",
+   "note": "masculine; plural івенти"
+  },
+  {
+   "en": "net",
+   "term": "канал",
+   "note": "masculine"
+  },
+  {
+   "en": "Broadcast",
+   "term": "Загальний",
+   "note": "adjective agreeing with канал"
+  },
+  {
+   "en": "Command",
+   "term": "Командний",
+   "note": "adjective agreeing with канал"
+  },
+  {
+   "en": "Reserve",
+   "term": "Резерв",
+   "note": "masculine"
+  },
+  {
+   "en": "lounge",
+   "term": "лаунж",
+   "note": "masculine; plural лаунжі"
+  },
+  {
+   "en": "group",
+   "term": "група",
+   "note": "feminine; never use it for party"
+  },
+  {
+   "en": "roster board",
+   "term": "дошка складу",
+   "note": "feminine (дошка)"
+  },
+  {
+   "en": "event leader",
+   "term": "лідер івенту",
+   "note": "masculine; also used for women"
+  },
+  {
+   "en": "deputy",
+   "term": "заступник",
+   "note": "masculine"
+  },
+  {
+   "en": "party leader",
+   "term": "паті-лідер",
+   "note": "masculine; short form ПЛ"
+  },
+  {
+   "en": "clan leader",
+   "term": "клан-лідер",
+   "note": "masculine; short form КЛ"
+  },
+  {
+   "en": "officer",
+   "term": "офіцер",
+   "note": "masculine"
+  },
+  {
+   "en": "alliance admin",
+   "term": "адмін альянсу",
+   "note": "masculine"
+  },
+  {
+   "en": "push-to-talk",
+   "term": "push-to-talk",
+   "note": "kept in English, not declined; short form PTT"
+  },
+  {
+   "en": "voice activation",
+   "term": "голосова активація",
+   "note": "feminine"
+  },
+  {
+   "en": "headset",
+   "term": "навушники",
+   "note": "plural only"
+  },
+  {
+   "en": "quick call",
+   "term": "швидка фраза",
+   "note": "feminine"
+  },
+  {
+   "en": "order",
+   "term": "наказ",
+   "note": "masculine"
+  },
+  {
+   "en": "ready check",
+   "term": "перевірка готовності",
+   "note": "feminine"
+  },
+  {
+   "en": "sign-up",
+   "term": "запис",
+   "note": "masculine"
+  },
+  {
+   "en": "compact strip",
+   "term": "міні-панель",
+   "note": "feminine"
+  },
+  {
+   "en": "key",
+   "term": "кнопка",
+   "note": "feminine; covers keyboard keys and mouse buttons"
+  },
+  {
+   "en": "Call to arms",
+   "term": "Загальний збір",
+   "note": "masculine"
+  },
+  {
+   "en": "away",
+   "term": "АФК",
+   "note": "not declined"
+  },
+  {
+   "en": "invite link",
+   "term": "посилання-запрошення",
+   "note": "neuter; both parts decline"
+  },
+  {
+   "en": "Settings",
+   "term": "Налаштування",
+   "note": "neuter"
+  }
+ ]
+}

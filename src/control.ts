@@ -3,7 +3,7 @@
 
 import type { NetKind } from "./settings";
 
-export type NetGrant = { net: NetKind; label: string; room: string; speak: boolean; token: string; /** Broadcast only: this player (the event leader) may lock it open for a briefing. */ lock?: boolean; /** May write in this net's chat. Absent on a server older than the chat. */ write?: boolean };
+export type NetGrant = { net: NetKind; label: string; /** The sentence the name is made from, where it is not a name people chose: shown in the player's language through said(). Absent on a server older than the languages. */ say?: string; room: string; speak: boolean; token: string; /** Broadcast only: this player (the event leader) may lock it open for a briefing. */ lock?: boolean; /** May write in this net's chat. Absent on a server older than the chat. */ write?: boolean };
 export type OpInfo = { id: number; name: string; state: "planned" | "live" | "ended" };
 /** A group between operations (decision 64), as the control service sends it to everyone in the alliance. */
 export type GroupInfo = {
