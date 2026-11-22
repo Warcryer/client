@@ -46,7 +46,7 @@ setLogExtension((level, msg, context) => {
  * What the library said from `since` on, oldest first, each with how long ago in seconds. The first
  * lines are the ones kept: the cause comes first, and what follows is the library trying again.
  */
-const voiceSaid = (since: number): string[] => VOICE_LOG.filter((l) => l.at >= since).slice(0, 8).map((l) => t(`${d(((Date.now() - l.at) / 1000).toFixed(1))}s ago: ${d(l.text)}`));
+const voiceSaid = (since: number): string[] => VOICE_LOG.filter((l) => l.at >= since).slice(0, 8).map((l) => `${((Date.now() - l.at) / 1000).toFixed(1)}s ago: ${l.text}`);
 import { getSettings, onSettings, type NetKind, type Settings } from "./settings";
 
 export type Member = {
@@ -253,7 +253,7 @@ export class VoiceEngine {
     try {
       if (!this.ctx) {
         this.ctx = new AudioContext();
-        await this.ctx.audioWorklet.addModule(t(`${d(import.meta.env.BASE_URL)}meter-worklet.js`));
+        await this.ctx.audioWorklet.addModule(`${import.meta.env.BASE_URL}meter-worklet.js`);
         this.meterNode = new AudioWorkletNode(this.ctx, "meter");
         this.meterNode.port.onmessage = (e) => {
           this.level = e.data as number;

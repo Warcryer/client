@@ -1,4 +1,4 @@
-import { t } from "../words";
+import { d, t } from "../words";
 import { useState } from "react";
 import { rpc } from "../api";
 import { useGame } from "../game";
@@ -28,7 +28,7 @@ export function ProfileForm({ name, className, levelBand, onSaved, submit }: { n
       }}
     >
       <label className="flex flex-col gap-1 text-text-muted">
-        In-game name
+        {t("In-game name")}
         <input className="field" value={n} onChange={(e) => setN(e.target.value)} maxLength={24} required autoComplete="off" />
         <span className="text-xs">{t("Exactly as it appears in game, so callers can find you.")}{game?.nameRule ? ` ${game.nameRule[0].toUpperCase()}${game.nameRule.slice(1)}.` : ""}</span>
       </label>

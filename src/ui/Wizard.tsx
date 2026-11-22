@@ -1,9 +1,11 @@
-import { t } from "../words";
+import { tx } from "../i18n";
+import { d, t } from "../words";
 import { useEffect, useState } from "react";
 import { engine } from "../runtime";
 import { setSettings, useSettings } from "../settings";
 import { DevicePickers, MicTest, PartyMode, useEngine, Wordmark } from "./common";
 
+// t() where shown.
 const STEPS = ["Devices", "Microphone test", "How you talk"] as const;
 
 /** First run: pick devices, hear yourself, then choose how you talk to your party. */
@@ -23,19 +25,21 @@ export function Wizard() {
       <div className="panel rise w-full max-w-lg p-8 flex flex-col gap-6">
         <div className="flex items-baseline justify-between">
           <Wordmark className="text-lg" />
-          <span className="text-text-muted tabular-nums">Step {step + 1} of {STEPS.length}</span>
+          <span className="text-text-muted tabular-nums">{t(`Step ${d(step + 1)} of ${d(STEPS.length)}`)}</span>
         </div>
         <div className="flex gap-1" aria-hidden>
           {STEPS.map((name, i) => (
             <span key={name} className={`h-0.5 flex-1 transition-colors duration-150 ${i <= step ? "bg-gold" : "bg-line"}`} />
           ))}
         </div>
-        <h1 className="title text-gold">{STEPS[step]}</h1>
+        <h1 className="title text-gold">{t(STEPS[step])}</h1>
 
         {eng.micError && (
           <p className="text-danger" role="alert">
-            The microphone could not be opened ({eng.micError}). Allow microphone access, then{" "}
-            <button type="button" className="underline cursor-pointer" onClick={() => void engine.startMic().catch(() => {})}>{t("try again")}</button>.
+            {tx("The microphone could not be opened ({why}). Allow microphone access, then {again}.", {
+              why: eng.micError,
+              again: <button type="button" className="underline cursor-pointer" onClick={() => void engine.startMic().catch(() => {})}>{t("try again")}</button>,
+            })}
           </p>
         )}
 

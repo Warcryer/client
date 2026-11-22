@@ -8,6 +8,7 @@
 // are a click away behind a count. What cannot wait (Broadcast locked open, a
 // party that lost its leader, a microphone that failed) keeps a bar of its own.
 
+import { tx } from "../i18n";
 import { useEffect, useState, type ReactNode } from "react";
 import { rpc, type JoinRequest } from "../api";
 import { useGame } from "../game";
@@ -39,8 +40,15 @@ function JoinAsk({ r }: { r: JoinRequest }) {
   return (
     <Row mark="join">
       <span className="min-w-0 truncate">
-        <span className="font-semibold">{r.name}</span>
-        {r.classTag && <span className="ml-1 text-xs text-gold">{r.classTag}</span>} asks to join <span className="font-semibold text-net-party">{r.partyName}</span>
+        {tx("{name} asks to join {party}", {
+          name: (
+            <>
+              <span className="font-semibold">{r.name}</span>
+              {r.classTag && <span className="ml-1 text-xs text-gold">{r.classTag}</span>}
+            </>
+          ),
+          party: <span className="font-semibold text-net-party">{r.partyName}</span>,
+        })}
       </span>
       <span className="flex shrink-0 gap-2">
         <button type="button" className="btn px-3 py-0.5 text-sm" disabled={act.busy} onClick={() => answer(true)}>{t("Accept")}</button>
@@ -63,7 +71,7 @@ function ClassAsk({ onLater }: { onLater: () => void }) {
     <div className="flex min-w-0 flex-1" data-class-ask>
       <Row mark="class" wrap={open}>
         <span className="min-w-0 truncate">
-          Which class do you play?
+          {t("Which class do you play?")}
           <span className="ml-2 text-text-muted">{t("Organisers see it when they build parties, and the board works out from it what each party still needs.")}</span>
         </span>
         {open ? (
@@ -101,7 +109,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
   // News first: it is gone again in a few seconds.
   if (notice) items.push({ key: "moved", node: <Row tone="news" mark="moved"><span className="min-w-0 truncate text-gold-bright">{notice}</span></Row> });
 
-  for (const r of info.joinRequests) items.push({ key: t(`join-${d(r.opId)}-${d(r.userId)}`), node: <JoinAsk r={r} /> });
+  for (const r of info.joinRequests) items.push({ key: `join-${r.opId}-${r.userId}`, node: <JoinAsk r={r} /> });
 
   if (update.phase === "ready" || update.phase === "installing") {
     items.push({
@@ -109,7 +117,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
       node: (
         <Row mark="update">
           <span className="min-w-0 truncate">
-            Version {update.version} is ready.
+            {t(`Version ${d(update.version)} is ready.`)}
             <span className="ml-2 text-text-muted">
               {update.phase === "installing" ? t("Installing; the app will restart by itself.") : t("Restarting takes a few seconds and drops you from voice while it does.")}
             </span>
@@ -126,13 +134,13 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
   const here = set?.operation?.state === "live" ? set.operation.id : null;
   for (const o of (info.openSignups ?? []).filter((o) => o.opId !== here)) {
     items.push({
-      key: t(`signup-${d(o.opId)}`),
+      key: `signup-${o.opId}`,
       node: (
         <Row mark="signup">
           <span className="min-w-0 truncate">
             {/* Its name opens its board, as Open does: it is what a player clicks first. */}
             <button type="button" className="cursor-pointer font-semibold text-gold-bright hover:underline" onClick={() => go("roster", o.opId)}>{o.name}</button>
-            <span className="text-text-muted"> · {o.state === "live" ? t("live now") : when(o.startsAt)} {t("· are you coming?")}</span>
+            <span className="text-text-muted"> · {o.state === "live" ? t("live now") : when(o.startsAt)} · {t("are you coming?")}</span>
           </span>
           <span className="flex shrink-0 flex-wrap items-center gap-2">
             <SignupControl opId={o.opId} status={null} />

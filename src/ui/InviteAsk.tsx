@@ -3,6 +3,7 @@
 // player has seen which clan it is for and said yes: a link alone must never
 // put someone in a clan, or their voice in its lounge.
 
+import { tx } from "../i18n";
 import { d, t } from "../words";
 import { useEffect, useState } from "react";
 import { dropPending, peekPending, redeemPending, type InvitePeek } from "../invite";
@@ -38,10 +39,10 @@ export function InviteAsk({ onDone }: { onDone: () => void }) {
       <div className="panel flex w-full max-w-md flex-col gap-4 p-5">
         <h2 className="title flex items-center gap-2 text-gold-bright">
           {inv && <ClanCrest clanId={inv.clanId} size={28} />}
-          You are invited to join {clan}
+          {t(`You are invited to join ${d(clan)}`)}
           {inv && <span className="font-sans text-sm font-normal text-text-muted">[{inv.clanTag}]</span>}
         </h2>
-        {inv?.allianceName && <p className="-mt-2 text-text-muted">{t("A clan of the alliance")} <span className="text-text">{inv.allianceName}</span>.</p>}
+        {inv?.allianceName && <p className="-mt-2 text-text-muted">{tx("A clan of the alliance {name}.", { name: <span className="text-text">{inv.allianceName}</span> })}</p>}
         <p className="text-text-muted">
           {inv === null
             ? t("A link you opened asks to add you to a clan. Only accept if you were expecting it.")
@@ -70,7 +71,7 @@ export function InviteAsk({ onDone }: { onDone: () => void }) {
               void redeemPending().then(onDone);
             }}
           >
-            Join {clan}
+            {t(`Join ${d(clan)}`)}
           </button>
         </div>
       </div>

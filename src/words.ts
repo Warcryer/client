@@ -11,11 +11,14 @@
 // `npm run check:words` fails if a sentence that names one of the five is not
 // passed through `t()`; `node scripts/words.mjs --fix` wraps what it finds.
 
-import { catalogue } from "./i18n";
+import { catalogue, englishIs } from "./i18n";
 import { translate } from "./i18n-core";
 import { d, DEFAULT_WORDS, reword, type Words } from "./reword";
 
 let current: Words = DEFAULT_WORDS;
+
+// Counted sentences and sentences with things in them (tn, tx in src/i18n.tsx) are said in the alliance's words too.
+englishIs((text) => reword(current, text));
 
 /** Called by the game-setup store when the alliance's words arrive or change. */
 export const setWords = (words: Words | null | undefined): void => {

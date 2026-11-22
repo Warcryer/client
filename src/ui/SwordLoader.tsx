@@ -138,7 +138,7 @@ export function SwordLoader({ progress, className = "" }: { progress: number | n
 
   const lit = progress !== null;
   const reached = (x: number) => lit && (progress ?? 0) * TIP > x;
-  const parts = t(`sw-parts-${d(id)}`);
+  const parts = `sw-parts-${id}`;
   const url = (name: string) => `url(#sw-${name}-${id})`;
 
   return (

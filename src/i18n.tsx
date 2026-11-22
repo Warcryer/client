@@ -83,10 +83,19 @@ export function useLanguage(): string {
   );
 }
 
+/**
+ * How a sentence is said in English: in the alliance's own words. src/words.ts, which knows them, hands
+ * this over when it loads (it cannot be imported from here: it imports this file).
+ */
+let inEnglish = (text: string): string => text;
+export const englishIs = (say: (text: string) => string): void => {
+  inEnglish = say;
+};
+
 /** A sentence with a count: "1 member", "3 members", and the forms the player's language has. `{n}` is where the number goes. */
 export function tn(n: number, one: string, many: string): string {
   const shown = state.numbers.format(n);
-  return (state.catalogue && translateCount(state.catalogue, state.rules, n, many, shown)) ?? englishCount(n, one, many, shown);
+  return (state.catalogue && translateCount(state.catalogue, state.rules, n, many, shown)) ?? inEnglish(englishCount(n, one, many, "{n}")).replace(/\{n\}/g, shown);
 }
 
 /**
@@ -95,8 +104,9 @@ export function tn(n: number, one: string, many: string): string {
  * A translation moves the places to where its grammar wants them.
  */
 export function tx(text: string, parts: Record<string, ReactNode>): ReactNode[] {
-  const said = (state.catalogue && translate(state.catalogue, text)) ?? text;
-  return pieces(said).map((piece, i) => (typeof piece === "string" ? piece : <span key={i} style={{ display: "contents" }}>{parts[piece.place]}</span>));
+  const other = state.catalogue && translate(state.catalogue, text);
+  // In English each stretch of text between the places is said in the alliance's words; a place's name is never read as a word.
+  return pieces(other ?? text).map((piece, i) => (typeof piece === "string" ? (other ? piece : inEnglish(piece)) : <span key={i} style={{ display: "contents" }}>{parts[piece.place]}</span>));
 }
 
 /** Marks a sentence that is written down in one place and shown in another through `t()`: it changes nothing, and tells scripts/i18n.mjs to collect it. */

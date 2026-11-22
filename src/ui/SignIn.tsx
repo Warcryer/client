@@ -1,4 +1,5 @@
-import { t } from "../words";
+import { tx } from "../i18n";
+import { d, t } from "../words";
 import { useEffect, useState } from "react";
 import { beginSignIn, onSignInLink, redeem } from "../auth";
 import { isDesktop, PRIVACY_URL, SERVER, TERMS_URL } from "../config";
@@ -84,9 +85,10 @@ export function SignIn({ onToken, notice }: { onToken: (token: string) => void; 
         )}
         {error && <p className="text-danger" role="alert">{error}</p>}
         <p className="text-xs text-text-muted">
-          In beta, and free. By signing in you accept the{" "}
-          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(TERMS_URL)}>{t("terms of use")}</button>; what is kept about you is in the{" "}
-          <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(PRIVACY_URL)}>{t("privacy policy")}</button>.
+          {tx("In beta, and free. By signing in you accept the {terms}; what is kept about you is in the {privacy}.", {
+            terms: <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(TERMS_URL)}>{t("terms of use")}</button>,
+            privacy: <button type="button" className="underline underline-offset-2 hover:text-text cursor-pointer" onClick={() => void openInBrowser(PRIVACY_URL)}>{t("privacy policy")}</button>,
+          })}
         </p>
       </div>
     </main>

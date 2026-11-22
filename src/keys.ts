@@ -7,6 +7,7 @@ export const VK_MBUTTON = 0x04;
 export const VK_XBUTTON1 = 0x05;
 export const VK_XBUTTON2 = 0x06;
 
+// t() where shown.
 const NAMED: Record<number, string> = {
   0x04: "Mouse 3 (middle)",
   0x05: "Mouse 4 (side)",
@@ -50,7 +51,7 @@ const NAMED: Record<number, string> = {
 };
 
 export function keyLabel(code: number): string {
-  if (NAMED[code]) return NAMED[code];
+  if (NAMED[code]) return t(NAMED[code]);
   if ((code >= 0x30 && code <= 0x39) || (code >= 0x41 && code <= 0x5a)) {
     return String.fromCharCode(code);
   }

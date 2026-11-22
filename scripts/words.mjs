@@ -55,7 +55,8 @@ const identifierLike = (s) => /^[a-z][A-Za-z0-9_.:/-]*$/.test(s);
 // Class names: every word is lower case with a hyphen, colon or bracket somewhere.
 const cssLike = (s) => /[-:\[]/.test(s) && s.split(/\s+/).every((w) => /^[a-z0-9!\[\]/:.%#()_-]+$/.test(w));
 const SKIP_ATTRS = new Set(["className", "class", "key", "id", "type", "name", "href", "src", "role", "htmlFor", "value", "d", "viewBox", "style"]);
-const WRAPPERS = new Set(["t", "d", "reword", "own"]);
+// tn() and tx() (src/i18n.tsx) say their sentence in the alliance's words as t() does; m() marks one that t() shows elsewhere.
+const WRAPPERS = new Set(["t", "tn", "tx", "m", "d", "reword", "own"]);
 
 let problems = 0;
 let fixed = 0;

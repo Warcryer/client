@@ -43,7 +43,7 @@ type Props = {
 export function AudioToggles({ micOff, headsetOff, onMic, onHeadset, small, live }: Props) {
   const size = small ? 14 : 18;
   const cls = (off: boolean, on = false) =>
-    t(`flex shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 ${
+    `flex shrink-0 cursor-pointer items-center justify-center rounded-sm transition-colors duration-150 ${
       small ? "h-[18px] w-[20px]" : "h-8 w-9 border"
     } ${
       off
@@ -51,7 +51,7 @@ export function AudioToggles({ micOff, headsetOff, onMic, onHeadset, small, live
         : on
           ? small ? "text-net-party" : "text-net-party border-net-party bg-net-party/10"
           : `text-text-muted hover:text-text ${small ? "" : "border-line hover:border-gold-dim"}`
-    }`);
+    }`;
   return (
     <span className="flex shrink-0 items-center gap-1" data-audio-toggles>
       <button

@@ -280,7 +280,7 @@ function Strip() {
     )}
     {!prefs.open && chatNow.ready && (
       <div className="flex items-center gap-2 px-2 leading-[22px]" data-strip-ready>
-        <span className="min-w-0 flex-1 truncate font-semibold text-gold-bright">{chatNow.ready.by}: ready?</span>
+        <span className="min-w-0 flex-1 truncate font-semibold text-gold-bright">{t(`${d(chatNow.ready.by)}: ready?`)}</span>
         <button type="button" className="cursor-pointer rounded-sm border border-gold px-1.5 text-[11px] leading-4 text-gold-bright" onClick={() => answer(true)}>{t("Ready")}</button>
         <button type="button" className="cursor-pointer rounded-sm border border-line px-1.5 text-[11px] leading-4 text-text-muted" onClick={() => answer(false)}>{t("Not")}</button>
       </div>
@@ -325,5 +325,6 @@ function Close({ channel }: { channel: React.RefObject<BroadcastChannel | null> 
 
 // The window itself is see-through (tauri.conf.json); only what is drawn here covers the game.
 for (const el of [document.documentElement, document.body, document.getElementById("root")!]) el.style.background = "transparent";
+// not shown: the strip has no title bar.
 document.title = "Compact strip";
 createRoot(document.getElementById("root")!).render(<Strip />);

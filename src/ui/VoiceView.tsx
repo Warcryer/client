@@ -16,6 +16,7 @@ import { useApp } from "./app-context";
 import { ClanCrest, ClanMark, Initial, NET_BORDER, netName, NET_TEXT, netTip, NET_VAR, useEngine } from "./common";
 import { Help } from "./tips";
 
+// t() where shown.
 const STATE_TEXT: Record<NetView["state"], string> = {
   connecting: "Connecting…",
   connected: "",
@@ -140,7 +141,7 @@ function NetCard({
         <Help text={help} />
       </div>
       {net.state !== "connected" ? (
-        <span className={`min-h-5 text-xs ${net.state === "relinking" ? "text-gold" : "text-danger"}`} data-net-state={net.state}>{STATE_TEXT[net.state]}</span>
+        <span className={`min-h-5 text-xs ${net.state === "relinking" ? "text-gold" : "text-danger"}`} data-net-state={net.state}>{t(STATE_TEXT[net.state])}</span>
       ) : (
         <div className="flex min-h-5 items-center gap-2 text-xs text-text-muted">
           <span className={`min-w-0 flex-1 truncate text-[13px] text-text transition-opacity duration-150 ${net.lowered ? "opacity-50" : ""}`} data-net-speakers>
@@ -262,7 +263,7 @@ export function VoiceView() {
         )}
         {eng.micError && (
           <div className="panel flex items-center gap-3 px-3 py-2 border-danger" role="alert">
-            <span>Microphone problem: {eng.micError}. You can listen but not speak.</span>
+            <span>{t(`Microphone problem: ${d(eng.micError)}. You can listen but not speak.`)}</span>
             <button type="button" className="btn text-sm" onClick={() => void engine.startMic().catch(() => {})}>{t("Try again")}</button>
           </div>
         )}
@@ -279,7 +280,7 @@ export function VoiceView() {
               <>
                 <h1 className="title text-gold">{t("Waiting for approval")}</h1>
                 <p className="text-text-muted">
-                  A leader or officer of {info.membership.name} {t("has to approve you. You will land in the clan lounge as soon as they do.")}
+                  {t(`A leader or officer of ${d(info.membership.name)} has to approve you. You will land in the clan lounge as soon as they do.`)}
                 </p>
               </>
             ) : info.alliance === null ? (
@@ -329,13 +330,13 @@ export function VoiceView() {
                     <span className="whitespace-nowrap text-text-muted">
                       {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
                       {shown.members.length} connected
-                      {shown.members.some((m) => !m.canSpeak) && t(` · ${d(shown.members.filter((m) => m.canSpeak).length)} can speak`)}
+                      {shown.members.some((m) => !m.canSpeak) && <> · {t(`${d(shown.members.filter((m) => m.canSpeak).length)} can speak`)}</>}
                     </span>
                     <Help text={t("Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected.")} />
                     <span className="ml-auto flex items-baseline gap-3">
                       {shown.room !== home?.room && (
                         <button type="button" className="text-text-muted hover:text-gold cursor-pointer" onClick={() => setShownRoom(null)}>
-                          {t("Back to")} {home?.label ?? t("your net")}
+                          {t(`Back to ${d(home?.label ?? t("your net"))}`)}
                         </button>
                       )}
                       {/* Only in a window too narrow for three columns. */}
@@ -397,7 +398,7 @@ export function VoiceView() {
                 )}
                 <div className={`flex shrink-0 items-center gap-2 px-3 py-1.5 ${folded ? "" : "border-b border-line"}`}>
                   <h2 className="title text-sm text-gold">{t("Chat")}</h2>
-                  <Help text={(op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP)) + t("\nDrag the chat's top edge to make it taller or shorter. Fold puts its lines away and keeps the line you write in; an order and a ready check still show.")} />
+                  <Help text={[op ? t(CHAT_HELP) : t(LOUNGE_CHAT_HELP), t("Drag the chat's top edge to make it taller or shorter. Fold puts its lines away and keeps the line you write in; an order and a ready check still show.")].join("\n")} />
                   {folded && unread && <span className="h-1.5 w-1.5 rounded-full bg-gold-bright" role="img" aria-label={t("New lines")} />}
                   <span className="ml-auto flex items-center gap-4">
                     {isDesktop && (
@@ -449,12 +450,12 @@ export function VoiceView() {
         ))}
         {s.bindings.muteAll !== null && (
           <span className="whitespace-nowrap">
-            <kbd className="kbd">{keyLabel(s.bindings.muteAll)}</kbd> Mute all
+            <kbd className="kbd">{keyLabel(s.bindings.muteAll)}</kbd> {t("Mute all")}
           </span>
         )}
         {s.bindings.deafen !== null && (
           <span className="whitespace-nowrap">
-            <kbd className="kbd">{keyLabel(s.bindings.deafen)}</kbd> Headset
+            <kbd className="kbd">{keyLabel(s.bindings.deafen)}</kbd> {t("Headset")}
           </span>
         )}
         {(hints.length > 0 || s.bindings.muteAll !== null || s.bindings.deafen !== null) && (

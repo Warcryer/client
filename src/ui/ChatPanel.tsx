@@ -3,6 +3,7 @@
 // chat window the compact strip opens into; both are handed the same view
 // (src/chat.ts) and the same four actions.
 
+import { tn } from "../i18n";
 import { useEffect, useRef, useState } from "react";
 import type { ChatChannel, ChatLineView, ChatView } from "../chat";
 import { d, t } from "../words";
@@ -186,7 +187,7 @@ export function ChatPanel({
       )}
       {view.ready && (
         <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-gold-dim/40 bg-gold/10 px-2 py-1" data-ready-ask>
-          <span className="font-semibold text-gold-bright">{view.ready.by} asks: ready?</span>
+          <span className="font-semibold text-gold-bright">{t(`${d(view.ready.by)} asks: ready?`)}</span>
           <button type="button" className="btn px-2 py-0 text-xs" onClick={() => answer(true)}>{t("Ready")}</button>
           <button type="button" className="btn btn-quiet px-2 py-0 text-xs" onClick={() => answer(false)}>{t("Not ready")}</button>
           <span className="ml-auto text-[11px] tabular-nums text-text-muted">{left(view.ready.endsAt)}</span>
@@ -195,9 +196,9 @@ export function ChatPanel({
       {tally && (
         <div className="flex shrink-0 flex-wrap items-baseline gap-x-3 border-b border-gold-dim/40 px-2 py-0.5 text-[12px]" data-ready-tally={tally.done ? "done" : "running"}>
           <span className="font-semibold text-gold">{t("Ready check")}{tally.done ? "" : ` · ${left(tally.endsAt)}`}</span>
-          <span className="text-net-party">{tally.ready} ready</span>
-          {tally.notReady > 0 && <span className="text-danger">{tally.notReady} not ready{tally.names ? `: ${tally.names.notReady.join(", ")}` : ""}</span>}
-          {tally.waiting > 0 && <span className="text-text-muted">{tally.waiting} no answer{tally.names ? `: ${tally.names.waiting.join(", ")}` : ""}</span>}
+          <span className="text-net-party">{tn(tally.ready, "{n} ready", "{n} ready")}</span>
+          {tally.notReady > 0 && <span className="text-danger">{tn(tally.notReady, "{n} not ready", "{n} not ready")}{tally.names ? `: ${tally.names.notReady.join(", ")}` : ""}</span>}
+          {tally.waiting > 0 && <span className="text-text-muted">{tn(tally.waiting, "{n} no answer", "{n} no answer")}{tally.names ? `: ${tally.names.waiting.join(", ")}` : ""}</span>}
           {view.organises && !tally.done && (
             <button type="button" className="ml-auto cursor-pointer text-[11px] text-text-muted hover:text-gold" onClick={() => act.readyCheck(false)}>
               {t("End now")}

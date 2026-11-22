@@ -1,4 +1,4 @@
-import { t } from "../words";
+import { d, t } from "../words";
 import { useState } from "react";
 import { rpc } from "../api";
 import type { LeaderLost } from "../control";
@@ -25,7 +25,7 @@ export function LeaderLostBar({ opId, lost, myId }: { opId: number; lost: Leader
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-net-command bg-bg-2 px-4 py-2" role="alert">
       <span>
-        <span className="font-semibold text-net-command">{lost.leader} has dropped out.</span> {lost.party} has no one on Command. Who leads it now?
+        <span className="font-semibold text-net-command">{t(`${d(lost.leader)} has dropped out.`)}</span> {t(`${d(lost.party)} has no one on Command. Who leads it now?`)}
       </span>
       {here.map((m) => (
         <button key={m.id} type="button" className="btn text-sm" disabled={busy} onClick={() => pick(m.id)}>

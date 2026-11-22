@@ -27,6 +27,7 @@ const KEYS: { target: Exclude<BindTarget, CallTarget>; label: string; note: stri
   { target: "ready", label: "Ready", note: "Answers a ready check with Ready, without leaving the game. It does nothing when nobody is asking" },
 ];
 
+// t() where shown.
 const SOURCES: { id: InputSource; label: string; note: string }[] = [
   { id: "auto", label: "Automatic", note: "Polling and Raw Input together: a key counts when either sees it. Recommended." },
   { id: "poll", label: "Polling", note: "Works with the game running as administrator, but some games' protection hides keys from it." },
@@ -133,7 +134,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-3">
             <h1 className="title text-gold-bright">{t("Settings")}</h1>
-            <span className="text-xs text-text-muted" data-app-version>Version {VERSION_TEXT}</span>
+            <span className="text-xs text-text-muted" data-app-version>{t(`Version ${d(VERSION_TEXT)}`)}</span>
           </div>
           <button type="button" className="btn btn-quiet text-sm" onClick={onClose}>{t("Close")}</button>
         </div>
@@ -187,7 +188,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
           <QuickCallKeys />
           <p className="text-xs text-text-muted">
             {t("Keys are never taken from the game: it still receives them. Only keys bound here are looked at.")}
-            {!isDesktop && t(" In the browser, keys only work while this tab has focus.")}
+            {!isDesktop && <> {t("In the browser, keys only work while this tab has focus.")}</>}
           </p>
         </Group>
 
@@ -211,7 +212,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
         <Group title={t("Priority")}>
           <Toggle label={t("Lower other nets while a higher one is live")} hint={t("So a Broadcast or Command call cuts through party chatter. Nothing is muted, only made quieter.")} checked={s.ducking} onChange={(v) => setSettings({ ducking: v })} />
           <label className="flex items-center gap-3 text-text-muted">
-            Lowered nets stay at
+            {t("Lowered nets stay at")}
             <input
               type="range"
               min={0}
@@ -228,7 +229,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
             {t("Order: Broadcast, Command, Clan, Party. On Command, the event leader, deputies and clan leaders also lower the party leaders. Nothing is ever muted by this, only made quieter.")}
           </p>
           <label className="flex items-center gap-3 text-text-muted">
-            Your lounge while you are in a group
+            {t("Your lounge while you are in a group")}
             <input
               type="range"
               min={0}
@@ -257,8 +258,8 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
               <label key={src.id} className="flex items-start gap-2">
                 <input type="radio" className="mt-1" checked={s.source === src.id} onChange={() => setSettings({ source: src.id })} />
                 <span>
-                  {src.label}
-                  <span className="block text-xs text-text-muted">{src.note}</span>
+                  {t(src.label)}
+                  <span className="block text-xs text-text-muted">{t(src.note)}</span>
                 </span>
               </label>
             ))}
@@ -268,7 +269,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
               onChange={(v) => setSettings({ alwaysAdmin: v })}
             />
             <p className="text-xs text-text-muted">
-              This app is running as {foreground?.selfElevated ? "administrator" : t("a normal user")}. With Polling you should not need administrator rights.
+              {foreground?.selfElevated ? t("This app is running as administrator. With Polling you should not need administrator rights.") : t("This app is running as a normal user. With Polling you should not need administrator rights.")}
             </p>
           </Group>
         )}

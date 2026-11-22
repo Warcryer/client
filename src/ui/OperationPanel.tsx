@@ -159,7 +159,7 @@ export function OperationPanel() {
                       <span className="truncate text-xs text-text-muted">
                         {leader ? t(`led by ${d(leader)}`) : t("no leader")}
                         {p.leaderLost && <span className="text-danger"> {t("· leader away")}</span>}
-                        {mine && t(" · yours")}
+                        {mine && <> · {t("yours")}</>}
                       </span>
                     </button>
                     {open && <ul className="flex flex-wrap gap-x-3 gap-y-0.5 px-3 pb-2 text-sm">{p.members.map(who)}</ul>}

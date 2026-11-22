@@ -7,9 +7,10 @@
 // the chat is translated into, and the one the app will be shown in once it
 // has others.
 
+import { count, tx } from "../i18n";
 import { useEffect, useState } from "react";
 import { rpc, type Info, type TranslateSettingsData } from "../api";
-import { t } from "../words";
+import { d, t } from "../words";
 import { useAct, useApp } from "./app-context";
 import { Help } from "./tips";
 
@@ -127,12 +128,12 @@ export function TranslateSettings({ settings, onChange }: { settings: TranslateS
           }}
           data-translate-switch
         />
-        Members may have the chat translated into their language
+        {t("Members may have the chat translated into their language")}
         <span className="text-xs text-text-muted">{t("Off: no line of the alliance is sent to be translated.")}</span>
       </label>
       <p className={`text-sm ${over ? "text-danger" : "text-text-muted"}`} data-translate-usage>
-        <span className="tabular-nums">{settings.month.toLocaleString()}</span> of <span className="tabular-nums">{settings.cap.toLocaleString()}</span> lines translated this month.
-        {over && t(" The limit is reached: lines stay as written until next month.")}
+        {tx("{used} of {limit} lines translated this month.", { used: <span className="tabular-nums">{count(settings.month)}</span>, limit: <span className="tabular-nums">{count(settings.cap)}</span> })}
+        {over && <> {t("The limit is reached: lines stay as written until next month.")}</>}
       </p>
       <label className="flex flex-col gap-1 text-text-muted">
         {t("Your alliance's own words, one per line")}

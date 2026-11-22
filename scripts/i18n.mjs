@@ -242,8 +242,12 @@ for (const file of files) {
         return;
       }
       if (ts.isTemplateExpression(node) && !skipped(node) && !wrapped(node)) {
-        const quasis = [node.head.text, ...node.templateSpans.map((s) => s.literal.text)].join(" ");
-        if (sentence(quasis)) {
+        // A template is a sentence when one of its own pieces reads as words; `join-${id}`, a file's path and a
+        // row of class names are put together the same way and are none.
+        const parts = [node.head.text, ...node.templateSpans.map((s) => s.literal.text)].map((p) => p.trim()).filter(Boolean);
+        const quasis = parts.join(" ");
+        const wordy = parts.some((p) => !cssLike(p) && !identifierLike(p) && !technical(p) && (/\p{L}{2,}[,.:;!?]?\s+\p{L}{2,}/u.test(p) || /^\p{Lu}\p{Ll}{2,}/u.test(p) || /\p{Ll}{3,}[.!?…]$/u.test(p)));
+        if (wordy && sentence(quasis)) {
           if (!insideFunction(node)) {
             if (!saidWhereShown(node)) report(node, "outside any function", quasis);
           } else if (!FIX) report(node, "template", quasis);
