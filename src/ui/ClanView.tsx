@@ -547,7 +547,7 @@ function Members({ clanId }: { clanId: number }) {
               {m.classTag && <span className="text-gold">{m.classTag}</span>}
               {m.role !== "member" && (
                 <span className="text-xs uppercase tracking-wider text-net-clan">
-                  {m.role}
+                  {m.role === "leader" ? t("Leader") : t("Officer")}
                 </span>
               )}
               {/* Their other characters, as on a leader's sheet. */}

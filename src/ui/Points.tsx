@@ -654,6 +654,22 @@ function ListStandings({ data, onPlayer, onChange }: { data: Standings; onPlayer
   );
 }
 
+/**
+ * The lines the server writes by itself (decay, a new season) carry a label it made in English, in a fixed
+ * shape, and one stored label is read by every reader: it is said again here in the reader's language. Anything
+ * else is what somebody wrote, and stays.
+ */
+function ownLabel(label: string | null): string | null {
+  if (!label) return label;
+  const decay = /^Decay (\d+(?:\.\d+)?)%$/.exec(label);
+  if (decay) return t(`Decay ${d(decay[1])}%`);
+  const carried = /^Season (\d+): (\d+)% carried over$/.exec(label);
+  if (carried) return t(`Season ${d(carried[1])}: ${d(carried[2])}% carried over`);
+  const season = /^Season (\d+)$/.exec(label);
+  if (season) return t(`Season ${d(season[1])}`);
+  return label;
+}
+
 function PlayerLines({ poolId, userId, manage, onBack }: { poolId: number; userId: number; manage: boolean; onBack: () => void }) {
   const [data, setData] = useState<PlayerPoints | null>(null);
   const [error, setError] = useState("");
@@ -684,7 +700,7 @@ function PlayerLines({ poolId, userId, manage, onBack }: { poolId: number; userI
         <span className="text-xs text-text-muted"> · {t("by hand")}</span>
       </>
     ) : (
-      <span className="text-text-muted">{e.label}</span>
+      <span className="text-text-muted">{ownLabel(e.label)}</span>
     );
   return (
     <div className="flex flex-col gap-3" data-points-player={userId}>

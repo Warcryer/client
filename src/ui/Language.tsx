@@ -4,10 +4,11 @@
 // has used of the month's limit, on the Alliance tab.
 //
 // The language chosen here is the one the app is shown in, where it has been
-// translated (src/i18n.tsx; the screens of the first stage), and the one the
+// translated (src/i18n.tsx), and the one the
 // chat is translated into.
 
 import { count, tx } from "../i18n";
+import { refreshGame } from "../game";
 import { useEffect, useState } from "react";
 import { rpc, type Info, type TranslateSettingsData } from "../api";
 import { SUPPORT_URL } from "../config";
@@ -53,6 +54,8 @@ export function LanguageSettings() {
     void act.run(() => rpc("profile.language", next)).then((ok) => {
       if (!ok) setAsked(null);
       refreshInfo();
+      // What the server words itself (the rule for names) is in the language it answered in: ask again.
+      if (ok) refreshGame();
     });
   };
   if (!tr) return null;

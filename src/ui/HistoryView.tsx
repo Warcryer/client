@@ -293,7 +293,7 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
       <div className="flex gap-1" role="group" aria-label={t("Period")}>
         {PERIODS.map((p) => (
           <button key={p.days} type="button" className={`btn text-xs ${days === p.days ? "" : "btn-quiet"}`} aria-pressed={days === p.days} onClick={() => setDays(p.days)}>
-            {p.label}
+            {t(p.label)}
           </button>
         ))}
       </div>
