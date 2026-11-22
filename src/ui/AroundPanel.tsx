@@ -8,7 +8,7 @@
 // sends both lists whenever they change; nothing here asks for them again.
 
 import { useState } from "react";
-import { d, t } from "../words";
+import { d, said, t } from "../words";
 import { rpc } from "../api";
 import type { GroupInfo, PresenceEntry } from "../control";
 import { useAct, useApp, useLoad } from "./app-context";
@@ -169,7 +169,7 @@ export function AroundPanel() {
                         <li key={g.id} className={`flex flex-col ${mine ? "bg-bg-2" : ""}`} data-group={g.id} data-group-open={open ? "" : undefined}>
                           <div className="flex items-center gap-2 px-3 py-1.5">
                             <button type="button" className="flex min-w-0 flex-1 cursor-pointer flex-col text-left" aria-expanded={open} onClick={() => setOpenId(open ? null : g.id)} data-group-toggle>
-                              <span className={`truncate font-medium ${mine ? "text-net-party" : "text-text"}`}>{g.name}</span>
+                              <span className={`truncate font-medium ${mine ? "text-net-party" : "text-text"}`}>{said(g.say, g.name)}</span>
                               <span className="truncate text-xs text-text-muted">
                                 <span className="tabular-nums">{g.members.length}</span>
                                 {mine && !open && <span> {t("· you are here")}</span>}

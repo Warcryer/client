@@ -10,6 +10,8 @@ export type GroupInfo = {
   id: number;
   label: string;
   name: string;
+  /** The sentence the name is made from when nobody gave the group a label ("Ada's group"): shown through said(). */
+  say?: string;
   starterId: number | null;
   members: { userId: number; name: string; classTag: string | null; clanId: number | null; clanTag: string | null; mayRemove?: boolean }[];
 };

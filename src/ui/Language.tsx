@@ -18,7 +18,7 @@ import { Help } from "./tips";
 
 // t() where shown.
 const LANGUAGE_HELP = [
-  "Choose the language you read. The screens you use every day are shown in it: signing in, Voice, the chat, Settings. The other tabs are still in English and will follow. The chat can be translated into it too.",
+  "Choose the language you read. The app is shown in it, and the chat can be translated into it too. The guides, the log and what the app posts to Discord are still in English.",
   "With translation on, a line written in another language still appears at once, as it was written. A second or so later it changes to your language and is marked \"translated\". Click that mark to see the line as it was written.",
   "Lines in your own language, and lines with nothing to translate (names, numbers, \"gg\"), stay as they are. What you write is not changed for you: each reader's own choice decides what they see.",
   "A machine translates. It keeps game talk as players write it, and it is sometimes wrong, more often with slang and in the smaller languages. When a line matters, look at the original.",
@@ -92,7 +92,7 @@ export function LanguageSettings() {
         </label>
         {why && <span className="text-xs text-text-muted" data-language-why>{why}</span>}
       </div>
-      <p className="text-xs text-text-muted">{t("Voice, the chat and Settings are shown in your language. The other tabs are still in English for now.")}</p>
+      <p className="text-xs text-text-muted">{t("The app is shown in your language. The guides and the log are still in English for now.")}</p>
       {/* Nobody who speaks the language has read the translations: its readers are asked to say what is wrong. */}
       {lang && lang !== "en" && (
         <p className="text-xs text-text-muted" data-language-report>

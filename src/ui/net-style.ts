@@ -29,7 +29,7 @@ const NET_NAME: Record<NetKind, string> = {
  * The sentences the server makes the nets' names from (its control/server.ts, nameOf), written here so that
  * they are translated: the server sends the sentence and said() shows it in the player's language.
  */
-export const netSentences = (name: string): string[] => [m("Clan lounge"), m(`${d(name)} lounge`), m("Alliance lounge"), m("Alliance broadcast"), m(`Clan ${d(name)}`)];
+export const netSentences = (name: string): string[] => [m("Clan lounge"), m(`${d(name)} lounge`), m("Alliance lounge"), m("Alliance broadcast"), m(`Clan ${d(name)}`), m(`${d(name)}'s group`), m("Group")];
 
 /** A net's name as this alliance says it: "Clan" may read "Guild". */
 export const netName = (net: NetKind): string => t(NET_NAME[net]);
