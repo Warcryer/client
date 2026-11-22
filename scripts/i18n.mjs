@@ -210,7 +210,9 @@ for (const file of files) {
       if (ts.isJsxText(node)) {
         const raw = node.getFullText(sf);
         const inner = raw.trim();
-        if (inner && sentence(decode(cook(inner), at(node)))) {
+        // Text between tags is always read by someone: one lower-case word ("connected", "muted") is a sentence
+        // here, where in a string it would be a name in the code.
+        if (inner && /\p{L}{2,}/u.test(decode(cook(inner), at(node))) && !technical(decode(cook(inner), at(node)))) {
           // Text between elements of one sentence ("<b>Ada</b> asks to join <b>Vanguard</b>") cannot be wrapped
           // piece by piece: a translation orders the pieces its own way. That is tx(), written by hand.
           // A label beside its control (text, then an input or a help icon) is a sentence of its own and is wrapped

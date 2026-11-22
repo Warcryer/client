@@ -47,7 +47,7 @@ function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; 
         {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
         <span className="ml-auto flex items-center gap-2 text-xs text-text-muted">
           {quiet && <span>{m.muted ? "muted" : `${Math.round(m.volume * 100)}%`}</span>}
-          {!m.canSpeak && <span>listening</span>}
+          {!m.canSpeak && <span>{t("listening")}</span>}
           {m.headsetOff && (
             <span className="flex items-center text-danger" role="img" aria-label={m.self ? t("Your headset is off: you hear no one") : t(`${d(m.name)} has their headset off and hears no one`)} data-headset-off>
               <HeadsetIcon off size={15} />
@@ -306,7 +306,7 @@ export function VoiceView() {
         <div className="relative flex min-h-[21rem] flex-1 gap-3 p-3" data-voice-main>
           <div className="flex w-60 shrink-0 flex-col gap-2 min-h-0 xl:w-72" data-voice-side>
             <h2 className="px-0.5 text-[11px] uppercase tracking-wider text-text-muted">{t("Your nets")}</h2>
-            <ul className="-m-0.5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5" aria-label={t("Your nets")}>
+            <ul className="-m-0.5 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-0.5" aria-label={t("Your nets")} data-nets>
               {nets.map((n) => (
                 <NetCard
                   key={n.room}
@@ -329,7 +329,7 @@ export function VoiceView() {
                     <h1 className={`title min-w-0 break-words ${NET_TEXT[shown.net]}`}>{shown.label}</h1>
                     <span className="whitespace-nowrap text-text-muted">
                       {shown.label !== netName(shown.net) && shown.net !== "lounge" && `${netName(shown.net)} · `}
-                      {shown.members.length} connected
+                      {t(`${d(shown.members.length)} connected`)}
                       {shown.members.some((m) => !m.canSpeak) && <> · {t(`${d(shown.members.filter((m) => m.canSpeak).length)} can speak`)}</>}
                     </span>
                     <Help text={t("Everyone connected to this net. A green outline means that player is speaking.\n\"listening\" marks players who can hear this net but not speak on it.\nClick a net on the left to see who is on it.\nClick another player to set your own volume for them, or mute them. Only you are affected.")} />

@@ -180,7 +180,7 @@ export function ChatPanel({
           {!compact && <span className="shrink-0 text-[11px] text-text-muted">{view.order.by}</span>}
           {view.organises && (
             <button type="button" className="shrink-0 cursor-pointer text-[11px] text-text-muted hover:text-danger" onClick={() => act.order("")} aria-label={t("Clear the order")}>
-              clear
+              {t("clear")}
             </button>
           )}
         </div>
@@ -242,7 +242,7 @@ export function ChatPanel({
               {(own || view.moderates || view.modRooms.includes(channel.room)) && (
                 <span className="ml-2 hidden gap-2 align-middle text-[11px] group-hover:inline-flex group-focus-within:inline-flex">
                   <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={t(`Remove this line of ${d(l.name)}`)}>
-                    remove
+                    {t("remove")}
                   </button>
                   {view.moderates && !own && (
                     <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.mute(l.userId as number, !off)} aria-label={off ? t(`Let ${d(l.name)} write again`) : t(`Switch off ${d(l.name)}'s writing`)}>

@@ -199,7 +199,7 @@ export function Notices({ update }: { update: ReturnType<typeof useUpdate> }) {
             onClick={() => setOpen(!open)}
             data-notices-more
           >
-            {more} more {open ? "▲" : "▼"}
+            {t(`${d(more)} more`)} {open ? "▲" : "▼"}
           </button>
         )}
       </div>

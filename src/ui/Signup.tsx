@@ -1,7 +1,8 @@
 // Signing up for an operation: "coming" or "can't come", and, when a player
 // brings a character other than the one on their profile, which one.
 
-import { t } from "../words";
+import { tx } from "../i18n";
+import { d, t } from "../words";
 import { useEffect, useState } from "react";
 import { rpc, type Character, type Signup } from "../api";
 import { useGame } from "../game";
@@ -91,7 +92,7 @@ export function SignupControl({
         {full && <Help text={t(SIGNUP_HELP)} />}
         {full && status === "coming" && (
           <span className="text-text-muted">
-            as <span className="text-text">{signup?.charName ?? info.user.name}</span>
+            {tx("as {name}", { name: <span className="text-text">{signup?.charName ?? info.user.name}</span> })}
             {(signup?.className ?? info.user.className) && <span> · {signup?.className ?? info.user.className}</span>}
             {(signup?.levelBand ?? info.user.levelBand) && <span> · {signup?.levelBand ?? info.user.levelBand}</span>}
             {signup?.byLeader && <span> {t("· signed up by your party's leader")}</span>}

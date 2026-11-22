@@ -170,7 +170,7 @@ export function SettingsPanel({ onClose, onSignOut }: { onClose: () => void; onS
                 value={s.vadHoldMs}
                 onChange={(e) => setSettings({ vadHoldMs: Number(e.target.value) })}
               />
-              <span className="tabular-nums text-text">{s.vadHoldMs} ms</span>
+              <span className="tabular-nums text-text">{t(`${d(s.vadHoldMs)} ms`)}</span>
             </label>
           )}
         </Group>

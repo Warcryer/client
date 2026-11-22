@@ -105,7 +105,7 @@ export function AroundPanel() {
         {presence && (
           <span className="whitespace-nowrap text-xs tabular-nums text-text-muted" aria-label={t(`${d(all.length)} online`)} data-online-count>
             {all.length}
-            <span className="hidden xl:inline"> online</span>
+            <span className="hidden xl:inline"> {t("online")}</span>
           </span>
         )}
         <Help text={t(AROUND_HELP)} />
@@ -204,7 +204,7 @@ export function AroundPanel() {
                                 >
                                   <span className="text-xs"><ClanMark clanId={m.clanId} tag={m.clanTag} size={14} /></span>
                                   <span className={isAway(m) ? "text-text-muted" : ""}>{m.name}</span>
-                                  {isAway(m) && <span className="text-[11px] text-text-muted" data-group-away>away</span>}
+                                  {isAway(m) && <span className="text-[11px] text-text-muted" data-group-away>{t("away")}</span>}
                                   {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
                                   {mayRemove(m) && (
                                     <button

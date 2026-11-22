@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { rpc, type Character } from "../api";
-import { t } from "../words";
+import { d, t } from "../words";
 import { useGame } from "../game";
 import { ConfirmButton, useAct } from "./app-context";
 import { CharacterFields } from "./CharacterFields";
@@ -17,7 +17,7 @@ export function CharacterLine({ c }: { c: Character }) {
       <span className="text-text">{c.name}</span>
       {c.classTag && <span className="text-xs text-gold">{c.classTag}</span>}
       {c.levelBand && <span className="text-xs text-text-muted">{c.levelBand}</span>}
-      {c.box && <span className="rounded-sm border border-line px-1 text-[10px] uppercase tracking-wide text-text-muted">box</span>}
+      {c.box && <span className="rounded-sm border border-line px-1 text-[10px] uppercase tracking-wide text-text-muted">{t("box")}</span>}
     </span>
   );
 }

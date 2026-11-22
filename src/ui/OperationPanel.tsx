@@ -133,7 +133,7 @@ export function OperationPanel() {
           <div className="sticky top-0 z-[1] flex items-center gap-2 border-b border-line bg-bg-1 px-3 py-1">
             <h3 className="text-xs uppercase tracking-wider text-text-muted">
               {t("Parties")} <span className="tabular-nums">{parties.length}</span>
-              {glance && <span className="normal-case tracking-normal"> · {placed} placed</span>}
+              {glance && <span className="normal-case tracking-normal"> · {t(`${d(placed)} placed`)}</span>}
             </h3>
             <Help text={t(PARTIES_HELP)} />
           </div>
