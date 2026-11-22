@@ -7,7 +7,7 @@
 // passes it on to the chat window (the strip), which has no connection of its
 // own.
 
-import { t } from "./words";
+import { d, t } from "./words";
 import type { ChatEvent, ChatOrder, ControlClient, NetSet, ReadyAsk, ReadyState } from "./control";
 import type { NetKind } from "./settings";
 
@@ -109,7 +109,7 @@ function onEvent(e: ChatEvent) {
     if (e.n !== null) pending.delete(e.n);
     // A refusal that names no line is about an order or a ready check: say it where the organiser is looking.
     const where = room ?? view.channels.find((c) => c.net === "broadcast")?.room;
-    if (where) add(where, note(room ? `Not sent. ${e.why}` : e.why), false);
+    if (where) add(where, note(room ? t(`Not sent. ${d(e.why)}`) : e.why), false);
   } else if (e.type === "order") {
     if (!view.operation) return;
     const fresh = e.order !== null && e.order.at !== view.order?.at;

@@ -62,6 +62,18 @@
   --radius-sm: 2px;
 }
 
+/* Chinese is drawn in the fonts the computer has for it: none is packed with the app (one would be many
+   megabytes), and Windows, macOS and Linux each bring their own for both written forms. The page says which
+   form it is showing, so each gets its own shapes. */
+:root:lang(zh-Hans) {
+  --font-sans: "Inter Variable", "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", system-ui, sans-serif;
+  --font-display: "Cinzel", "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC", sans-serif;
+}
+:root:lang(zh-Hant) {
+  --font-sans: "Inter Variable", "Microsoft JhengHei UI", "Microsoft JhengHei", "PingFang TC", "Noto Sans CJK TC", "Noto Sans TC", system-ui, sans-serif;
+  --font-display: "Cinzel", "Microsoft JhengHei UI", "Microsoft JhengHei", "PingFang TC", "Noto Sans CJK TC", "Noto Sans TC", sans-serif;
+}
+
 :root {
   color-scheme: dark;
 }

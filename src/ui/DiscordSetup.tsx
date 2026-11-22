@@ -79,7 +79,7 @@ export function DiscordSetup({
         className="flex flex-wrap items-center gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          set(url, "Connected. A first message has been posted in the channel.");
+          set(url, t("Connected. A first message has been posted in the channel."));
         }}
       >
         {/* Typed like a password: it is one, and this screen may be on a stream. */}
@@ -106,7 +106,7 @@ export function DiscordSetup({
             >
               {t("Send a test message")}
             </button>
-            <ConfirmButton confirm={t("Stop announcing?")} disabled={act.busy} onConfirm={() => set("", "Disconnected. Nothing more is posted.")}>{t("Disconnect")}</ConfirmButton>
+            <ConfirmButton confirm={t("Stop announcing?")} disabled={act.busy} onConfirm={() => set("", t("Disconnected. Nothing more is posted."))}>{t("Disconnect")}</ConfirmButton>
           </>
         )}
       </form>

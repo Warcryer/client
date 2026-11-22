@@ -45,7 +45,7 @@ const MODEL = CHOSEN.id;
 const PRICE = CHOSEN.price;
 
 /** The languages the app is translated into, by code, with their English names for the model. */
-const ALL = { fr: "French", de: "German", es: "Spanish", "pt-BR": "Brazilian Portuguese", ro: "Romanian", pl: "Polish", lt: "Lithuanian", el: "Greek", ru: "Russian", uk: "Ukrainian", tr: "Turkish" };
+const ALL = { fr: "French", de: "German", es: "Spanish", "pt-BR": "Brazilian Portuguese", ro: "Romanian", pl: "Polish", lt: "Lithuanian", el: "Greek", ru: "Russian", uk: "Ukrainian", "zh-Hans": "Simplified Chinese (as written in mainland China)", "zh-Hant": "Traditional Chinese (as written in Taiwan)", tr: "Turkish" };
 const LANGS = (process.env.LANGS ? process.env.LANGS.split(",") : Object.keys(ALL)).filter((l) => ALL[l]);
 
 // ---- What there is to translate ----
@@ -217,7 +217,7 @@ const estimate = () => {
       calls++;
       inTok += tokens(r.params.system[0].text) + tokens(r.params.messages[0].content);
       // Translations run longer than their English, more so outside the Latin alphabet; and the model thinks a little.
-      outTok += Math.ceil(tokens(r.chunk.map((s) => s.key).join(" ")) * (["ru", "uk", "el"].includes(lang) ? 2.6 : 1.7) * 1.25) + r.chunk.length * 12;
+      outTok += Math.ceil(tokens(r.chunk.map((s) => s.key).join(" ")) * (["ru", "uk", "el", "zh-Hans", "zh-Hant"].includes(lang) ? 2.6 : 1.7) * 1.25) + r.chunk.length * 12;
     }
   }
   const rate = NOW ? 1 : 0.5;

@@ -1,0 +1,275 @@
+{
+ "address": "Address the player informally as 你 (not 您), as Chinese games and chat apps usually do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "联盟",
+   "note": ""
+  },
+  {
+   "en": "clan",
+   "term": "公会",
+   "note": ""
+  },
+  {
+   "en": "party",
+   "term": "小队",
+   "note": ""
+  },
+  {
+   "en": "constant party",
+   "term": "固定队",
+   "note": ""
+  },
+  {
+   "en": "operation",
+   "term": "活动",
+   "note": ""
+  },
+  {
+   "en": "net",
+   "term": "频道",
+   "note": "Voice channel; prefix the name, e.g. 指挥频道"
+  },
+  {
+   "en": "Broadcast",
+   "term": "广播",
+   "note": ""
+  },
+  {
+   "en": "Command",
+   "term": "指挥",
+   "note": ""
+  },
+  {
+   "en": "Reserve",
+   "term": "候补",
+   "note": "Distinct from standby (替补)"
+  },
+  {
+   "en": "lounge",
+   "term": "公会大厅",
+   "note": ""
+  },
+  {
+   "en": "group",
+   "term": "小组",
+   "note": "Do not confuse with party (小队)"
+  },
+  {
+   "en": "roster board",
+   "term": "分队面板",
+   "note": ""
+  },
+  {
+   "en": "event leader",
+   "term": "团长",
+   "note": ""
+  },
+  {
+   "en": "deputy",
+   "term": "副团长",
+   "note": ""
+  },
+  {
+   "en": "party leader",
+   "term": "队长",
+   "note": ""
+  },
+  {
+   "en": "clan leader",
+   "term": "会长",
+   "note": ""
+  },
+  {
+   "en": "officer",
+   "term": "官员",
+   "note": ""
+  },
+  {
+   "en": "alliance admin",
+   "term": "联盟管理员",
+   "note": ""
+  },
+  {
+   "en": "push-to-talk",
+   "term": "按键说话",
+   "note": ""
+  },
+  {
+   "en": "voice activation",
+   "term": "自由麦",
+   "note": ""
+  },
+  {
+   "en": "headset",
+   "term": "耳机",
+   "note": ""
+  },
+  {
+   "en": "quick call",
+   "term": "快捷喊话",
+   "note": ""
+  },
+  {
+   "en": "order",
+   "term": "指令",
+   "note": ""
+  },
+  {
+   "en": "ready check",
+   "term": "就位确认",
+   "note": ""
+  },
+  {
+   "en": "sign-up",
+   "term": "报名",
+   "note": ""
+  },
+  {
+   "en": "compact strip",
+   "term": "悬浮条",
+   "note": ""
+  },
+  {
+   "en": "key",
+   "term": "按键",
+   "note": ""
+  },
+  {
+   "en": "Call to arms",
+   "term": "紧急集合",
+   "note": ""
+  },
+  {
+   "en": "away",
+   "term": "暂离",
+   "note": ""
+  },
+  {
+   "en": "invite link",
+   "term": "邀请链接",
+   "note": ""
+  },
+  {
+   "en": "Settings",
+   "term": "设置",
+   "note": ""
+  },
+  {
+   "en": "points",
+   "term": "积分",
+   "note": "Keep DKP in Latin letters"
+  },
+  {
+   "en": "set of points",
+   "term": "积分池",
+   "note": ""
+  },
+  {
+   "en": "standings",
+   "term": "积分榜",
+   "note": ""
+  },
+  {
+   "en": "season",
+   "term": "赛季",
+   "note": ""
+  },
+  {
+   "en": "decay",
+   "term": "衰减",
+   "note": ""
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Keep as GP; may gloss as 装备分"
+  },
+  {
+   "en": "loot",
+   "term": "战利品",
+   "note": ""
+  },
+  {
+   "en": "drop",
+   "term": "掉落",
+   "note": ""
+  },
+  {
+   "en": "loot council",
+   "term": "分配委员会",
+   "note": ""
+  },
+  {
+   "en": "price list",
+   "term": "价目表",
+   "note": ""
+  },
+  {
+   "en": "standby",
+   "term": "替补",
+   "note": "Distinct from Reserve (候补)"
+  },
+  {
+   "en": "attendance",
+   "term": "出勤",
+   "note": ""
+  },
+  {
+   "en": "turnout",
+   "term": "出勤率",
+   "note": ""
+  },
+  {
+   "en": "crest",
+   "term": "会徽",
+   "note": ""
+  },
+  {
+   "en": "ban",
+   "term": "封禁",
+   "note": ""
+  },
+  {
+   "en": "game setup",
+   "term": "游戏设定",
+   "note": ""
+  },
+  {
+   "en": "role",
+   "term": "定位",
+   "note": ""
+  },
+  {
+   "en": "class",
+   "term": "职业",
+   "note": ""
+  },
+  {
+   "en": "character",
+   "term": "角色",
+   "note": ""
+  },
+  {
+   "en": "preset",
+   "term": "预设",
+   "note": ""
+  },
+  {
+   "en": "log",
+   "term": "日志",
+   "note": ""
+  },
+  {
+   "en": "History",
+   "term": "历史记录",
+   "note": ""
+  },
+  {
+   "en": "roster",
+   "term": "阵容",
+   "note": ""
+  }
+ ]
+}

@@ -198,7 +198,9 @@ for (const file of files) {
           const callee = a.expression;
           const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
           // Not the list that join() puts together: sentences joined with "\n" are read. What is handed to join() is not.
-          if (QUIET_CALLS.test(name) && !(name === "join" && inside(node, callee))) return true;
+          // "add" and "has" are quiet as a set's or a class list's (x.add("on")), not as a function of our own called add(...).
+          const ownFunction = ts.isIdentifier(callee) && /^(add|has|delete|get|set|push|includes|test|match)$/.test(name);
+          if (QUIET_CALLS.test(name) && !ownFunction && !(name === "join" && inside(node, callee))) return true;
         }
         if (ts.isFunctionLike(a) || ts.isJsxElement(a)) break;
       }

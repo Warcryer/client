@@ -33,6 +33,11 @@ const guess = (languages: Record<string, string>): string | null => {
     if (!tag) continue;
     if (Object.hasOwn(languages, tag)) return tag;
     const short = tag.split("-")[0];
+    // Chinese is offered in its two written forms; a browser names it by form (zh-Hant) or by place (zh-TW).
+    if (short === "zh") {
+      const form = /hant|-(tw|hk|mo)\b/i.test(tag) ? "zh-Hant" : "zh-Hans";
+      if (Object.hasOwn(languages, form)) return form;
+    }
     const hit = Object.keys(languages).find((code) => code === short || code.split("-")[0] === short);
     if (hit) return hit;
   }

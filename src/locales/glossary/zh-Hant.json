@@ -1,0 +1,275 @@
+{
+ "address": "Address the player informally with 你 (not 您), as Taiwanese games and chat apps usually do.",
+ "terms": [
+  {
+   "en": "alliance",
+   "term": "聯盟",
+   "note": "Chinese has no gender or plural; the same applies to all terms."
+  },
+  {
+   "en": "clan",
+   "term": "公會",
+   "note": "Lineage-style communities may say 血盟; keep 公會 consistently."
+  },
+  {
+   "en": "party",
+   "term": "隊伍",
+   "note": "Verb 'to form a party' is 組隊."
+  },
+  {
+   "en": "constant party",
+   "term": "固定隊",
+   "note": ""
+  },
+  {
+   "en": "operation",
+   "term": "活動",
+   "note": ""
+  },
+  {
+   "en": "net",
+   "term": "頻道",
+   "note": "Short for 語音頻道."
+  },
+  {
+   "en": "Broadcast",
+   "term": "廣播",
+   "note": "Net name."
+  },
+  {
+   "en": "Command",
+   "term": "指揮",
+   "note": "Net name; may expand to 指揮頻道."
+  },
+  {
+   "en": "Reserve",
+   "term": "候補",
+   "note": "Net name; distinct from standby 替補."
+  },
+  {
+   "en": "lounge",
+   "term": "大廳",
+   "note": "Often 公會大廳."
+  },
+  {
+   "en": "group",
+   "term": "小組",
+   "note": "Do not confuse with party 隊伍."
+  },
+  {
+   "en": "roster board",
+   "term": "編隊看板",
+   "note": ""
+  },
+  {
+   "en": "event leader",
+   "term": "總指揮",
+   "note": ""
+  },
+  {
+   "en": "deputy",
+   "term": "副指揮",
+   "note": ""
+  },
+  {
+   "en": "party leader",
+   "term": "隊長",
+   "note": ""
+  },
+  {
+   "en": "clan leader",
+   "term": "會長",
+   "note": ""
+  },
+  {
+   "en": "officer",
+   "term": "幹部",
+   "note": ""
+  },
+  {
+   "en": "alliance admin",
+   "term": "聯盟管理員",
+   "note": ""
+  },
+  {
+   "en": "push-to-talk",
+   "term": "按鍵通話",
+   "note": ""
+  },
+  {
+   "en": "voice activation",
+   "term": "語音觸發",
+   "note": ""
+  },
+  {
+   "en": "headset",
+   "term": "耳機",
+   "note": "'Headset off' (deafened) is 拒聽."
+  },
+  {
+   "en": "quick call",
+   "term": "快捷喊話",
+   "note": ""
+  },
+  {
+   "en": "order",
+   "term": "指令",
+   "note": ""
+  },
+  {
+   "en": "ready check",
+   "term": "就位確認",
+   "note": ""
+  },
+  {
+   "en": "sign-up",
+   "term": "報名",
+   "note": "Also used as verb."
+  },
+  {
+   "en": "compact strip",
+   "term": "迷你浮動條",
+   "note": ""
+  },
+  {
+   "en": "key",
+   "term": "按鍵",
+   "note": "Key binding is 按鍵綁定."
+  },
+  {
+   "en": "Call to arms",
+   "term": "緊急集合",
+   "note": ""
+  },
+  {
+   "en": "away",
+   "term": "暫離",
+   "note": "Players also say AFK."
+  },
+  {
+   "en": "invite link",
+   "term": "邀請連結",
+   "note": ""
+  },
+  {
+   "en": "Settings",
+   "term": "設定",
+   "note": ""
+  },
+  {
+   "en": "points",
+   "term": "點數",
+   "note": "DKP stays in English."
+  },
+  {
+   "en": "set of points",
+   "term": "點數組",
+   "note": ""
+  },
+  {
+   "en": "standings",
+   "term": "點數表",
+   "note": ""
+  },
+  {
+   "en": "season",
+   "term": "賽季",
+   "note": ""
+  },
+  {
+   "en": "decay",
+   "term": "衰減",
+   "note": ""
+  },
+  {
+   "en": "gear points",
+   "term": "裝備點數",
+   "note": "Abbreviation GP stays in English."
+  },
+  {
+   "en": "loot",
+   "term": "戰利品",
+   "note": ""
+  },
+  {
+   "en": "drop",
+   "term": "掉落物",
+   "note": ""
+  },
+  {
+   "en": "loot council",
+   "term": "分裝委員會",
+   "note": ""
+  },
+  {
+   "en": "price list",
+   "term": "價目表",
+   "note": ""
+  },
+  {
+   "en": "standby",
+   "term": "替補",
+   "note": "Distinct from Reserve 候補."
+  },
+  {
+   "en": "attendance",
+   "term": "出席紀錄",
+   "note": ""
+  },
+  {
+   "en": "turnout",
+   "term": "出席率",
+   "note": ""
+  },
+  {
+   "en": "crest",
+   "term": "徽章",
+   "note": ""
+  },
+  {
+   "en": "ban",
+   "term": "封鎖",
+   "note": "Also used as verb."
+  },
+  {
+   "en": "game setup",
+   "term": "遊戲配置",
+   "note": "Avoid 設定 to not clash with Settings."
+  },
+  {
+   "en": "role",
+   "term": "定位",
+   "note": "Tank 坦克, healer 補師, damage 輸出."
+  },
+  {
+   "en": "class",
+   "term": "職業",
+   "note": ""
+  },
+  {
+   "en": "character",
+   "term": "角色",
+   "note": ""
+  },
+  {
+   "en": "preset",
+   "term": "預設範本",
+   "note": ""
+  },
+  {
+   "en": "log",
+   "term": "操作紀錄",
+   "note": "Taiwan spelling 紀錄."
+  },
+  {
+   "en": "History",
+   "term": "歷史紀錄",
+   "note": ""
+  },
+  {
+   "en": "roster",
+   "term": "編隊名單",
+   "note": ""
+  }
+ ]
+}
