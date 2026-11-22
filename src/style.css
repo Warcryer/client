@@ -3,6 +3,44 @@
 @import "@fontsource/cinzel/500.css";
 @import "@fontsource/cinzel/700.css";
 
+/* Titles in Russian, Ukrainian and Greek (server decision 66). Cinzel, the title font, has Latin letters
+   only; the owner chose Alegreya SC for the other two alphabets (2026-11-22): one family for both, and its
+   strokes hold at the small size of panel titles. It is named after Cinzel in --font-display, so a letter
+   Cinzel has stays in Cinzel (a clan's name inside a Russian heading) and only Cyrillic and Greek letters
+   come from here. The files are kept in the repository with their licence (SIL Open Font License 1.1). */
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/alegreya-sc/alegreya-sc-cyrillic-500-normal.woff2") format("woff2");
+  unicode-range: U+0400-052F, U+1C80-1C8F, U+2DE0-2DFF, U+A640-A69F, U+2116;
+}
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/alegreya-sc/alegreya-sc-cyrillic-700-normal.woff2") format("woff2");
+  unicode-range: U+0400-052F, U+1C80-1C8F, U+2DE0-2DFF, U+A640-A69F, U+2116;
+}
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/alegreya-sc/alegreya-sc-greek-500-normal.woff2") format("woff2");
+  unicode-range: U+0370-03FF, U+1F00-1FFF;
+}
+@font-face {
+  font-family: "Alegreya SC";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/alegreya-sc/alegreya-sc-greek-700-normal.woff2") format("woff2");
+  unicode-range: U+0370-03FF, U+1F00-1FFF;
+}
+
 @theme {
   --color-bg-0: #0b0c0f;
   --color-bg-1: #12141a;
@@ -20,7 +58,7 @@
   --color-net-reserve: #9a968c;
   --color-danger: #e2553f;
   --font-sans: "Inter Variable", system-ui, sans-serif;
-  --font-display: "Cinzel", Georgia, serif;
+  --font-display: "Cinzel", "Alegreya SC", Georgia, serif;
   --radius-sm: 2px;
 }
 
