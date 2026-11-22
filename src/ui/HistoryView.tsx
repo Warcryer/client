@@ -5,7 +5,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { rpc } from "../api";
-import { t } from "../words";
+import { d, t } from "../words";
+import { dayFull as fullDay, dayShort as day, span } from "./common";
 import { useApp } from "./app-context";
 import { Help } from "./tips";
 import { POINTS_HELP, PointsStandings, poolTitle, usePointsOverview } from "./Points";
@@ -43,13 +44,6 @@ const HELP = [
 const FILL = "#b68d35";
 const TRACK = "#3a3222";
 
-const span = (seconds: number) => {
-  const m = Math.round(seconds / 60);
-  if (m === 0) return seconds > 0 ? "under 1 min" : "0 min";
-  return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
-};
-const day = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
-const fullDay = (iso: string) => new Date(iso).toLocaleDateString(undefined, { dateStyle: "medium" });
 const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
 
 function Tile({ id, label, value, note }: { id: string; label: string; value: string; note?: string }) {
@@ -115,8 +109,8 @@ function TurnoutChart({ ops }: { ops: TurnoutOp[] }) {
   return (
     <div className="flex flex-col gap-2" data-history-chart>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-muted">
-        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-[2px]" style={{ background: FILL }} />In voice</span>
-        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-[2px]" style={{ background: TRACK }} />Expected and not there</span>
+        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-[2px]" style={{ background: FILL }} />{t("In voice")}</span>
+        <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-[2px]" style={{ background: TRACK }} />{t("Expected and not there")}</span>
       </div>
       <div ref={box} className="relative overflow-x-auto" onPointerLeave={() => setAt(null)}>
         <svg width={w} height={H} role="group" aria-label={t("Turnout by operation, oldest first")} className="block">
@@ -137,7 +131,7 @@ function TurnoutChart({ ops }: { ops: TurnoutOp[] }) {
                 key={o.id}
                 tabIndex={0}
                 role="img"
-                aria-label={`${o.name}, ${fullDay(o.endedAt)}: ${o.attended} of ${o.expected} in voice; ${o.coming} said they were coming, ${o.noShow} of them did not show`}
+                aria-label={t(`${d(o.name)}, ${d(fullDay(o.endedAt))}: ${d(o.attended)} of ${d(o.expected)} in voice; ${d(o.coming)} said they were coming, ${d(o.noShow)} of them did not show`)}
                 onPointerEnter={() => setAt(i)}
                 onFocus={() => setAt(i)}
                 onBlur={() => setAt(null)}
@@ -157,10 +151,10 @@ function TurnoutChart({ ops }: { ops: TurnoutOp[] }) {
         </svg>
         {shown && (
           <div className="pointer-events-none absolute top-1 z-10 w-52 -translate-x-1/2 rounded-sm border border-gold-dim bg-bg-0 px-3 py-2 text-xs shadow-lg" style={{ left: tipLeft }} role="status" data-history-tip>
-            <div className="text-sm font-semibold text-text">{shown.attended} of {shown.expected} in voice</div>
+            <div className="text-sm font-semibold text-text">{t(`${d(shown.attended)} of ${d(shown.expected)} in voice`)}</div>
             <div className="truncate text-text-muted">{shown.name}</div>
-            <div className="text-text-muted">{fullDay(shown.endedAt)} · ran {span(shown.seconds)}</div>
-            <div className="mt-1 text-text-muted">{shown.coming} said they were coming{shown.noShow > 0 ? ` · ${shown.noShow} did not show` : ""}</div>
+            <div className="text-text-muted">{fullDay(shown.endedAt)} · {t(`ran ${d(span(shown.seconds))}`)}</div>
+            <div className="mt-1 text-text-muted">{t(`${d(shown.coming)} said they were coming`)}{shown.noShow > 0 ? ` · ${t(`${d(shown.noShow)} did not show`)}` : ""}</div>
           </div>
         )}
       </div>
@@ -174,13 +168,13 @@ function OperationsTable({ ops }: { ops: TurnoutOp[] }) {
       <table className="w-full text-sm" data-history-table>
         <thead>
           <tr className="text-left text-xs text-text-muted">
-            <th className="py-1 pr-3 font-normal">Ended</th>
+            <th className="py-1 pr-3 font-normal">{t("Ended")}</th>
             <th className="py-1 pr-3 font-normal">{t("Operation")}</th>
-            <th className="py-1 pr-3 text-right font-normal">In voice</th>
-            <th className="py-1 pr-3 text-right font-normal">Expected</th>
-            <th className="py-1 pr-3 text-right font-normal">Said coming</th>
-            <th className="py-1 pr-3 text-right font-normal">Did not show</th>
-            <th className="py-1 text-right font-normal">Ran</th>
+            <th className="py-1 pr-3 text-right font-normal">{t("In voice")}</th>
+            <th className="py-1 pr-3 text-right font-normal">{t("Expected")}</th>
+            <th className="py-1 pr-3 text-right font-normal">{t("Said coming")}</th>
+            <th className="py-1 pr-3 text-right font-normal">{t("Did not show")}</th>
+            <th className="py-1 text-right font-normal">{t("Ran")}</th>
           </tr>
         </thead>
         <tbody className="tabular-nums">
@@ -216,7 +210,7 @@ function Record({ userId, days, onBack }: { userId: number; days: number; onBack
     };
   }, [userId, days, tick]);
   if (error) return <p className="text-danger" role="alert">{error}</p>;
-  if (!data) return <p className="text-text-muted">Loading…</p>;
+  if (!data) return <p className="text-text-muted">{t("Loading…")}</p>;
   const { totals } = data;
   return (
     <section className="panel flex flex-col gap-4 p-5" data-history-record={data.player.userId}>
@@ -225,12 +219,12 @@ function Record({ userId, days, onBack }: { userId: number; days: number; onBack
         {data.player.clanTag && <span className="text-xs font-normal text-text-muted"> [{data.player.clanTag}]</span>}
       </h2>
       {onBack && (
-        <button type="button" className="btn btn-quiet self-start text-xs" onClick={onBack}>Back to everyone</button>
+        <button type="button" className="btn btn-quiet self-start text-xs" onClick={onBack}>{t("Back to everyone")}</button>
       )}
       <div className="flex flex-wrap gap-3">
         <Tile id="attended" label={t("Operations attended")} value={`${totals.attended} of ${totals.expected}`} note={totals.expected > 0 ? `${pct(totals.attended, totals.expected)}%` : undefined} />
-        <Tile id="noshow" label="Said coming, did not show" value={String(totals.noShow)} />
-        <Tile id="share" label="Time stayed" value={totals.attended > 0 ? `${Math.round(totals.share * 100)}%` : "–"} note={totals.lastAt ? `Last there ${fullDay(totals.lastAt)}` : undefined} />
+        <Tile id="noshow" label={t("Said coming, did not show")} value={String(totals.noShow)} />
+        <Tile id="share" label={t("Time stayed")} value={totals.attended > 0 ? `${Math.round(totals.share * 100)}%` : "–"} note={totals.lastAt ? t(`Last there ${d(fullDay(totals.lastAt))}`) : undefined} />
       </div>
       {data.operations.length === 0 ? (
         <p className="text-text-muted">{t("No operation in this period that their clan took part in.")}</p>
@@ -239,12 +233,12 @@ function Record({ userId, days, onBack }: { userId: number; days: number; onBack
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-text-muted">
-                <th className="py-1 pr-3 font-normal">Ended</th>
+                <th className="py-1 pr-3 font-normal">{t("Ended")}</th>
                 <th className="py-1 pr-3 font-normal">{t("Operation")}</th>
-                <th className="py-1 pr-3 font-normal">In voice</th>
-                <th className="py-1 pr-3 font-normal">Answered</th>
+                <th className="py-1 pr-3 font-normal">{t("In voice")}</th>
+                <th className="py-1 pr-3 font-normal">{t("Answered")}</th>
                 <th className="py-1 pr-3 font-normal">{t("Party")}</th>
-                <th className="py-1 font-normal">Came as</th>
+                <th className="py-1 font-normal">{t("Came as")}</th>
               </tr>
             </thead>
             <tbody>
@@ -254,9 +248,9 @@ function Record({ userId, days, onBack }: { userId: number; days: number; onBack
                   <td className="py-1 pr-3">{o.name}</td>
                   <td className="py-1 pr-3 whitespace-nowrap">
                     <Meter part={o.attendedSeconds} whole={Math.max(o.seconds, o.attendedSeconds)} />
-                    <span className={`ml-2 tabular-nums ${o.attendedSeconds > 0 ? "" : "text-text-muted"}`}>{o.attendedSeconds > 0 ? `${span(o.attendedSeconds)} of ${span(o.seconds)}` : "Not there"}</span>
+                    <span className={`ml-2 tabular-nums ${o.attendedSeconds > 0 ? "" : "text-text-muted"}`}>{o.attendedSeconds > 0 ? `${span(o.attendedSeconds)} of ${span(o.seconds)}` : t("Not there")}</span>
                   </td>
-                  <td className="py-1 pr-3 text-text-muted">{o.signup === "coming" ? "Coming" : o.signup === "out" ? "Can't come" : "No answer"}</td>
+                  <td className="py-1 pr-3 text-text-muted">{o.signup === "coming" ? t("Coming") : o.signup === "out" ? t("Can't come") : t("No answer")}</td>
                   <td className="py-1 pr-3 text-text-muted">{o.party ?? ""}</td>
                   <td className="py-1 text-text-muted">{o.cameAs}{o.className ? ` · ${o.className}` : ""}</td>
                 </tr>
@@ -296,7 +290,7 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
 
   const filters = (
     <div className="flex flex-wrap items-center gap-2" data-history-filters>
-      <div className="flex gap-1" role="group" aria-label="Period">
+      <div className="flex gap-1" role="group" aria-label={t("Period")}>
         {PERIODS.map((p) => (
           <button key={p.days} type="button" className={`btn text-xs ${days === p.days ? "" : "btn-quiet"}`} aria-pressed={days === p.days} onClick={() => setDays(p.days)}>
             {p.label}
@@ -311,7 +305,7 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
       )}
       {leads && (
         <button type="button" className="btn btn-quiet ml-auto text-xs" onClick={() => setPlayer(player === info.user.id ? null : info.user.id)} aria-pressed={player === info.user.id}>
-          My own record
+          {t("My own record")}
         </button>
       )}
     </div>
@@ -321,7 +315,7 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
   if (!leads) {
     return (
       <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 p-4" data-history="own">
-        <h1 className="title flex items-center gap-2 text-gold-bright">History <Help text={t(HELP)} /></h1>
+        <h1 className="title flex items-center gap-2 text-gold-bright">{t("History")} <Help text={t(HELP)} /></h1>
         {tabs}
         {filters}
         <Record userId={info.user.id} days={days} />
@@ -335,14 +329,14 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
   const noShow = ops.reduce((n, o) => n + o.noShow, 0);
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4" data-history="turnout">
-      <h1 className="title flex items-center gap-2 text-gold-bright">History <Help text={t(HELP)} /></h1>
+      <h1 className="title flex items-center gap-2 text-gold-bright">{t("History")} <Help text={t(HELP)} /></h1>
       {tabs}
       {filters}
       {error && <p className="text-danger" role="alert">{error}</p>}
       {player !== null ? (
         <Record userId={player} days={days} onBack={() => setPlayer(null)} />
       ) : !data ? (
-        <p className="text-text-muted">Loading…</p>
+        <p className="text-text-muted">{t("Loading…")}</p>
       ) : ops.length === 0 ? (
         <section className="panel p-5 text-text-muted" data-history-empty>
           {t("No operation ended in this period. When one ends, who was in voice is written down and shows here.")}
@@ -351,30 +345,30 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
         <div className={`flex flex-col gap-4 transition-opacity ${loading ? "opacity-60" : ""}`}>
           <div className="flex flex-wrap gap-3">
             <Tile id="operations" label={t("Operations")} value={String(ops.length)} />
-            <Tile id="turnout" label="Average turnout" value={`${pct(attended, expected)}%`} note={`On average ${Math.round(attended / ops.length)} of ${Math.round(expected / ops.length)} in voice`} />
-            <Tile id="noshow" label="Said coming, did not show" value={String(noShow)} />
-            <Tile id="players" label="Players" value={String(data.players.length)} />
+            <Tile id="turnout" label={t("Average turnout")} value={`${pct(attended, expected)}%`} note={t(`On average ${d(Math.round(attended / ops.length))} of ${d(Math.round(expected / ops.length))} in voice`)} />
+            <Tile id="noshow" label={t("Said coming, did not show")} value={String(noShow)} />
+            <Tile id="players" label={t("Players")} value={String(data.players.length)} />
           </div>
           <section className="panel flex flex-col gap-3 p-5">
             <h2 className="title title-rule text-sm text-gold">{t("Turnout by operation")}</h2>
             <TurnoutChart ops={ops} />
             <button type="button" className="btn btn-quiet self-start text-xs" aria-expanded={table} onClick={() => setTable(!table)}>
-              {table ? "Hide the table" : "Show as a table"}
+              {table ? t("Hide the table") : t("Show as a table")}
             </button>
             {table && <OperationsTable ops={ops} />}
           </section>
           <section className="panel flex flex-col gap-3 p-5">
-            <h2 className="title title-rule text-sm text-gold">Players</h2>
-            <p className="text-xs text-text-muted">Those who come least often first. Click a player for their record.</p>
+            <h2 className="title title-rule text-sm text-gold">{t("Players")}</h2>
+            <p className="text-xs text-text-muted">{t("Those who come least often first. Click a player for their record.")}</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm" data-history-players>
                 <thead>
                   <tr className="text-left text-xs text-text-muted">
-                    <th className="py-1 pr-3 font-normal">Player</th>
+                    <th className="py-1 pr-3 font-normal">{t("Player")}</th>
                     <th className="py-1 pr-3 font-normal">{t("Operations attended")}</th>
-                    <th className="py-1 pr-3 text-right font-normal">Did not show</th>
-                    <th className="py-1 pr-3 text-right font-normal">Time stayed</th>
-                    <th className="py-1 font-normal">Last there</th>
+                    <th className="py-1 pr-3 text-right font-normal">{t("Did not show")}</th>
+                    <th className="py-1 pr-3 text-right font-normal">{t("Time stayed")}</th>
+                    <th className="py-1 font-normal">{t("Last there")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -386,11 +380,11 @@ function AttendanceHistory({ tabs }: { tabs: React.ReactNode }) {
                       </td>
                       <td className="py-1 pr-3 whitespace-nowrap">
                         <Meter part={p.attended} whole={p.expected} />
-                        <span className="ml-2 tabular-nums">{p.attended} of {p.expected}</span>
+                        <span className="ml-2 tabular-nums">{t(`${d(p.attended)} of ${d(p.expected)}`)}</span>
                       </td>
                       <td className="py-1 pr-3 text-right tabular-nums">{p.noShow > 0 ? p.noShow : ""}</td>
                       <td className="py-1 pr-3 text-right tabular-nums text-text-muted">{p.attended > 0 ? `${Math.round(p.share * 100)}%` : ""}</td>
-                      <td className="py-1 text-text-muted">{p.lastAt ? fullDay(p.lastAt) : "Never"}</td>
+                      <td className="py-1 text-text-muted">{p.lastAt ? fullDay(p.lastAt) : t("Never")}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -412,9 +406,9 @@ export function HistoryView() {
   const [view, setView] = useState<number | "loot" | null>(null);
   const pools = (points?.pools ?? []).filter((p) => p.settings.enabled && p.id !== null);
   const tabs = (
-    <div className="flex flex-wrap gap-1" role="tablist" aria-label="What to show" data-history-tabs>
+    <div className="flex flex-wrap gap-1" role="tablist" aria-label={t("What to show")} data-history-tabs>
       <button type="button" role="tab" aria-selected={view === null} className={`btn text-sm ${view === null ? "" : "btn-quiet"}`} onClick={() => setView(null)}>
-        Attendance
+        {t("Attendance")}
       </button>
       {pools.map((p, i) => (
         <button key={p.id} type="button" role="tab" aria-selected={view === i} className={`btn text-sm ${view === i ? "" : "btn-quiet"}`} onClick={() => setView(i)} data-history-tab-points={p.id}>
@@ -422,14 +416,14 @@ export function HistoryView() {
         </button>
       ))}
       <button type="button" role="tab" aria-selected={view === "loot"} className={`btn text-sm ${view === "loot" ? "" : "btn-quiet"}`} onClick={() => setView("loot")} data-history-tab-loot>
-        Loot
+        {t("Loot")}
       </button>
     </div>
   );
   if (view === "loot") {
     return (
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4" data-history="loot">
-        <h1 className="title flex items-center gap-2 text-gold-bright">History <Help text={t(LOOT_HELP)} /></h1>
+        <h1 className="title flex items-center gap-2 text-gold-bright">{t("History")} <Help text={t(LOOT_HELP)} /></h1>
         {tabs}
         <LootHistory />
       </div>
@@ -439,7 +433,7 @@ export function HistoryView() {
   if (!pool) return <AttendanceHistory tabs={tabs} />;
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 p-4" data-history="points">
-      <h1 className="title flex items-center gap-2 text-gold-bright">History <Help text={t(POINTS_HELP)} /></h1>
+      <h1 className="title flex items-center gap-2 text-gold-bright">{t("History")} <Help text={t(POINTS_HELP)} /></h1>
       {tabs}
       <PointsStandings key={pool.id} pool={pool} />
     </div>

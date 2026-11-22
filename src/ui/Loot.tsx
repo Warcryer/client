@@ -6,7 +6,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { rpc } from "../api";
-import { t } from "../words";
+import { d, own, t } from "../words";
+import { tn } from "../i18n";
+import { dayShort as day } from "./common";
 import { useAct, useApp } from "./app-context";
 import { Help } from "./tips";
 
@@ -51,7 +53,7 @@ type ChargePool = {
 const costed = (p: ChargePool | undefined) => p?.spending === "price" || p?.spending === "epgp" || p?.spending === "zeroSum";
 const poolLabel = (p: ChargePool) =>
   `${p.name}${p.clanTag ? ` [${p.clanTag}]` : ""}${
-    p.spending === "council" ? t(" (loot council, no cost)") : p.spending === "epgp" ? " (EPGP: adds gear points)" : p.spending === "zeroSum" ? t(" (zero-sum: shared among those there)") : p.spending === "list" ? " (Suicide Kings list)" : ""
+    p.spending === "council" ? ` (${t("loot council, no cost")})` : p.spending === "epgp" ? ` (${t("EPGP: adds gear points")})` : p.spending === "zeroSum" ? ` (${t("zero-sum: shared among those there")})` : p.spending === "list" ? ` (${t("Suicide Kings list")})` : ""
   }`;
 /** The players to choose from for a set: its members, in the order the set gives (priority, or the list), labelled with it. */
 function choices(people: Person[], pool: ChargePool | undefined): { p: Person; label: string; low?: boolean }[] {
@@ -60,14 +62,14 @@ function choices(people: Person[], pool: ChargePool | undefined): { p: Person; l
   if (pool?.spending === "epgp" && pool.priority) {
     return pool.priority.flatMap((r) => {
       const p = byId.get(r.userId);
-      return p ? [{ p, label: `${personLabel(p)} · PR ${r.pr} (${r.ep} EP, ${r.gp} GP)${r.minReached ? "" : " · below the minimum EP"}`, low: !r.minReached }] : [];
+      return p ? [{ p, label: `${personLabel(p)} · PR ${r.pr} (${r.ep} EP, ${r.gp} GP)${r.minReached ? "" : ` · ${t("below the minimum EP")}`}`, low: !r.minReached }] : [];
     });
   }
   if (pool?.spending === "list" && pool.order) {
     const here = new Set(pool.present ?? []);
     return pool.order.flatMap((id, i) => {
       const p = byId.get(id);
-      return p ? [{ p, label: `${i + 1}. ${personLabel(p)}${here.has(id) ? "" : " · not here"}` }] : [];
+      return p ? [{ p, label: `${i + 1}. ${personLabel(p)}${here.has(id) ? "" : ` · ${t("not here")}`}` }] : [];
     });
   }
   return inSet.map((p) => ({ p, label: personLabel(p) }));
@@ -85,15 +87,14 @@ export const LOOT_HELP = [
 ].join("\n");
 
 /** What a given drop cost, as far as the viewer sees: "50 DKP", "150 GP (EP)", "EP council", "List". */
-const costText = (d: Drop) =>
-  !d.pool ? (d.method === "council" ? "Council" : "")
-  : d.method === "epgp" && d.cost !== null ? `${d.cost} GP (${d.pool.name})`
-  : d.cost !== null ? `${d.cost} ${d.pool.name}`
-  : d.method === "council" ? `${d.pool.name} council`
-  : d.method === "list" ? `${d.pool.name} list`
+const costText = (drop: Drop) =>
+  !drop.pool ? (drop.method === "council" ? t("Council") : "")
+  : drop.method === "epgp" && drop.cost !== null ? `${drop.cost} GP (${drop.pool.name})`
+  : drop.cost !== null ? `${drop.cost} ${drop.pool.name}`
+  : drop.method === "council" ? `${drop.pool.name} council`
+  : drop.method === "list" ? `${drop.pool.name} list`
   : "";
-const day = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short" });
-const qty = (d: { quantity: number; item: string }) => (d.quantity > 1 ? `${d.quantity} × ${d.item}` : d.item);
+const qty = (drop: { quantity: number; item: string }) => (drop.quantity > 1 ? `${drop.quantity} × ${drop.item}` : drop.item);
 const personLabel = (p: Person) => `${p.name}${p.clanTag ? ` [${p.clanTag}]` : ""}`;
 
 /**
@@ -148,15 +149,15 @@ export function OpLoot({ opId }: { opId: number }) {
   return (
     <section className="panel flex flex-col gap-3 p-5" data-loot-op={opId}>
       <h2 className="title title-rule text-sm text-gold">
-        Loot
+        {t("Loot")}
         <Help text={t(LOOT_HELP)} />
       </h2>
       {data.drops.length === 0 ? (
         <p className="text-sm text-text-muted">{t("Nothing recorded for this operation yet.")}</p>
       ) : (
         <ul className="flex flex-col divide-y divide-line" data-loot-drops>
-          {data.drops.map((d) => (
-            <DropLine key={d.id} d={d} data={data} onChange={reload} />
+          {data.drops.map((drop) => (
+            <DropLine key={drop.id} drop={drop} data={data} onChange={reload} />
           ))}
         </ul>
       )}
@@ -165,69 +166,69 @@ export function OpLoot({ opId }: { opId: number }) {
   );
 }
 
-function DropLine({ d, data, onChange }: { d: Drop; data: OpLootData; onChange: () => void }) {
+function DropLine({ drop, data, onChange }: { drop: Drop; data: OpLootData; onChange: () => void }) {
   const act = useAct();
   const [giving, setGiving] = useState(false);
   const [notice, setNotice] = useState("");
   const mayGive = data.canRecord || data.pools.length > 0;
   const status =
-    d.state === "given" && d.recipient
-      ? `${d.recipient.name}${d.recipient.character && d.recipient.character !== d.recipient.name ? ` (${d.recipient.character})` : ""}${costText(d) ? ` · ${costText(d)}` : ""}`
-      : d.state === "kept"
+    drop.state === "given" && drop.recipient
+      ? `${drop.recipient.name}${drop.recipient.character && drop.recipient.character !== drop.recipient.name ? ` (${drop.recipient.character})` : ""}${costText(drop) ? ` · ${costText(drop)}` : ""}`
+      : drop.state === "kept"
         ? t("Kept for the guild")
-        : d.state === "sold"
-          ? "Sold"
-          : "Not given out";
+        : drop.state === "sold"
+          ? t("Sold")
+          : t("Not given out");
   return (
-    <li className="flex flex-col gap-2 py-2" data-loot-drop={d.id}>
+    <li className="flex flex-col gap-2 py-2" data-loot-drop={drop.id}>
       <div className="flex flex-wrap items-baseline gap-3">
-        <span className="font-medium">{qty(d)}</span>
-        {d.source === "screenshot" && <span className="text-[11px] text-text-muted">from a screenshot</span>}
-        <span className={`flex-1 text-sm ${d.state === "open" ? "text-gold" : "text-text-muted"}`} data-loot-status>{status}</span>
-        {d.note && <span className="text-xs text-text-muted">{d.note}</span>}
-        {mayGive && d.state === "open" && !giving && (
+        <span className="font-medium">{qty(drop)}</span>
+        {drop.source === "screenshot" && <span className="text-[11px] text-text-muted">{t("from a screenshot")}</span>}
+        <span className={`flex-1 text-sm ${drop.state === "open" ? "text-gold" : "text-text-muted"}`} data-loot-status>{status}</span>
+        {drop.note && <span className="text-xs text-text-muted">{drop.note}</span>}
+        {mayGive && drop.state === "open" && !giving && (
           <>
-            <button type="button" className="btn text-sm" onClick={() => setGiving(true)} data-loot-give>Give…</button>
+            <button type="button" className="btn text-sm" onClick={() => setGiving(true)} data-loot-give>{t("Give…")}</button>
             {data.canRecord && (
               <>
-                <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.setKept", { dropId: d.id, state: "kept" })).then((ok) => ok && onChange())} data-loot-keep>Keep</button>
-                <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.setKept", { dropId: d.id, state: "sold" })).then((ok) => ok && onChange())} data-loot-sold>Sold</button>
+                <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.setKept", { dropId: drop.id, state: "kept" })).then((ok) => ok && onChange())} data-loot-keep>{t("Keep")}</button>
+                <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.setKept", { dropId: drop.id, state: "sold" })).then((ok) => ok && onChange())} data-loot-sold>{t("Sold")}</button>
               </>
             )}
           </>
         )}
-        {mayGive && d.state !== "open" && (
+        {mayGive && drop.state !== "open" && (
           <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() =>
               void act.run(async () => {
-                const r = await rpc<{ listRestored?: boolean | null } | null>("loot.takeBack", { dropId: d.id });
+                const r = await rpc<{ listRestored?: boolean | null } | null>("loot.takeBack", { dropId: drop.id });
                 setNotice(r?.listRestored === false ? t("Taken back. The list has changed since the item was given, so it was left as it is: put it in order on the Points tab if needed.") : "");
                 onChange();
               })
-            } data-loot-takeback>Take back</button>
+            } data-loot-takeback>{t("Take back")}</button>
         )}
       </div>
-      {giving && <GiveForm d={d} data={data} onDone={() => (setGiving(false), onChange())} onCancel={() => setGiving(false)} />}
+      {giving && <GiveForm drop={drop} data={data} onDone={() => (setGiving(false), onChange())} onCancel={() => setGiving(false)} />}
       {act.error && <span className="text-sm text-danger" role="alert">{act.error}</span>}
       {notice && <span className="text-sm text-gold" data-loot-notice>{notice}</span>}
     </li>
   );
 }
 
-function GiveForm({ d, data, onDone, onCancel }: { d: Drop; data: OpLootData; onDone: () => void; onCancel: () => void }) {
+function GiveForm({ drop, data, onDone, onCancel }: { drop: Drop; data: OpLootData; onDone: () => void; onCancel: () => void }) {
   const act = useAct();
   const [userId, setUserId] = useState<number | "">("");
   const [character, setCharacter] = useState("");
   const [poolId, setPoolId] = useState<number | "">(data.pools[0]?.id ?? "");
   const pool = data.pools.find((p) => p.id === poolId);
-  const priced = costed(pool) && d.itemId !== null ? pool!.prices[d.itemId] : undefined;
-  const [cost, setCost] = useState(priced !== undefined ? String(priced * d.quantity) : "");
+  const priced = costed(pool) && drop.itemId !== null ? pool!.prices[drop.itemId] : undefined;
+  const [cost, setCost] = useState(priced !== undefined ? String(priced * drop.quantity) : "");
   const [note, setNote] = useState("");
   const person = data.people.find((p) => p.userId === userId);
   const pickPool = (id: number | "") => {
     setPoolId(id);
     const p = data.pools.find((x) => x.id === id);
-    const price = costed(p) && d.itemId !== null ? p!.prices[d.itemId] : undefined;
-    setCost(price !== undefined ? String(price * d.quantity) : "");
+    const price = costed(p) && drop.itemId !== null ? p!.prices[drop.itemId] : undefined;
+    setCost(price !== undefined ? String(price * drop.quantity) : "");
     // The player chosen may not be in the new set.
     if (p?.members && userId !== "" && !p.members.includes(userId)) setUserId("");
   };
@@ -235,20 +236,20 @@ function GiveForm({ d, data, onDone, onCancel }: { d: Drop; data: OpLootData; on
   const others = pool?.spending === "zeroSum" ? (pool.present ?? []).filter((u) => u !== userId).length : 0;
   const send = () =>
     void act
-      .run(() => rpc("loot.give", { dropId: d.id, userId, character: character || null, poolId: poolId === "" ? null : poolId, cost: costed(pool) ? Math.trunc(Number(cost) || 0) : null, note: note || null }))
+      .run(() => rpc("loot.give", { dropId: drop.id, userId, character: character || null, poolId: poolId === "" ? null : poolId, cost: costed(pool) ? Math.trunc(Number(cost) || 0) : null, note: note || null }))
       .then((ok) => ok && onDone());
   return (
     <div className="flex flex-col gap-2 rounded-sm border border-line p-3" data-loot-give-form>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-24 text-text-muted">To</span>
-        <select className="field w-auto" value={userId} onChange={(e) => (setUserId(e.target.value ? Number(e.target.value) : ""), setCharacter(""))} aria-label="Who got it" data-loot-to>
-          <option value="">Choose a player…</option>
+        <span className="w-24 text-text-muted">{t("To")}</span>
+        <select className="field w-auto" value={userId} onChange={(e) => (setUserId(e.target.value ? Number(e.target.value) : ""), setCharacter(""))} aria-label={t("Who got it")} data-loot-to>
+          <option value="">{t("Choose a player…")}</option>
           {options.map((o) => (
             <option key={o.p.userId} value={o.p.userId}>{o.label}</option>
           ))}
         </select>
         {person && person.characters.length > 0 && (
-          <select className="field w-auto" value={character} onChange={(e) => setCharacter(e.target.value)} aria-label="As which character" data-loot-character>
+          <select className="field w-auto" value={character} onChange={(e) => setCharacter(e.target.value)} aria-label={t("As which character")} data-loot-character>
             <option value="">{person.name}</option>
             {person.characters.filter((c) => c !== person.name).map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -257,8 +258,8 @@ function GiveForm({ d, data, onDone, onCancel }: { d: Drop; data: OpLootData; on
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-24 text-text-muted">Paid with</span>
-        <select className="field w-auto" value={poolId} onChange={(e) => pickPool(e.target.value ? Number(e.target.value) : "")} aria-label="Which set of points" data-loot-pool>
+        <span className="w-24 text-text-muted">{t("Paid with")}</span>
+        <select className="field w-auto" value={poolId} onChange={(e) => pickPool(e.target.value ? Number(e.target.value) : "")} aria-label={t("Which set of points")} data-loot-pool>
           {data.pools.map((p) => (
             <option key={p.id} value={p.id}>{poolLabel(p)}</option>
           ))}
@@ -266,26 +267,26 @@ function GiveForm({ d, data, onDone, onCancel }: { d: Drop; data: OpLootData; on
         </select>
         {costed(pool) && (
           <>
-            <span className="text-xs text-text-muted" data-loot-cost-label>{pool!.spending === "epgp" ? "GP" : pool!.name}</span>
-            <input className="field w-28" type="number" min={0} value={cost} onChange={(e) => setCost(e.target.value)} placeholder="Cost" aria-label="Cost" data-loot-cost />
-            <span className="text-xs text-text-muted">{priced !== undefined ? `${priced} each on the price list` : "No price on the list: enter the winning bid or the price."}</span>
+            <span className="text-xs text-text-muted" data-loot-cost-label>{pool!.spending === "epgp" ? own("GP") : pool!.name}</span>
+            <input className="field w-28" type="number" min={0} value={cost} onChange={(e) => setCost(e.target.value)} placeholder={t("Cost")} aria-label={t("Cost")} data-loot-cost />
+            <span className="text-xs text-text-muted">{priced !== undefined ? t(`${d(priced)} each on the price list`) : t("No price on the list: enter the winning bid or the price.")}</span>
           </>
         )}
       </div>
       {pool?.spending === "zeroSum" && (
         <p className="text-xs text-text-muted" data-loot-share>
-          {others > 0 ? t(`The price is taken from the winner and shared among ${others} ${others === 1 ? "other" : "others"} in voice at this operation.`) : t("Nobody else in these points has been in voice at this operation yet, so it can only be given at no cost.")}
+          {others > 0 ? tn(others, "The price is taken from the winner and shared with {n} other who was in voice at this operation.", "The price is taken from the winner and shared among {n} others in voice at this operation.") : t("Nobody else in these points has been in voice at this operation yet, so it can only be given at no cost.")}
         </p>
       )}
       {pool?.spending === "list" && <p className="text-xs text-text-muted" data-loot-list-note>{t("The winner goes to the bottom of the list; those below who have been in voice move up one, those who have not keep their place.")}</p>}
-      {pool?.spending === "epgp" && <p className="text-xs text-text-muted">{`First in line first: priority is EP divided by GP (with a base of ${pool.gear?.baseGp ?? 100} GP). The price is added to the winner's gear points.`}</p>}
+      {pool?.spending === "epgp" && <p className="text-xs text-text-muted">{t(`First in line first: priority is EP divided by GP (with a base of ${d(pool.gear?.baseGp ?? 100)} GP). The price is added to the winner's gear points.`)}</p>}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-24 text-text-muted">Note</span>
-        <input className="field min-w-0 flex-1" maxLength={120} value={note} onChange={(e) => setNote(e.target.value)} placeholder={pool?.spending === "council" ? "Why (the council's reason)" : "Optional"} aria-label="Note" data-loot-note />
+        <span className="w-24 text-text-muted">{t("Note")}</span>
+        <input className="field min-w-0 flex-1" maxLength={120} value={note} onChange={(e) => setNote(e.target.value)} placeholder={pool?.spending === "council" ? t("Why (the council's reason)") : t("Optional")} aria-label={t("Note")} data-loot-note />
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className="btn" disabled={act.busy || userId === "" || (costed(pool) && cost === "")} onClick={send} data-loot-give-go>Give it</button>
-        <button type="button" className="btn btn-quiet" onClick={onCancel}>Cancel</button>
+        <button type="button" className="btn" disabled={act.busy || userId === "" || (costed(pool) && cost === "")} onClick={send} data-loot-give-go>{t("Give it")}</button>
+        <button type="button" className="btn btn-quiet" onClick={onCancel}>{t("Cancel")}</button>
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
       </div>
     </div>
@@ -360,20 +361,20 @@ function AddDrops({ opId, data, onAdded }: { opId: number; data: OpLootData; onA
         }
       }
       onAdded();
-      if (missed.length) throw new Error(`Recorded, but not given out: ${missed.join(" ")} Give ${missed.length === 1 ? "it" : "them"} from the list above.`);
+      if (missed.length) throw new Error(missed.length === 1 ? t(`Recorded, but not given out: ${d(missed.join(" "))} Give it from the list above.`) : t(`Recorded, but not given out: ${d(missed.join(" "))} Give them from the list above.`));
     });
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3" onPaste={onPaste} tabIndex={-1} data-loot-add>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" className="btn btn-quiet text-sm" onClick={() => setRows((r) => [...r, blank()])} data-loot-add-hand>+ Add a drop by hand</button>
+        <button type="button" className="btn btn-quiet text-sm" onClick={() => setRows((r) => [...r, blank()])} data-loot-add-hand>{t("+ Add a drop by hand")}</button>
         {data.reads.enabled ? (
           <>
-            <button type="button" className="btn text-sm" disabled={reading || left <= 0} onClick={() => file.current?.click()} data-loot-upload>{reading ? "Reading…" : "Read a screenshot"}</button>
+            <button type="button" className="btn text-sm" disabled={reading || left <= 0} onClick={() => file.current?.click()} data-loot-upload>{reading ? t("Reading…") : t("Read a screenshot")}</button>
             <input ref={file} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => e.target.files?.[0] && void readImage(e.target.files[0]).then(() => (e.target.value = ""))} data-loot-file />
-            <span className="text-xs text-text-muted" data-loot-left>{left > 0 ? `Or paste one here with Ctrl+V. ${left} of ${data.reads.perMonth} reads left this month.` : t(`Your alliance has used its ${data.reads.perMonth} screenshot reads this month; they start again on the 1st.`)}</span>
+            <span className="text-xs text-text-muted" data-loot-left>{left > 0 ? t(`Or paste one here with Ctrl+V. ${d(left)} of ${d(data.reads.perMonth)} reads left this month.`) : t(`Your alliance has used its ${d(data.reads.perMonth)} screenshot reads this month; they start again on the 1st.`)}</span>
           </>
         ) : (
-          <span className="text-xs text-text-muted">Reading screenshots is not switched on for this service.</span>
+          <span className="text-xs text-text-muted">{t("Reading screenshots is not switched on for this service.")}</span>
         )}
       </div>
       {note && <p className="text-sm text-text-muted" data-loot-read-note>{note}</p>}
@@ -382,8 +383,8 @@ function AddDrops({ opId, data, onAdded }: { opId: number; data: OpLootData; onA
           {readId !== null && <p className="text-sm text-text-muted">{t("Check what was read. Untick anything that is not a drop, fix names and amounts, choose who got an item if you know. Nothing is added until you confirm.")}</p>}
           {data.pools.length > 0 && rows.some((r) => r.userId !== "") && (
             <label className="flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-text-muted">Items given out are paid with</span>
-              <select className="field w-auto" value={poolId} onChange={(e) => setPoolId(e.target.value ? Number(e.target.value) : "")} aria-label="Which set of points pays" data-loot-batch-pool>
+              <span className="text-text-muted">{t("Items given out are paid with")}</span>
+              <select className="field w-auto" value={poolId} onChange={(e) => setPoolId(e.target.value ? Number(e.target.value) : "")} aria-label={t("Which set of points pays")} data-loot-batch-pool>
                 {data.pools.map((p) => (
                   <option key={p.id} value={p.id}>{poolLabel(p)}</option>
                 ))}
@@ -400,24 +401,24 @@ function AddDrops({ opId, data, onAdded }: { opId: number; data: OpLootData; onA
             <thead>
               <tr className="text-left text-xs text-text-muted">
                 <th className="py-1 pr-2 font-normal" />
-                <th className="py-1 pr-2 font-normal">Item</th>
-                <th className="py-1 pr-2 font-normal">How many</th>
-                <th className="py-1 pr-2 font-normal">Given to (if known)</th>
-                {costed(pool) && <th className="py-1 font-normal">{pool!.spending === "epgp" ? "GP" : "Cost"}</th>}
+                <th className="py-1 pr-2 font-normal">{t("Item")}</th>
+                <th className="py-1 pr-2 font-normal">{t("How many")}</th>
+                <th className="py-1 pr-2 font-normal">{t("Given to (if known)")}</th>
+                {costed(pool) && <th className="py-1 font-normal">{pool!.spending === "epgp" ? own("GP") : t("Cost")}</th>}
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.key} className="border-t border-line" data-loot-row={r.key}>
-                  <td className="py-1 pr-2"><input type="checkbox" checked={r.include} onChange={(e) => set(r.key, { include: e.target.checked })} aria-label="Add this drop" data-loot-include /></td>
+                  <td className="py-1 pr-2"><input type="checkbox" checked={r.include} onChange={(e) => set(r.key, { include: e.target.checked })} aria-label={t("Add this drop")} data-loot-include /></td>
                   <td className="py-1 pr-2">
-                    <input className={`field w-full ${r.sure ? "" : "border-gold"}`} list={`loot-items-${opId}`} maxLength={64} value={r.name} onChange={(e) => set(r.key, { name: e.target.value, sure: true })} aria-label="Item" data-loot-name />
-                    {!r.sure && <span className="text-[11px] text-gold" data-loot-unsure>Not sure: check this one</span>}
+                    <input className={`field w-full ${r.sure ? "" : "border-gold"}`} list={`loot-items-${opId}`} maxLength={64} value={r.name} onChange={(e) => set(r.key, { name: e.target.value, sure: true })} aria-label={t("Item")} data-loot-name />
+                    {!r.sure && <span className="text-[11px] text-gold" data-loot-unsure>{t("Not sure: check this one")}</span>}
                   </td>
-                  <td className="py-1 pr-2"><input className="field w-20" type="number" min={1} value={r.quantity} onChange={(e) => set(r.key, { quantity: e.target.value })} aria-label="How many" data-loot-qty /></td>
+                  <td className="py-1 pr-2"><input className="field w-20" type="number" min={1} value={r.quantity} onChange={(e) => set(r.key, { quantity: e.target.value })} aria-label={t("How many")} data-loot-qty /></td>
                   <td className="py-1 pr-2">
-                    <select className="field w-full" value={r.userId} onChange={(e) => set(r.key, { userId: e.target.value ? Number(e.target.value) : "", character: null })} aria-label="Given to" data-loot-row-to>
-                      <option value="">{r.character ? `Not matched: ${r.character}` : "Not yet"}</option>
+                    <select className="field w-full" value={r.userId} onChange={(e) => set(r.key, { userId: e.target.value ? Number(e.target.value) : "", character: null })} aria-label={t("Given to")} data-loot-row-to>
+                      <option value="">{r.character ? t(`Not matched: ${d(r.character)}`) : t("Not yet")}</option>
                       {data.people.map((p) => (
                         <option key={p.userId} value={p.userId}>{personLabel(p)}</option>
                       ))}
@@ -425,7 +426,7 @@ function AddDrops({ opId, data, onAdded }: { opId: number; data: OpLootData; onA
                   </td>
                   {costed(pool) && (
                     <td className="py-1">
-                      {r.userId !== "" && <input className="field w-24" type="number" min={0} value={costs[r.key] ?? defaultCost(r)} onChange={(e) => setCosts((c) => ({ ...c, [r.key]: e.target.value }))} aria-label="Cost" data-loot-row-cost />}
+                      {r.userId !== "" && <input className="field w-24" type="number" min={0} value={costs[r.key] ?? defaultCost(r)} onChange={(e) => setCosts((c) => ({ ...c, [r.key]: e.target.value }))} aria-label={t("Cost")} data-loot-row-cost />}
                     </td>
                   )}
                 </tr>
@@ -433,15 +434,15 @@ function AddDrops({ opId, data, onAdded }: { opId: number; data: OpLootData; onA
             </tbody>
           </table>
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" className="btn" disabled={act.busy || chosen.length === 0} onClick={save} data-loot-save>{`Add ${chosen.length} ${chosen.length === 1 ? "drop" : "drops"}`}</button>
-            <button type="button" className="btn btn-quiet" onClick={() => (setRows([]), setReadId(null), setNote(null))}>Discard</button>
+            <button type="button" className="btn" disabled={act.busy || chosen.length === 0} onClick={save} data-loot-save>{tn(chosen.length, "Add {n} drop", "Add {n} drops")}</button>
+            <button type="button" className="btn btn-quiet" onClick={() => (setRows([]), setReadId(null), setNote(null))}>{t("Discard")}</button>
           </div>
         </div>
       )}
       {act.error && (
         <span className="flex flex-wrap items-baseline gap-2 text-sm text-danger" role="alert">
           {act.error}
-          <button type="button" className="btn btn-quiet px-2 py-0 text-xs" onClick={act.clear} data-loot-dismiss>Dismiss</button>
+          <button type="button" className="btn btn-quiet px-2 py-0 text-xs" onClick={act.clear} data-loot-dismiss>{t("Dismiss")}</button>
         </span>
       )}
     </div>
@@ -472,11 +473,11 @@ export function LootHistory() {
   return (
     <section className="panel flex flex-col gap-3 p-5" data-loot-history>
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="title title-rule flex-1 text-sm text-gold">Loot</h2>
-        <input className="field w-48" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Find an item" aria-label="Find an item" data-loot-find />
+        <h2 className="title title-rule flex-1 text-sm text-gold">{t("Loot")}</h2>
+        <input className="field w-48" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Find an item")} aria-label={t("Find an item")} data-loot-find />
         <label className="flex items-center gap-1.5 text-sm">
           <input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} data-loot-mine />
-          Only mine
+          {t("Only mine")}
         </label>
       </div>
       {error && <p className="text-danger" role="alert">{error}</p>}
@@ -486,23 +487,23 @@ export function LootHistory() {
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-text-muted">
-                <th className="py-1 pr-3 font-normal">When</th>
-                <th className="py-1 pr-3 font-normal">Item</th>
+                <th className="py-1 pr-3 font-normal">{t("When")}</th>
+                <th className="py-1 pr-3 font-normal">{t("Item")}</th>
                 <th className="py-1 pr-3 font-normal">{t("Operation")}</th>
-                <th className="py-1 pr-3 font-normal">Went to</th>
-                <th className="py-1 font-normal">Cost</th>
+                <th className="py-1 pr-3 font-normal">{t("Went to")}</th>
+                <th className="py-1 font-normal">{t("Cost")}</th>
               </tr>
             </thead>
             <tbody>
-              {drops.map((d) => (
-                <tr key={d.id} className="border-t border-line" data-loot-history-row={d.id}>
-                  <td className="py-1 pr-3 text-text-muted">{day(d.recordedAt)}</td>
-                  <td className="py-1 pr-3">{qty(d)}</td>
-                  <td className="py-1 pr-3 text-text-muted">{d.operation ?? ""}</td>
+              {drops.map((drop) => (
+                <tr key={drop.id} className="border-t border-line" data-loot-history-row={drop.id}>
+                  <td className="py-1 pr-3 text-text-muted">{day(drop.recordedAt)}</td>
+                  <td className="py-1 pr-3">{qty(drop)}</td>
+                  <td className="py-1 pr-3 text-text-muted">{drop.operation ?? ""}</td>
                   <td className="py-1 pr-3">
-                    {d.state === "given" && d.recipient ? `${d.recipient.name}${d.recipient.character && d.recipient.character !== d.recipient.name ? ` (${d.recipient.character})` : ""}` : d.state === "kept" ? t("Kept for the guild") : d.state === "sold" ? "Sold" : <span className="text-text-muted">Not given out</span>}
+                    {drop.state === "given" && drop.recipient ? `${drop.recipient.name}${drop.recipient.character && drop.recipient.character !== drop.recipient.name ? ` (${drop.recipient.character})` : ""}` : drop.state === "kept" ? t("Kept for the guild") : drop.state === "sold" ? t("Sold") : <span className="text-text-muted">{t("Not given out")}</span>}
                   </td>
-                  <td className="py-1 text-text-muted">{costText(d)}</td>
+                  <td className="py-1 text-text-muted">{costText(drop)}</td>
                 </tr>
               ))}
             </tbody>
@@ -540,21 +541,21 @@ export function ItemsSection({ clanId }: { clanId: number | null }) {
   return (
     <section className="panel flex flex-col gap-3 p-5" data-loot-items={clanId === null ? "alliance" : clanId}>
       <h2 className="title title-rule text-sm text-gold">
-        {clanId === null ? "Items and prices" : t("Prices in the clan's points")}
+        {clanId === null ? t("Items and prices") : t("Prices in the clan's points")}
         <Help text={t("Your own list of items worth recording, so names are spelled one way and screenshots are read right. Add other spellings players use, separated by commas. A price is what an item costs in a set of points that spends by price or Zero-sum, or the gear points it adds in an EPGP set; leave it empty to enter the price, or the winning bid, each time. Nothing here comes from the game itself.")} />
       </h2>
       {manageList && <AddItem onAdded={reload} />}
       {data.items.length === 0 ? (
-        <p className="text-sm text-text-muted">{manageList ? "No items yet. Add the ones worth recording." : t("The alliance has no item list yet.")}</p>
+        <p className="text-sm text-text-muted">{manageList ? t("No items yet. Add the ones worth recording.") : t("The alliance has no item list yet.")}</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-text-muted">
-                <th className="py-1 pr-3 font-normal">Item</th>
-                <th className="py-1 pr-3 font-normal">Other spellings</th>
+                <th className="py-1 pr-3 font-normal">{t("Item")}</th>
+                <th className="py-1 pr-3 font-normal">{t("Other spellings")}</th>
                 {pools.map((p) => (
-                  <th key={p.id} className="py-1 pr-3 font-normal">{`${p.name}${p.clanTag ? ` [${p.clanTag}]` : ""}${p.spending === "epgp" ? " (GP)" : ""}`}</th>
+                  <th key={p.id} className="py-1 pr-3 font-normal">{`${p.name}${p.clanTag ? ` [${p.clanTag}]` : ""}${p.spending === "epgp" ? own(" (GP)") : ""}`}</th>
                 ))}
                 {manageList && <th className="py-1 font-normal" />}
               </tr>
@@ -578,9 +579,9 @@ function AddItem({ onAdded }: { onAdded: () => void }) {
   const add = () => void act.run(() => rpc("loot.saveItem", { name, aliases })).then((ok) => ok && (setName(""), setAliases(""), onAdded()));
   return (
     <form className="flex flex-wrap items-center gap-2" onSubmit={(e) => (e.preventDefault(), add())} data-loot-item-add>
-      <input className="field w-56" maxLength={64} value={name} onChange={(e) => setName(e.target.value)} placeholder="Item name" aria-label="Item name" />
-      <input className="field min-w-0 flex-1" maxLength={255} value={aliases} onChange={(e) => setAliases(e.target.value)} placeholder="Other spellings, separated by commas (optional)" aria-label="Other spellings" />
-      <button type="submit" className="btn text-sm" disabled={act.busy || !name.trim()}>Add the item</button>
+      <input className="field w-56" maxLength={64} value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Item name")} aria-label={t("Item name")} />
+      <input className="field min-w-0 flex-1" maxLength={255} value={aliases} onChange={(e) => setAliases(e.target.value)} placeholder={t("Other spellings, separated by commas (optional)")} aria-label={t("Other spellings")} />
+      <button type="submit" className="btn text-sm" disabled={act.busy || !name.trim()}>{t("Add the item")}</button>
       {act.error && <span className="w-full text-danger" role="alert">{act.error}</span>}
     </form>
   );
@@ -598,17 +599,17 @@ function ItemRow({ it, pools, manage, onChange }: { it: ItemList["items"][number
   };
   return (
     <tr className={`border-t border-line ${it.hidden ? "opacity-50" : ""}`} data-loot-item={it.id}>
-      <td className="py-1 pr-3">{manage ? <input className="field w-48" maxLength={64} value={name} onChange={(e) => setName(e.target.value)} aria-label="Item name" /> : it.name}</td>
-      <td className="py-1 pr-3 text-text-muted">{manage ? <input className="field w-full" maxLength={255} value={aliases} onChange={(e) => setAliases(e.target.value)} aria-label="Other spellings" /> : it.aliases}</td>
+      <td className="py-1 pr-3">{manage ? <input className="field w-48" maxLength={64} value={name} onChange={(e) => setName(e.target.value)} aria-label={t("Item name")} /> : it.name}</td>
+      <td className="py-1 pr-3 text-text-muted">{manage ? <input className="field w-full" maxLength={255} value={aliases} onChange={(e) => setAliases(e.target.value)} aria-label={t("Other spellings")} /> : it.aliases}</td>
       {pools.map((p) => (
         <td key={p.id} className="py-1 pr-3">
-          <input className="field w-24" type="number" min={0} defaultValue={it.prices[p.id] ?? ""} onBlur={(e) => setPrice(p.id, e.target.value)} aria-label={`${it.name}: price in ${p.name}`} data-loot-price={p.id} />
+          <input className="field w-24" type="number" min={0} defaultValue={it.prices[p.id] ?? ""} onBlur={(e) => setPrice(p.id, e.target.value)} aria-label={t(`${d(it.name)}: price in ${d(p.name)}`)} data-loot-price={p.id} />
         </td>
       ))}
       {manage && (
         <td className="py-1 whitespace-nowrap">
-          {changed && <button type="button" className="btn text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.saveItem", { id: it.id, name, aliases, hidden: it.hidden })).then((ok) => ok && onChange())}>Save</button>}
-          <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.saveItem", { id: it.id, name: it.name, aliases: it.aliases, hidden: !it.hidden })).then((ok) => ok && onChange())}>{it.hidden ? "Show" : "Hide"}</button>
+          {changed && <button type="button" className="btn text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.saveItem", { id: it.id, name, aliases, hidden: it.hidden })).then((ok) => ok && onChange())}>{t("Save")}</button>}
+          <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => void act.run(() => rpc("loot.saveItem", { id: it.id, name: it.name, aliases: it.aliases, hidden: !it.hidden })).then((ok) => ok && onChange())}>{it.hidden ? t("Show") : t("Hide")}</button>
           {act.error && <span className="block text-danger" role="alert">{act.error}</span>}
         </td>
       )}

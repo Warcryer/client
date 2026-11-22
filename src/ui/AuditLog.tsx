@@ -1,6 +1,8 @@
+import { t } from "../words";
 import { useState } from "react";
 import { ApiError, rpc, type AuditEntry } from "../api";
 import { Help } from "./tips";
+import { startTime } from "./common";
 
 /**
  * The record of who changed what: roster moves, roles, bans, invite links,
@@ -29,8 +31,8 @@ export function AuditLog({ scope, clanId, title, help }: { scope: "alliance" | "
   };
 
   const words = filter.trim().toLowerCase();
-  const shown = (entries ?? []).filter((e) => !words || `${e.actor ?? "the server"} ${e.text} ${e.operation ?? ""}`.toLowerCase().includes(words));
-  const when = (iso: string) => new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  const shown = (entries ?? []).filter((e) => !words || `${e.actor ?? t("the server")} ${e.text} ${e.operation ?? ""}`.toLowerCase().includes(words));
+  const when = (iso: string) => startTime(iso);
 
   return (
     <section className="panel p-5 flex flex-col gap-3" aria-label={title}>
@@ -40,26 +42,26 @@ export function AuditLog({ scope, clanId, title, help }: { scope: "alliance" | "
           <Help text={help} />
         </h2>
         {entries === null ? (
-          <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load()}>{busy ? "Loading…" : "Show the log"}</button>
+          <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load()}>{busy ? t("Loading…") : t("Show the log")}</button>
         ) : (
           <>
-            <input className="field w-48 text-sm" placeholder="Filter" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter the log" />
-            <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load()}>Refresh</button>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setEntries(null)}>Hide</button>
+            <input className="field w-48 text-sm" placeholder={t("Filter")} value={filter} onChange={(e) => setFilter(e.target.value)} aria-label={t("Filter the log")} />
+            <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load()}>{t("Refresh")}</button>
+            <button type="button" className="btn btn-quiet text-sm" onClick={() => setEntries(null)}>{t("Hide")}</button>
           </>
         )}
       </div>
       {error && <p className="text-danger" role="alert">{error}</p>}
       {entries !== null && (
         <>
-          {entries.length === 0 && <p className="text-text-muted">Nothing has been recorded yet.</p>}
-          {entries.length > 0 && shown.length === 0 && <p className="text-text-muted">Nothing matches that filter.</p>}
+          {entries.length === 0 && <p className="text-text-muted">{t("Nothing has been recorded yet.")}</p>}
+          {entries.length > 0 && shown.length === 0 && <p className="text-text-muted">{t("Nothing matches that filter.")}</p>}
           <ol className="flex flex-col divide-y divide-line">
             {shown.map((e) => (
               <li key={e.id} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-1.5">
                 <time className="w-40 shrink-0 text-xs tabular-nums text-text-muted" dateTime={e.at}>{when(e.at)}</time>
                 <span className="min-w-0 flex-1">
-                  <span className={e.actor === null ? "text-text-muted" : "font-medium"}>{e.actor ?? "The server"}</span> {e.text}
+                  <span className={e.actor === null ? "text-text-muted" : "font-medium"}>{e.actor ?? t("The server")}</span> {e.text}
                   {e.operation && <span className="ml-2 text-xs text-text-muted">{e.operation}</span>}
                 </span>
               </li>
@@ -67,7 +69,7 @@ export function AuditLog({ scope, clanId, title, help }: { scope: "alliance" | "
           </ol>
           {more && (
             <div>
-              <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load(entries[entries.length - 1]?.id)}>{busy ? "Loading…" : "Older entries"}</button>
+              <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void load(entries[entries.length - 1]?.id)}>{busy ? t("Loading…") : t("Older entries")}</button>
             </div>
           )}
         </>

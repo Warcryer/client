@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { rpc } from "../api";
-import { t } from "../words";
+import { d, t } from "../words";
 import { useAct } from "./app-context";
 
 // t() where shown.
@@ -38,15 +38,15 @@ export function QuickCalls({ calls, limits, onChange }: { calls: string[]; limit
               className="field min-w-0 flex-1"
               value={text}
               maxLength={limits.max}
-              placeholder="Not used"
-              aria-label={`Quick call ${i + 1}`}
+              placeholder={t("Not used")}
+              aria-label={t(`Quick call ${d(i + 1)}`)}
               onChange={(e) => setDraft(draft.map((c, n) => (n === i ? e.target.value : c)))}
             />
           </li>
         ))}
       </ol>
       <div className="flex items-center gap-3">
-        <button type="submit" className="btn" disabled={act.busy || !changed}>Save the calls</button>
+        <button type="submit" className="btn" disabled={act.busy || !changed}>{t("Save the calls")}</button>
         <span className="text-xs text-text-muted">{t("Up to {n} characters each. They go to the caller's party.").replace("{n}", String(limits.max))}</span>
       </div>
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}

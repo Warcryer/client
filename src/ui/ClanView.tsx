@@ -1,13 +1,14 @@
-import { d, t } from "../words";
+import { d, own, t } from "../words";
 import { useRef, useState } from "react";
 import { rpc, type ClanMember, type ClanSummary, type ClanView as ClanData, type Cp, type CpList, type Invite } from "../api";
-import { DISCORD_HELP, DiscordSetup } from "./DiscordSetup";
+import { discordHelp, DiscordSetup } from "./DiscordSetup";
 import { CharacterLine } from "./MyCharacters";
 import { partySizeOf, useGame } from "../game";
 import { clearInviteOutcome, redeemInvite, useInviteOutcome } from "../invite";
 import { ConfirmButton, useAct, useApp, useLoad } from "./app-context";
 import { SUPPORT_URL } from "../config";
-import { ClanCrest, Initial, openInBrowser } from "./common";
+import { ClanCrest, dayFull, Initial, openInBrowser } from "./common";
+import { tn, tx } from "../i18n";
 import { Help } from "./tips";
 import { AuditLog } from "./AuditLog";
 import { PointsSettingsSection } from "./Points";
@@ -38,7 +39,7 @@ async function shrink(file: File): Promise<string> {
   const scale = Math.min(CREST_SIZE / image.width, CREST_SIZE / image.height);
   const w = image.width * scale, h = image.height * scale;
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("This device could not prepare the image.");
+  if (!ctx) throw new Error(t("This device could not prepare the image."));
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(image, (CREST_SIZE - w) / 2, (CREST_SIZE - h) / 2, w, h);
   // PNG keeps sharp edges and transparency; a photo that comes out too large goes as WebP instead.
@@ -61,7 +62,7 @@ function CrestEditor({ clanId }: { clanId: number }) {
         type="file"
         accept="image/png,image/jpeg,image/webp,image/gif"
         className="hidden"
-        aria-label="Crest image"
+        aria-label={t("Crest image")}
         onChange={async (e) => {
           const file = e.target.files?.[0];
           e.target.value = "";
@@ -71,18 +72,18 @@ function CrestEditor({ clanId }: { clanId: number }) {
             try {
               image = await shrink(file);
             } catch {
-              throw new Error("That file is not an image this app can read. Use a PNG, JPEG or WebP.");
+              throw new Error(t("That file is not an image this app can read. Use a PNG, JPEG or WebP."));
             }
             await rpc("clan.setCrest", { clanId, image });
           });
         }}
       />
       <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={() => input.current?.click()}>
-        {act.busy ? "Saving…" : has ? "Change crest" : "Upload crest"}
+        {act.busy ? t("Saving…") : has ? t("Change crest") : t("Upload crest")}
       </button>
       {has && (
-        <ConfirmButton confirm="Remove the crest?" disabled={act.busy} onConfirm={() => void act.run(() => rpc("clan.setCrest", { clanId, image: null }))}>
-          Remove
+        <ConfirmButton confirm={t("Remove the crest?")} disabled={act.busy} onConfirm={() => void act.run(() => rpc("clan.setCrest", { clanId, image: null }))}>
+          {t("Remove")}
         </ConfirmButton>
       )}
       <Help text={t("Your clan's crest is shown beside the clan wherever it appears: its lounge and Clan net, roster boards and the clan lists. Beside your members' names it takes the place of the clan tag. Without a crest, the tag is shown.\nPick any PNG, JPEG or WebP. It is shrunk to a small square, so a simple, bold image reads best. A transparent background works well on the dark screens.\nEveryone in the alliance can see it. Alliance admins can remove a crest.")} />
@@ -110,14 +111,15 @@ function NoAlliance() {
         <PasteInvite />
       </Section>
       <Section
-        title="Or start your own"
+        title={t("Or start your own")}
         help={t("Creates an alliance with you as its owner. You then make its clans on the Alliance tab, send each clan's invite link to its leader, and appoint them.\nThe game you choose only fills in a starting list of classes and party size; you can change all of it afterwards under Game setup.")}
       >
         {mode === "closed" && <p className="text-text-muted" data-door-closed>{t("New alliances cannot be started for now. If your clan's alliance already uses the app, ask its leader for an invite link.")}</p>}
         {mode === "code" && (
           <p className="text-sm text-text-muted">
-            {t("Warcryer is in beta, and free. To start an alliance you need a code:")}{" "}
-            <button type="button" className="text-gold-bright underline-offset-2 hover:underline cursor-pointer" onClick={() => void openInBrowser(SUPPORT_URL)}>ask for one on the Warcryer Discord</button>.
+            {tx("Warcryer is in beta, and free. To start an alliance you need a code: {ask}.", {
+              ask: <button type="button" className="text-gold-bright underline-offset-2 hover:underline cursor-pointer" onClick={() => void openInBrowser(SUPPORT_URL)}>{t("ask for one on the Warcryer Discord")}</button>,
+            })}
           </p>
         )}
         <form
@@ -136,19 +138,19 @@ function NoAlliance() {
             <input className="field w-64" value={name} onChange={(e) => setName(e.target.value)} maxLength={48} required aria-label={t("Alliance name")} />
           </label>
           <label className="flex flex-col gap-1 text-text-muted">
-            Game
-            <select className="field" value={preset} onChange={(e) => setPreset(e.target.value)} required aria-label="Game">
-              <option value="" disabled>Choose…</option>
+            {t("Game")}
+            <select className="field" value={preset} onChange={(e) => setPreset(e.target.value)} required aria-label={t("Game")}>
+              <option value="" disabled>{t("Choose…")}</option>
               {presets?.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
             </select>
           </label>
           {mode === "code" && (
             <label className="flex flex-col gap-1 text-text-muted">
               <span className="flex items-center gap-1">
-                Beta code
+                {t("Beta code")}
                 <Help text={t("During the beta, starting an alliance needs a code from the service. One code starts one alliance; players who join it need no code, only its invite links.")} />
               </span>
-              <input className="field w-36 uppercase" value={code} onChange={(e) => setCode(e.target.value)} maxLength={20} required autoComplete="off" spellCheck={false} aria-label="Beta code" placeholder="XXXX-XXXX" />
+              <input className="field w-36 uppercase" value={code} onChange={(e) => setCode(e.target.value)} maxLength={20} required autoComplete="off" spellCheck={false} aria-label={t("Beta code")} placeholder={own("XXXX-XXXX")} />
             </label>
           )}
           <button className="btn" disabled={act.busy || name.trim().length < 2 || !preset || (mode === "code" && code.trim().length < 8)}>{t("Create alliance")}</button>
@@ -176,7 +178,7 @@ function JoinAClan() {
             <ClanCrest clanId={c.id} size={24} />
             <span className="font-medium">{c.name}</span>
             <span className="text-text-muted">[{c.tag}]</span>
-            <span className="text-text-muted">{c.leaderName ? `Led by ${c.leaderName}` : "No leader yet"} · {c.members} members</span>
+            <span className="text-text-muted">{c.leaderName ? t(`Led by ${d(c.leaderName)}`) : t("No leader yet")} · {tn(c.members, "{n} member", "{n} members")}</span>
             <button
               type="button"
               className="btn text-sm ml-auto"
@@ -186,7 +188,7 @@ function JoinAClan() {
                 refreshInfo();
               }}
             >
-              Request to join
+              {t("Request to join")}
             </button>
           </li>
         ))}
@@ -196,7 +198,7 @@ function JoinAClan() {
       {info.alliance && info.alliance.role !== "owner" && (
         <div className="flex items-center justify-end gap-1 border-t border-line pt-3">
           <ConfirmButton
-            confirm={`Leave ${info.alliance.name}?`}
+            confirm={t(`Leave ${d(info.alliance.name)}?`)}
             disabled={act.busy}
             onConfirm={async () => {
               await act.run(() => rpc("alliance.leave"));
@@ -233,12 +235,12 @@ function PasteInvite() {
     >
       <label className="flex flex-col gap-1 text-text-muted">
         <span className="flex items-center gap-1">
-          Have an invite link?
+          {t("Have an invite link?")}
           <Help text={t("A clan's leader or officer can send you an invite link. Paste it here (the whole address, or just its code) to join that clan.\nDepending on how the link was made, you are let in at once or added to the clan's waiting list.")} />
         </span>
         <span className="flex flex-wrap gap-2">
-          <input className="field max-w-md flex-1" value={text} onChange={(e) => setText(e.target.value)} placeholder="Paste the link here" aria-label="Invite link" />
-          <button className="btn text-sm" disabled={act.busy || text.trim().length < 8}>Use invite</button>
+          <input className="field max-w-md flex-1" value={text} onChange={(e) => setText(e.target.value)} placeholder={t("Paste the link here")} aria-label={t("Invite link")} />
+          <button className="btn text-sm" disabled={act.busy || text.trim().length < 8}>{t("Use invite")}</button>
         </span>
       </label>
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
@@ -282,30 +284,30 @@ export function InviteLinks({ clanId, inline = false }: { clanId: number; inline
     inline ? (
       <div className="flex w-full flex-col gap-3 border-l-2 border-gold-dim pl-3" data-invites={clanId}>
         <span className="flex items-center gap-1 text-xs uppercase tracking-wider text-text-muted">
-          Invite links ({data?.length ?? 0}) <Help text={t(INVITE_HELP)} />
+          {t(`Invite links (${d(data?.length ?? 0)})`)} <Help text={t(INVITE_HELP)} />
         </span>
         {children}
       </div>
     ) : (
-      <Section title={`Invite links (${data?.length ?? 0})`} help={t(INVITE_HELP)}>{children}</Section>
+      <Section title={t(`Invite links (${d(data?.length ?? 0)})`)} help={t(INVITE_HELP)}>{children}</Section>
     );
   return framed(
     <>
       {error && <p className="text-danger">{error}</p>}
-      {data && data.length === 0 && <p className="text-text-muted">No open invite links.</p>}
+      {data && data.length === 0 && <p className="text-text-muted">{t("No open invite links.")}</p>}
       <ul className="flex flex-col divide-y divide-line">
         {data?.map((inv) => (
           <li key={inv.code} data-invite={inv.code} className="flex flex-col gap-1 py-2">
             <div className="flex flex-wrap items-center gap-2">
-              <input className="field min-w-0 flex-1 select-all text-xs" readOnly value={inv.link} aria-label="Invite link" onFocus={(e) => e.target.select()} />
-              <button type="button" className="btn text-sm" onClick={() => void copy(inv)}>{copied === inv.code ? "Copied" : "Copy link"}</button>
-              <ConfirmButton confirm="Revoke this link?" disabled={act.busy} onConfirm={() => void act.run(() => rpc("clan.revokeInvite", { code: inv.code })).then(reload)}>
-                Revoke
+              <input className="field min-w-0 flex-1 select-all text-xs" readOnly value={inv.link} aria-label={t("Invite link")} onFocus={(e) => e.target.select()} />
+              <button type="button" className="btn text-sm" onClick={() => void copy(inv)}>{copied === inv.code ? t("Copied") : t("Copy link")}</button>
+              <ConfirmButton confirm={t("Revoke this link?")} disabled={act.busy} onConfirm={() => void act.run(() => rpc("clan.revokeInvite", { code: inv.code })).then(reload)}>
+                {t("Revoke")}
               </ConfirmButton>
             </div>
             <p className="text-xs text-text-muted">
-              <span className={inv.autoApprove ? "text-net-command" : ""}>{inv.autoApprove ? "Lets them straight in" : "Still needs approval"}</span>
-              {` · used ${inv.uses} of ${inv.maxUses} · until ${new Date(inv.expiresAt).toLocaleDateString(undefined, { dateStyle: "medium" })} · made by ${inv.createdBy}`}
+              <span className={inv.autoApprove ? "text-net-command" : ""}>{inv.autoApprove ? t("Lets them straight in") : t("Still needs approval")}</span>
+              {" · "}{t(`used ${d(inv.uses)} of ${d(inv.maxUses)}`)}{" · "}{t(`until ${d(dayFull(inv.expiresAt))}`)}{" · "}{t(`made by ${d(inv.createdBy)}`)}
             </p>
           </li>
         ))}
@@ -320,17 +322,17 @@ export function InviteLinks({ clanId, inline = false }: { clanId: number; inline
       >
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-text-muted">
-            Uses
-            <input type="number" className="field w-24" min={1} max={500} value={uses} onChange={(e) => setUses(Number(e.target.value))} aria-label="Number of uses" />
+            {t("Uses")}
+            <input type="number" className="field w-24" min={1} max={500} value={uses} onChange={(e) => setUses(Number(e.target.value))} aria-label={t("Number of uses")} />
           </label>
           <label className="flex flex-col gap-1 text-text-muted">
-            Valid for (days)
-            <input type="number" className="field w-24" min={1} max={30} value={days} onChange={(e) => setDays(Number(e.target.value))} aria-label="Days valid" />
+            {t("Valid for (days)")}
+            <input type="number" className="field w-24" min={1} max={30} value={days} onChange={(e) => setDays(Number(e.target.value))} aria-label={t("Days valid")} />
           </label>
-          <button className="btn text-sm" disabled={act.busy}>Create invite link</button>
+          <button className="btn text-sm" disabled={act.busy}>{t("Create invite link")}</button>
         </div>
         <label className="flex items-center gap-2">
-          <input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} /> Let people who use it straight in, without approval
+          <input type="checkbox" checked={auto} onChange={(e) => setAuto(e.target.checked)} /> {t("Let people who use it straight in, without approval")}
         </label>
         {auto && <p className="text-xs text-net-command">{t("Anyone who gets hold of this link joins your clan and hears its nets. Share it only with people you know.")}</p>}
       </form>
@@ -364,7 +366,7 @@ function ConstantParties({ clanId, members, leads }: { clanId: number; members: 
 
   return (
     <Section title={t(`Constant parties (${d(data.cps.length)})`)} help={t(CP_HELP)}>
-      {data.cps.length === 0 && <p className="text-text-muted">None yet. Create one for each group that always fights together.</p>}
+      {data.cps.length === 0 && <p className="text-text-muted">{t("None yet. Create one for each group that always fights together.")}</p>}
       <ul className="flex flex-col gap-3">
         {data.cps.map((cp) => (
           <CpCard key={cp.id} cp={cp} me={me} canManage={leads || data.canCreate || cp.leaderId === me} canDelete={data.canCreate} clanMembers={active} busy={act.busy} call={call} />
@@ -379,8 +381,8 @@ function ConstantParties({ clanId, members, leads }: { clanId: number; members: 
             setName("");
           }}
         >
-          <input className="field w-56" value={name} onChange={(e) => setName(e.target.value)} maxLength={48} placeholder="Name, for example Vanguard" aria-label={t("New constant party")} />
-          <button className="btn text-sm" disabled={act.busy || name.trim().length < 2}>Create</button>
+          <input className="field w-56" value={name} onChange={(e) => setName(e.target.value)} maxLength={48} placeholder={t("Name, for example Vanguard")} aria-label={t("New constant party")} />
+          <button className="btn text-sm" disabled={act.busy || name.trim().length < 2}>{t("Create")}</button>
         </form>
       )}
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
@@ -427,7 +429,7 @@ function CpCard({
         ) : (
           <h3 className="title text-sm text-net-party">
             {canManage ? (
-              <button type="button" className="title cursor-text hover:text-gold-bright" aria-label={`Rename ${cp.name}`} onClick={() => setRenaming(true)}>{cp.name}</button>
+              <button type="button" className="title cursor-text hover:text-gold-bright" aria-label={t(`Rename ${d(cp.name)}`)} onClick={() => setRenaming(true)}>{cp.name}</button>
             ) : (
               cp.name
             )}
@@ -436,14 +438,14 @@ function CpCard({
         {mine && <span className="text-xs uppercase tracking-wider text-gold">{t("Your constant party")}</span>}
         <span className={`ml-auto tabular-nums ${over ? "text-danger" : "text-text-muted"}`}>{cp.members.length}/{PARTY_SIZE}</span>
         {canDelete && (
-          <ConfirmButton className="text-xs text-text-muted hover:text-danger cursor-pointer" confirm={`Delete ${cp.name}?`} disabled={busy} onConfirm={() => void call("cp.delete", { cpId: cp.id })}>
-            Delete
+          <ConfirmButton className="text-xs text-text-muted hover:text-danger cursor-pointer" confirm={t(`Delete ${d(cp.name)}?`)} disabled={busy} onConfirm={() => void call("cp.delete", { cpId: cp.id })}>
+            {t("Delete")}
           </ConfirmButton>
         )}
       </div>
       {over && <p className="text-xs text-danger">{t("Over the usual party size of")} {PARTY_SIZE}.</p>}
       {cp.members.length === 0 ? (
-        <p className="text-text-muted">No members yet.</p>
+        <p className="text-text-muted">{t("No members yet.")}</p>
       ) : (
         <ul className="flex flex-col divide-y divide-line">
           {cp.members.map((m) => (
@@ -451,13 +453,13 @@ function CpCard({
               <Initial name={m.name} />
               <span className={`font-medium ${m.userId === me ? "text-gold-bright" : ""}`}>{m.name}</span>
               {m.classTag && <span className="text-gold">{m.classTag}</span>}
-              {m.userId === cp.leaderId && <span className="text-xs uppercase tracking-wider text-net-command">Leader</span>}
+              {m.userId === cp.leaderId && <span className="text-xs uppercase tracking-wider text-net-command">{t("Leader")}</span>}
               {canManage && (
                 <span className="ml-auto flex gap-2">
                   {m.userId !== cp.leaderId && (
-                    <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void call("cp.setLeader", { cpId: cp.id, userId: m.userId })}>Make leader</button>
+                    <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void call("cp.setLeader", { cpId: cp.id, userId: m.userId })}>{t("Make leader")}</button>
                   )}
-                  <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void call("cp.setMember", { cpId: cp.id, userId: m.userId, member: false })}>Take out</button>
+                  <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={() => void call("cp.setMember", { cpId: cp.id, userId: m.userId, member: false })}>{t("Take out")}</button>
                 </span>
               )}
             </li>
@@ -469,10 +471,10 @@ function CpCard({
           className="field w-auto self-start text-sm"
           value=""
           disabled={busy}
-          aria-label={`Add a member to ${cp.name}`}
+          aria-label={t(`Add a member to ${d(cp.name)}`)}
           onChange={(e) => e.target.value && void call("cp.setMember", { cpId: cp.id, userId: Number(e.target.value), member: true })}
         >
-          <option value="">Add a member…</option>
+          <option value="">{t("Add a member…")}</option>
           {clanMembers
             .filter((m) => !inside.has(m.userId))
             .map((m) => (
@@ -489,7 +491,7 @@ function Members({ clanId }: { clanId: number }) {
   const { data, error, reload } = useLoad(() => rpc<ClanData>("clan.get", { clanId }), [clanId]);
   const act = useAct();
   if (error) return <p className="text-danger">{error}</p>;
-  if (!data) return <p className="text-text-muted">Loading…</p>;
+  if (!data) return <p className="text-text-muted">{t("Loading…")}</p>;
 
   const online = new Set(data.onlineIds);
   const pending = data.members.filter((m) => m.status === "pending");
@@ -505,19 +507,19 @@ function Members({ clanId }: { clanId: number }) {
     <>
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
       {leads && (
-        <Section title={`Waiting for approval (${pending.length})`} help={t("Players who picked this clan and are waiting to be let in.\nApprove lets the player into the clan's lounge, its Clan net and its operations. Decline removes the request.\nDiscord: the name of the Discord account that is asking. Check it is the player you know before you approve. An in-game name belongs to one account, so nobody else can ask under a member's name.\nThe clan leader and officers can do both.")}>
+        <Section title={t(`Waiting for approval (${d(pending.length)})`)} help={t("Players who picked this clan and are waiting to be let in.\nApprove lets the player into the clan's lounge, its Clan net and its operations. Decline removes the request.\nDiscord: the name of the Discord account that is asking. Check it is the player you know before you approve. An in-game name belongs to one account, so nobody else can ask under a member's name.\nThe clan leader and officers can do both.")}>
           {pending.length === 0 ? (
-            <p className="text-text-muted">Nobody is waiting.</p>
+            <p className="text-text-muted">{t("Nobody is waiting.")}</p>
           ) : (
             <ul className="flex flex-col divide-y divide-line">
               {pending.map((m) => (
                 <li key={m.userId} className="flex flex-wrap items-center gap-3 py-2">
                   <span className="font-medium">{m.name}</span>
                   {m.classTag && <span className="text-gold">{m.classTag}</span>}
-                  {m.discordName && <span className="text-text-muted" data-discord>Discord: {m.discordName}</span>}
+                  {m.discordName && <span className="text-text-muted" data-discord>{t(`Discord: ${d(m.discordName)}`)}</span>}
                   <span className="ml-auto flex gap-2">
-                    <button type="button" className="btn text-sm" disabled={act.busy} onClick={call("clan.approve", { userId: m.userId })}>Approve</button>
-                    <ConfirmButton confirm="Decline?" disabled={act.busy} onConfirm={call("clan.remove", { userId: m.userId })}>Decline</ConfirmButton>
+                    <button type="button" className="btn text-sm" disabled={act.busy} onClick={call("clan.approve", { userId: m.userId })}>{t("Approve")}</button>
+                    <ConfirmButton confirm={t("Decline?")} disabled={act.busy} onConfirm={call("clan.remove", { userId: m.userId })}>{t("Decline")}</ConfirmButton>
                   </span>
                 </li>
               ))}
@@ -527,7 +529,7 @@ function Members({ clanId }: { clanId: number }) {
         </Section>
       )}
       <Section
-        title={`${data.clan.name} [${data.clan.tag}] · ${active.length} members`}
+        title={`${data.clan.name} [${data.clan.tag}] · ${tn(active.length, "{n} member", "{n} members")}`}
         before={<ClanCrest clanId={clanId} size={40} />}
         help={t("Green dot: the player has the app open.\nLeader: speaks on Clan and Command, approves members and appoints officers.\nOfficer: approves and removes members, builds parties, and speaks on the Clan net.\nMembers hear the Clan net and talk in the lounge and in their party.")}
       >
@@ -538,7 +540,7 @@ function Members({ clanId }: { clanId: number }) {
               <span
                 className={`h-2 w-2 rounded-full ${online.has(m.userId) ? "bg-net-party" : "bg-line"}`}
                 role="img"
-                aria-label={online.has(m.userId) ? "App open" : "Offline"}
+                aria-label={online.has(m.userId) ? t("App open") : t("Offline")}
               />
               <Initial name={m.name} />
               <span className={`font-medium ${m.userId === info.user.id ? "text-gold-bright" : ""}`}>{m.name}</span>
@@ -551,19 +553,19 @@ function Members({ clanId }: { clanId: number }) {
               {/* Their other characters, as on a leader's sheet. */}
               {m.characters && m.characters.length > 0 && (
                 <span className="flex flex-wrap items-baseline gap-x-3 text-sm text-text-muted" data-characters={m.name}>
-                  also
+                  {t("also")}
                   {m.characters.map((c) => <CharacterLine key={c.id} c={c} />)}
                 </span>
               )}
               <span className="ml-auto flex gap-2">
                 {data.myRole === "leader" && m.role === "member" && (
-                  <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={call("clan.setOfficer", { userId: m.userId, officer: true })}>Make officer</button>
+                  <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={call("clan.setOfficer", { userId: m.userId, officer: true })}>{t("Make officer")}</button>
                 )}
                 {data.myRole === "leader" && m.role === "officer" && (
-                  <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={call("clan.setOfficer", { userId: m.userId, officer: false })}>Remove officer</button>
+                  <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={call("clan.setOfficer", { userId: m.userId, officer: false })}>{t("Remove officer")}</button>
                 )}
                 {leads && m.role !== "leader" && (m.role === "member" || data.myRole === "leader") && m.userId !== info.user.id && (
-                  <ConfirmButton confirm={`Remove ${m.name}?`} disabled={act.busy} onConfirm={call("clan.remove", { userId: m.userId })}>Remove</ConfirmButton>
+                  <ConfirmButton confirm={t(`Remove ${d(m.name)}?`)} disabled={act.busy} onConfirm={call("clan.remove", { userId: m.userId })}>{t("Remove")}</ConfirmButton>
                 )}
               </span>
             </li>
@@ -579,7 +581,7 @@ function Members({ clanId }: { clanId: number }) {
       {leads && <InviteLinks clanId={clanId} />}
       <ConstantParties clanId={clanId} members={data.members} leads={leads} />
       {data.myRole === "leader" && data.discord !== undefined && (
-        <Section title="Discord announcements" help={DISCORD_HELP(t("an operation your clan takes part in"))}>
+        <Section title={t("Discord announcements")} help={discordHelp(true)}>
           <DiscordSetup clanId={clanId} connected={data.discord} role={data.discordRole} onChange={reload} />
         </Section>
       )}
@@ -607,26 +609,26 @@ export function ClanView() {
       {invited && (
         <div className={`panel flex flex-wrap items-center gap-3 px-4 py-3 ${invited.ok ? "border-net-party" : "border-danger"}`} role={invited.ok ? "status" : "alert"}>
           <span className="flex-1">{invited.text}</span>
-          <button type="button" className="btn btn-quiet text-sm" onClick={clearInviteOutcome}>OK</button>
+          <button type="button" className="btn btn-quiet text-sm" onClick={clearInviteOutcome}>{t("OK")}</button>
         </div>
       )}
       {/* In no alliance: nothing to browse. (A server from before alliances does not say; it has just the one.) */}
       {!m && (info.alliance === null ? <NoAlliance /> : <JoinAClan />)}
       {m?.status === "pending" && (
-        <Section title="Waiting for approval">
+        <Section title={t("Waiting for approval")}>
           <p>
-            A leader or officer of <span className="font-medium">{m.name}</span> has to approve you. This screen updates by itself when they do.
+            {tx("A leader or officer of {clan} has to approve you. This screen updates by itself when they do.", { clan: <span className="font-medium">{m.name}</span> })}
           </p>
           <div>
             <ConfirmButton
-              confirm="Withdraw request?"
+              confirm={t("Withdraw request?")}
               disabled={act.busy}
               onConfirm={async () => {
                 await act.run(() => rpc("clan.withdraw"));
                 refreshInfo();
               }}
             >
-              Withdraw
+              {t("Withdraw")}
             </ConfirmButton>
           </div>
         </Section>

@@ -1,3 +1,4 @@
+import { d, t } from "./words";
 import type { Words } from "./reword";
 // Calls to the backend's app API. The desktop app proves who it is with its
 // session token; the browser version, served from the site, with the site's cookie.
@@ -25,10 +26,10 @@ export async function rpc<T = unknown>(method: string, params: Record<string, un
       body: JSON.stringify({ method, params }),
     });
   } catch {
-    throw new ApiError("The server could not be reached.", 0);
+    throw new ApiError(t("The server could not be reached."), 0);
   }
   const body = (await res.json().catch(() => ({}))) as { result?: T; error?: string };
-  if (!res.ok) throw new ApiError(body.error ?? `The server said ${res.status}.`, res.status);
+  if (!res.ok) throw new ApiError(body.error ?? t(`The server said ${d(res.status)}.`), res.status);
   return body.result as T;
 }
 

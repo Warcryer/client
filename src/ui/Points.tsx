@@ -5,7 +5,8 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { rpc } from "../api";
-import { d, t } from "../words";
+import { d, own, t } from "../words";
+import { tn, tx, when as inLanguage } from "../i18n";
 import { useAct, useApp } from "./app-context";
 import { Help } from "./tips";
 
@@ -67,8 +68,8 @@ export const POINTS_HELP = [
 
 export const poolTitle = (p: PoolInfo) => (p.clanId === null ? p.settings.name : `${p.settings.name} [${p.clanTag ?? ""}]`);
 const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${-n}` : "0");
-const dur = (s: number) => (s >= 3600 ? `${Math.floor(s / 3600)} h ${Math.round((s % 3600) / 60)} min` : `${Math.round(s / 60)} min`);
-const day = (iso: string) => new Date(iso).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+const dur = (s: number) => (s >= 3600 ? t(`${d(Math.floor(s / 3600))} h ${d(Math.round((s % 3600) / 60))} min`) : t(`${d(Math.round(s / 60))} min`));
+const day = (iso: string) => inLanguage(iso, { day: "numeric", month: "short", year: "numeric" });
 const num = (v: string, max = 10000) => Math.min(max, Math.max(0, Math.floor(Number(v) || 0)));
 /** The same words the server keeps as a posted line's reason (core/points.ts, partsText). */
 const partsText = (parts: Part[]) => parts.map((p) => `${p.what} ${p.amount > 0 ? p.amount : `−${-p.amount}`}`).join(", ");
@@ -112,20 +113,20 @@ export function PointsSettingsSection({ clanId }: { clanId: number | null }) {
   return (
     <section className="panel flex flex-col gap-3 p-5" data-points-settings={clanId === null ? "alliance" : clanId}>
       <h2 className="title title-rule text-sm text-gold">
-        {clanId === null ? "Points" : t("The clan's own points")}
-        <Help text={t(POINTS_HELP) + (clanId === null ? t("\nThe alliance's admins can also let each clan keep points of its own, run by the clan's leader and officers, for the clan's own loot.") : "")} />
+        {clanId === null ? t("Points") : t("The clan's own points")}
+        <Help text={t(POINTS_HELP) + (clanId === null ? "\n" + t("The alliance's admins can also let each clan keep points of its own, run by the clan's leader and officers, for the clan's own loot.") : "")} />
       </h2>
       {(pools.length > 0 || mayCreate) && (
-        <div className="flex flex-wrap gap-1" role="tablist" aria-label="Sets of points">
+        <div className="flex flex-wrap gap-1" role="tablist" aria-label={t("Sets of points")}>
           {pools.map((p) => (
             <button key={p.id} type="button" role="tab" aria-selected={!adding && shown?.id === p.id} className={`btn text-sm ${!adding && shown?.id === p.id ? "" : "btn-quiet"}`} onClick={() => setOpen(p.id)} data-points-pool-tab={p.id}>
               {p.settings.name}
-              {!p.settings.enabled && <span className="ml-1 text-xs text-text-muted">(off)</span>}
+              {!p.settings.enabled && <span className="ml-1 text-xs text-text-muted">{t("(off)")}</span>}
             </button>
           ))}
           {mayCreate && pools.length < 10 && (
             <button type="button" role="tab" aria-selected={adding} className={`btn text-sm ${adding ? "" : "btn-quiet"}`} onClick={() => setOpen("new")} data-points-new>
-              + New set of points
+              {t("+ New set of points")}
             </button>
           )}
         </div>
@@ -152,8 +153,8 @@ function CreatePool({ clanId, presets, first, onCreated }: { clanId: number | nu
     <div className="flex flex-col gap-2" data-points-create>
       {first && <p className="text-sm text-text-muted">{clanId === null ? t("No points yet. Start from the preset closest to how your alliance does it; every part can be changed afterwards.") : t("No points for the clan yet. Start from the preset closest to how the clan does it; every part can be changed afterwards.")}</p>}
       <label className="flex flex-wrap items-center gap-2">
-        <span className="w-40 text-text-muted">Start from</span>
-        <select className="field w-auto" value={preset} onChange={(e) => setPreset(e.target.value as PresetId)} aria-label="Preset" data-points-preset>
+        <span className="w-40 text-text-muted">{t("Start from")}</span>
+        <select className="field w-auto" value={preset} onChange={(e) => setPreset(e.target.value as PresetId)} aria-label={t("Preset")} data-points-preset>
           {presets.map((p) => (
             <option key={p.id} value={p.id}>{p.title}</option>
           ))}
@@ -161,8 +162,8 @@ function CreatePool({ clanId, presets, first, onCreated }: { clanId: number | nu
       </label>
       <p className="text-xs text-text-muted sm:pl-42" data-points-preset-about>{about}</p>
       <div className="flex items-center gap-3">
-        <button type="button" className="btn" disabled={act.busy} onClick={create} data-points-create-go>Set it up</button>
-        <span className="text-xs text-text-muted">It starts switched off, so you can look it over first.</span>
+        <button type="button" className="btn" disabled={act.busy} onClick={create} data-points-create-go>{t("Set it up")}</button>
+        <span className="text-xs text-text-muted">{t("It starts switched off, so you can look it over first.")}</span>
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
       </div>
     </div>
@@ -219,30 +220,30 @@ function RuleRow({ rule, eventTypes, onChange, onRemove, index }: { rule: Rule; 
       <div className="flex flex-wrap items-center gap-2">
         <span className="w-40 font-medium">{t(info.title)}</span>
         {rule.kind === "objective" && (
-          <input className="field w-40" maxLength={32} value={rule.label ?? ""} placeholder="Boss kill" onChange={(e) => onChange({ ...rule, label: e.target.value })} aria-label="Objective's name" data-points-rule-label />
+          <input className="field w-40" maxLength={32} value={rule.label ?? ""} placeholder={t("Boss kill")} onChange={(e) => onChange({ ...rule, label: e.target.value })} aria-label={t("Objective's name")} data-points-rule-label />
         )}
-        <input className="field w-24" type="number" min={0} value={rule.amount} onChange={(e) => onChange({ ...rule, amount: num(e.target.value) })} aria-label={`${info.title}: points`} data-points-rule-amount />
+        <input className="field w-24" type="number" min={0} value={rule.amount} onChange={(e) => onChange({ ...rule, amount: num(e.target.value) })} aria-label={t(`${d(t(info.title))}: points`)} data-points-rule-amount />
         {rule.kind === "attend" && (
           <>
-            <span className="text-text-muted">at</span>
-            <input className="field w-20" type="number" min={0} max={100} value={rule.minShare ?? 50} onChange={(e) => onChange({ ...rule, minShare: num(e.target.value, 100) })} aria-label={t("Share of the operation")} data-points-rule-share />
-            <span className="text-text-muted">%</span>
+            <span className="contents text-text-muted">
+              {tx("at {share} %", { share: <input className="field w-20" type="number" min={0} max={100} value={rule.minShare ?? 50} onChange={(e) => onChange({ ...rule, minShare: num(e.target.value, 100) })} aria-label={t("Share of the operation")} data-points-rule-share /> })}
+            </span>
           </>
         )}
         {(rule.kind === "onTime" || rule.kind === "toEnd") && (
           <>
-            <span className="text-text-muted">within</span>
-            <input className="field w-20" type="number" min={0} max={600} value={rule.minutes ?? 15} onChange={(e) => onChange({ ...rule, minutes: num(e.target.value, 600) })} aria-label="Minutes" data-points-rule-minutes />
-            <span className="text-text-muted">min</span>
+            <span className="contents text-text-muted">
+              {tx("within {minutes} min", { minutes: <input className="field w-20" type="number" min={0} max={600} value={rule.minutes ?? 15} onChange={(e) => onChange({ ...rule, minutes: num(e.target.value, 600) })} aria-label={t("Minutes")} data-points-rule-minutes /> })}
+            </span>
           </>
         )}
         <span className="flex-1 text-xs text-text-muted">{t(info.note)}</span>
-        <button type="button" className="btn btn-quiet px-2 py-0.5 text-xs" onClick={onRemove} aria-label={`Remove the rule ${info.title}`} data-points-rule-remove>Remove</button>
+        <button type="button" className="btn btn-quiet px-2 py-0.5 text-xs" onClick={onRemove} aria-label={t(`Remove the rule ${d(t(info.title))}`)} data-points-rule-remove>{t("Remove")}</button>
       </div>
       {eventTypes.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 sm:pl-42">
-          <span className="text-xs text-text-muted">For</span>
-          <KindPicker all={eventTypes} picked={rule.kinds} onChange={(kinds) => onChange({ ...rule, kinds })} label={`${info.title}: kinds of event`} />
+          <span className="text-xs text-text-muted">{t("For")}</span>
+          <KindPicker all={eventTypes} picked={rule.kinds} onChange={(kinds) => onChange({ ...rule, kinds })} label={t(`${d(t(info.title))}: kinds of event`)} />
         </div>
       )}
     </li>
@@ -278,25 +279,25 @@ function PointsForm({ pool, eventTypes, presets, onSaved, onRemoved }: { pool: P
     <div className="flex flex-col gap-3" data-points-form={pool.id}>
       <label className="flex items-center gap-2">
         <input type="checkbox" checked={s.enabled} onChange={(e) => set({ enabled: e.target.checked })} data-points-enabled />
-        Switched on
+        {t("Switched on")}
         <span className="text-xs text-text-muted">{pool.clanId === null ? t("Off: nobody in the alliance sees these points, and no operation waits for them.") : t("Off: the clan's members do not see these points.")}</span>
       </label>
       <label className="flex flex-wrap items-center gap-2">
-        <span className="w-40 text-text-muted">Called</span>
-        <input className="field w-40" value={s.name} maxLength={16} onChange={(e) => set({ name: e.target.value })} aria-label="What the points are called" data-points-name />
-        <span className="text-xs text-text-muted">DKP, EP, PAP, Raid points: whatever your players say.</span>
+        <span className="w-40 text-text-muted">{t("Called")}</span>
+        <input className="field w-40" value={s.name} maxLength={16} onChange={(e) => set({ name: e.target.value })} aria-label={t("What the points are called")} data-points-name />
+        <span className="text-xs text-text-muted">{t("DKP, EP, PAP, Raid points: whatever your players say.")}</span>
       </label>
       <PresetSwap presets={presets} current={s.preset} onPick={(preset, from) => set({ preset, rules: from.rules, decay: from.decay, limits: from.limits, spending: from.spending, ...(from.gear ? { gear: from.gear } : {}) })} />
       {eventTypes.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-40 text-text-muted">Counts</span>
-          <KindPicker all={eventTypes} picked={s.kinds} onChange={(kinds) => set({ kinds })} label="Kinds of event these points count" />
+          <span className="w-40 text-text-muted">{t("Counts")}</span>
+          <KindPicker all={eventTypes} picked={s.kinds} onChange={(kinds) => set({ kinds })} label={t("Kinds of event these points count")} />
           <span className="text-xs text-text-muted">{t("Which operations earn these points.")}</span>
         </div>
       )}
 
       <div className="flex flex-col gap-1 border-t border-line pt-3" data-points-rules>
-        <h3 className="text-sm text-gold">How they are earned</h3>
+        <h3 className="text-sm text-gold">{t("How they are earned")}</h3>
         {s.rules.length === 0 ? (
           <p className="text-sm text-text-muted">{t("No rules yet: every operation's draft starts at zero. Add a rule below.")}</p>
         ) : (
@@ -308,8 +309,8 @@ function PointsForm({ pool, eventTypes, presets, onSaved, onRemoved }: { pool: P
         )}
         {s.rules.length < 30 && (
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <select className="field w-auto" value={adding} onChange={(e) => e.target.value && addRule(e.target.value as RuleKind)} aria-label="Add a rule" data-points-add-rule>
-              <option value="">Add a rule…</option>
+            <select className="field w-auto" value={adding} onChange={(e) => e.target.value && addRule(e.target.value as RuleKind)} aria-label={t("Add a rule")} data-points-add-rule>
+              <option value="">{t("Add a rule…")}</option>
               {RULE_ORDER.map((k) => (
                 <option key={k} value={k}>{t(RULES[k].title)}</option>
               ))}
@@ -320,52 +321,57 @@ function PointsForm({ pool, eventTypes, presets, onSaved, onRemoved }: { pool: P
       </div>
 
       <div className="flex flex-col gap-2 border-t border-line pt-3">
-        <h3 className="text-sm text-gold">Loot, decay and limits</h3>
+        <h3 className="text-sm text-gold">{t("Loot, decay and limits")}</h3>
         <label className="flex flex-wrap items-center gap-2">
-          <span className="w-40 text-text-muted">Loot</span>
-          <select className="field w-auto" value={s.spending ?? "none"} onChange={(e) => set({ spending: e.target.value as PoolSettings["spending"] })} aria-label="How loot is paid for" data-points-spending>
-            <option value="none">Not spent on loot</option>
-            <option value="price">Spent: the item's price is taken from the winner</option>
-            <option value="council">Loot council: a record of who got what and why, no cost</option>
-            <option value="epgp">EPGP: the price is added to the winner's gear points; priority is EP divided by GP</option>
+          <span className="w-40 text-text-muted">{t("Loot")}</span>
+          <select className="field w-auto" value={s.spending ?? "none"} onChange={(e) => set({ spending: e.target.value as PoolSettings["spending"] })} aria-label={t("How loot is paid for")} data-points-spending>
+            <option value="none">{t("Not spent on loot")}</option>
+            <option value="price">{t("Spent: the item's price is taken from the winner")}</option>
+            <option value="council">{t("Loot council: a record of who got what and why, no cost")}</option>
+            <option value="epgp">{t("EPGP: the price is added to the winner's gear points; priority is EP divided by GP")}</option>
             <option value="zeroSum">{t("Zero-sum: the price is taken from the winner and shared among the others there")}</option>
-            <option value="list">Suicide Kings: no cost; the winner goes to the bottom of a list</option>
+            <option value="list">{t("Suicide Kings: no cost; the winner goes to the bottom of a list")}</option>
           </select>
           <span className="text-xs text-text-muted">{t("Loot is recorded and given out on an operation's board.")}</span>
         </label>
         {s.spending === "epgp" && (
           <label className="flex flex-wrap items-center gap-2" data-points-gear>
-            <span className="w-40 text-text-muted">Gear points</span>
-            <span className="text-text-muted">base</span>
-            <input className="field w-24" type="number" min={1} value={s.gear?.baseGp ?? 100} onChange={(e) => set({ gear: { baseGp: Math.max(1, num(e.target.value, 10_000_000)), minEp: s.gear?.minEp ?? 0 } })} aria-label="Base GP" data-points-base-gp />
-            <span className="text-text-muted">GP; first in line needs at least</span>
-            <input className="field w-24" type="number" min={0} value={s.gear?.minEp ?? 0} onChange={(e) => set({ gear: { baseGp: s.gear?.baseGp ?? 100, minEp: num(e.target.value, 10_000_000) } })} aria-label="Minimum EP" data-points-min-ep />
-            <span className="text-text-muted">{`${s.name}`}</span>
-            <span className="text-xs text-text-muted">Everyone starts from the base, so a new player is not first in line for everything. 0 for no minimum.</span>
+            <span className="w-40 text-text-muted">{t("Gear points")}</span>
+            <span className="contents text-text-muted">
+              {tx(`base {base} GP; first in line needs at least {least} ${d(s.name)}`, {
+                base: <input className="field w-24" type="number" min={1} value={s.gear?.baseGp ?? 100} onChange={(e) => set({ gear: { baseGp: Math.max(1, num(e.target.value, 10_000_000)), minEp: s.gear?.minEp ?? 0 } })} aria-label={t("Base GP")} data-points-base-gp />,
+                least: <input className="field w-24" type="number" min={0} value={s.gear?.minEp ?? 0} onChange={(e) => set({ gear: { baseGp: s.gear?.baseGp ?? 100, minEp: num(e.target.value, 10_000_000) } })} aria-label={t("Minimum EP")} data-points-min-ep />,
+              })}
+            </span>
+            <span className="text-xs text-text-muted">{t("Everyone starts from the base, so a new player is not first in line for everything. 0 for no minimum.")}</span>
           </label>
         )}
         {s.spending === "zeroSum" && !s.limits.negative && <p className="text-xs text-gold">{t("Zero-sum works with points that may go below zero: otherwise a player needs points before winning anything.")}</p>}
         <label className="flex flex-wrap items-center gap-2">
-          <span className="w-40 text-text-muted">Decay</span>
-          <input className="field w-20" type="number" min={0} max={100} value={s.decay.pct} onChange={(e) => set({ decay: { ...s.decay, pct: num(e.target.value, 100) } })} aria-label="Decay in percent" data-points-decay />
-          <span className="text-text-muted">% every</span>
-          <select className="field w-auto" value={s.decay.every} onChange={(e) => set({ decay: { ...s.decay, every: e.target.value as "week" | "month" } })} aria-label="How often decay is taken" data-points-decay-every>
-            <option value="week">week (Monday)</option>
-            <option value="month">month (the 1st)</option>
-          </select>
-          <span className="text-text-muted">not below</span>
-          <input className="field w-24" type="number" min={0} value={s.decay.floor} onChange={(e) => set({ decay: { ...s.decay, floor: num(e.target.value, 10_000_000) } })} aria-label="Decay floor" data-points-decay-floor />
-          <span className="text-xs text-text-muted">0% for none. Recent effort counts most.</span>
+          <span className="w-40 text-text-muted">{t("Decay")}</span>
+          <span className="contents text-text-muted">
+            {tx("{percent} % every {period} not below {floor}", {
+              percent: <input className="field w-20" type="number" min={0} max={100} value={s.decay.pct} onChange={(e) => set({ decay: { ...s.decay, pct: num(e.target.value, 100) } })} aria-label={t("Decay in percent")} data-points-decay />,
+              period: (
+                <select className="field w-auto" value={s.decay.every} onChange={(e) => set({ decay: { ...s.decay, every: e.target.value as "week" | "month" } })} aria-label={t("How often decay is taken")} data-points-decay-every>
+                  <option value="week">{t("week (Monday)")}</option>
+                  <option value="month">{t("month (the 1st)")}</option>
+                </select>
+              ),
+              floor: <input className="field w-24" type="number" min={0} value={s.decay.floor} onChange={(e) => set({ decay: { ...s.decay, floor: num(e.target.value, 10_000_000) } })} aria-label={t("Decay floor")} data-points-decay-floor />,
+            })}
+          </span>
+          <span className="text-xs text-text-muted">{t("0% for none. Recent effort counts most.")}</span>
         </label>
         <label className="flex flex-wrap items-center gap-2">
-          <span className="w-40 text-text-muted">Cap</span>
-          <input className="field w-24" type="number" min={0} value={s.limits.cap} onChange={(e) => set({ limits: { ...s.limits, cap: num(e.target.value, 10_000_000) } })} aria-label="Most points a player may have" data-points-cap />
-          <span className="text-xs text-text-muted">The most a player may have. 0 for no cap.</span>
+          <span className="w-40 text-text-muted">{t("Cap")}</span>
+          <input className="field w-24" type="number" min={0} value={s.limits.cap} onChange={(e) => set({ limits: { ...s.limits, cap: num(e.target.value, 10_000_000) } })} aria-label={t("Most points a player may have")} data-points-cap />
+          <span className="text-xs text-text-muted">{t("The most a player may have. 0 for no cap.")}</span>
         </label>
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={s.limits.negative} onChange={(e) => set({ limits: { ...s.limits, negative: e.target.checked } })} data-points-negative />
-          May go below zero
-          <span className="text-xs text-text-muted">Off: a deduction stops at zero.</span>
+          {t("May go below zero")}
+          <span className="text-xs text-text-muted">{t("Off: a deduction stops at zero.")}</span>
         </label>
       </div>
 
@@ -379,14 +385,14 @@ function PointsForm({ pool, eventTypes, presets, onSaved, onRemoved }: { pool: P
         )}
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={s.open} onChange={(e) => set({ open: e.target.checked })} data-points-open />
-          Everyone sees the standings
+          {t("Everyone sees the standings")}
           <span className="text-xs text-text-muted">{pool.clanId === null ? t("Off: admins see all, a clan's leader and officers their clan, each player their own.") : t("Off: the clan's leader and officers see all, each player their own.")}</span>
         </label>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="button" className="btn" disabled={!changed || act.busy} onClick={save} data-points-save>Save the points</button>
-        {saved && !changed && <span className="text-sm text-text-muted" role="status">Saved.</span>}
+        <button type="button" className="btn" disabled={!changed || act.busy} onClick={save} data-points-save>{t("Save the points")}</button>
+        {saved && !changed && <span className="text-sm text-text-muted" role="status">{t("Saved.")}</span>}
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
       </div>
       <SeasonAndRemove pool={pool} onDone={onSaved} onRemoved={onRemoved} />
@@ -410,18 +416,18 @@ function PresetSwap({ presets, current, onPick }: { presets: Preset[]; current: 
   };
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="w-40 text-text-muted">Preset</span>
+      <span className="w-40 text-text-muted">{t("Preset")}</span>
       <span>{title}</span>
-      <select className="field w-auto" value={want} onChange={(e) => setWant(e.target.value as PresetId | "")} aria-label="Start again from a preset" data-points-swap>
-        <option value="">Start again from…</option>
+      <select className="field w-auto" value={want} onChange={(e) => setWant(e.target.value as PresetId | "")} aria-label={t("Start again from a preset")} data-points-swap>
+        <option value="">{t("Start again from…")}</option>
         {presets.map((p) => (
           <option key={p.id} value={p.id}>{p.title}</option>
         ))}
       </select>
       {want && (
         <>
-          <span className="text-xs text-text-muted">This replaces the rules, decay and limits below (not the name). Nothing is saved until you save.</span>
-          <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={apply} data-points-swap-go>Replace</button>
+          <span className="text-xs text-text-muted">{t("This replaces the rules, decay and limits below (not the name). Nothing is saved until you save.")}</span>
+          <button type="button" className="btn btn-quiet text-sm" disabled={act.busy} onClick={apply} data-points-swap-go>{t("Replace")}</button>
         </>
       )}
       {act.error && <span className="text-danger" role="alert">{act.error}</span>}
@@ -437,28 +443,28 @@ function SeasonAndRemove({ pool, onDone, onRemoved }: { pool: PoolInfo; onDone: 
   return (
     <div className="flex flex-col gap-2 border-t border-line pt-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-40 text-text-muted">Season</span>
-        <span data-points-season>{`Season ${pool.season}`}{pool.seasonAt ? `, since ${day(pool.seasonAt)}` : ""}</span>
+        <span className="w-40 text-text-muted">{t("Season")}</span>
+        <span data-points-season>{pool.seasonAt ? t(`Season ${d(pool.season)}, since ${d(day(pool.seasonAt))}`) : t(`Season ${d(pool.season)}`)}</span>
         {asking !== "season" ? (
-          <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking("season")} data-points-season-start>Start a new season…</button>
+          <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking("season")} data-points-season-start>{t("Start a new season…")}</button>
         ) : (
           <>
-            <span className="text-text-muted">carry over</span>
-            <input className="field w-20" type="number" min={0} max={100} value={carry} onChange={(e) => setCarry(e.target.value)} aria-label="Share carried over, in percent" data-points-carry />
-            <span className="text-text-muted">{`% of everyone's ${name}?`}</span>
-            <button type="button" className="btn text-sm" disabled={act.busy} onClick={() => void act.run(() => rpc("points.newSeason", { poolId: pool.id, carry: num(carry, 100) })).then((ok) => ok && (setAsking(null), onDone()))} data-points-season-go>Start it</button>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking(null)}>Not now</button>
+            <span className="contents text-text-muted">
+              {tx(`carry over {share} % of everyone's ${d(name)}?`, { share: <input className="field w-20" type="number" min={0} max={100} value={carry} onChange={(e) => setCarry(e.target.value)} aria-label={t("Share carried over, in percent")} data-points-carry /> })}
+            </span>
+            <button type="button" className="btn text-sm" disabled={act.busy} onClick={() => void act.run(() => rpc("points.newSeason", { poolId: pool.id, carry: num(carry, 100) })).then((ok) => ok && (setAsking(null), onDone()))} data-points-season-go>{t("Start it")}</button>
+            <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking(null)}>{t("Not now")}</button>
           </>
         )}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         {asking !== "remove" ? (
-          <button type="button" className="btn btn-quiet self-start text-xs" onClick={() => setAsking("remove")} data-points-remove>Remove these points…</button>
+          <button type="button" className="btn btn-quiet self-start text-xs" onClick={() => setAsking("remove")} data-points-remove>{t("Remove these points…")}</button>
         ) : (
           <>
-            <span>{t(`Remove ${name}? Only points with no lines yet can be removed; otherwise switch them off.`)}</span>
-            <button type="button" className="btn text-sm" disabled={act.busy} onClick={() => void act.run(() => rpc("points.removePool", { poolId: pool.id })).then((ok) => ok && onRemoved())} data-points-remove-go>Remove</button>
-            <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking(null)}>Keep them</button>
+            <span>{t(`Remove ${d(name)}? Only points with no lines yet can be removed; otherwise switch them off.`)}</span>
+            <button type="button" className="btn text-sm" disabled={act.busy} onClick={() => void act.run(() => rpc("points.removePool", { poolId: pool.id })).then((ok) => ok && onRemoved())} data-points-remove-go>{t("Remove")}</button>
+            <button type="button" className="btn btn-quiet text-sm" onClick={() => setAsking(null)}>{t("Keep them")}</button>
           </>
         )}
       </div>
@@ -467,24 +473,30 @@ function SeasonAndRemove({ pool, onDone, onRemoved }: { pool: PoolInfo; onDone: 
   );
 }
 
+const decayLine = (decay: PoolSettings["decay"]) =>
+  decay.every === "month"
+    ? decay.floor ? t(`Decay: ${d(decay.pct)}% every month, not below ${d(decay.floor)}`) : t(`Decay: ${d(decay.pct)}% every month`)
+    : decay.floor ? t(`Decay: ${d(decay.pct)}% every week, not below ${d(decay.floor)}`) : t(`Decay: ${d(decay.pct)}% every week`);
+
 /** The rules as a player reads them, under the standings. */
 function RulesSummary({ s }: { s: PoolSettings }) {
   if (s.rules.length === 0 && s.decay.pct === 0) return null;
   const line = (r: Rule) => {
     const info = RULES[r.kind];
     const what = r.kind === "objective" ? r.label : t(info.title);
-    const extra = r.kind === "attend" ? t(` (${d(r.minShare ?? 50)}% of the operation)`) : r.kind === "onTime" || r.kind === "toEnd" ? ` (${r.minutes ?? 15} min)` : "";
-    return `${what}${extra}: ${r.kind === "noShow" ? "−" : ""}${r.amount}${r.kind === "hourly" ? " an hour" : ""}${r.kinds.length ? ` · ${r.kinds.join(", ")}` : ""}`;
+    const extra = r.kind === "attend" ? ` (${t(`${d(r.minShare ?? 50)}% of the operation`)})` : r.kind === "onTime" || r.kind === "toEnd" ? ` (${t(`${d(r.minutes ?? 15)} min`)})` : "";
+    const amount = `${r.kind === "noShow" ? "−" : ""}${r.amount}`;
+    return `${what}${extra}: ${r.kind === "hourly" ? t(`${d(amount)} an hour`) : amount}${r.kinds.length ? ` · ${r.kinds.join(", ")}` : ""}`;
   };
   return (
     <details className="text-xs text-text-muted" data-points-rules-summary>
-      <summary className="cursor-pointer">{`How ${s.name} are earned`}</summary>
+      <summary className="cursor-pointer">{t(`How ${d(s.name)} are earned`)}</summary>
       <ul className="mt-1 flex flex-col gap-0.5 pl-3">
         {s.rules.map((r, i) => (
           <li key={i}>{line(r)}</li>
         ))}
-        {s.decay.pct > 0 && <li>{`Decay: ${s.decay.pct}% every ${s.decay.every === "month" ? "month" : "week"}${s.decay.floor ? `, not below ${s.decay.floor}` : ""}`}</li>}
-        {s.limits.cap > 0 && <li>{`Cap: ${s.limits.cap}`}</li>}
+        {s.decay.pct > 0 && <li>{decayLine(s.decay)}</li>}
+        {s.limits.cap > 0 && <li>{t(`Cap: ${d(s.limits.cap)}`)}</li>}
       </ul>
     </details>
   );
@@ -512,12 +524,12 @@ export function PointsStandings({ pool }: { pool: PoolInfo }) {
   }, [pool.id, tick, again]);
 
   if (error) return <p className="text-danger" role="alert">{error}</p>;
-  if (!data) return <p className="text-text-muted">Loading…</p>;
+  if (!data) return <p className="text-text-muted">{t("Loading…")}</p>;
   const name = data.pool.settings.name;
   if (opId !== null) {
     return (
       <div className="flex flex-col gap-3">
-        <button type="button" className="btn btn-quiet self-start text-sm" onClick={() => (setOpId(null), reload())}>Back to the standings</button>
+        <button type="button" className="btn btn-quiet self-start text-sm" onClick={() => (setOpId(null), reload())}>{t("Back to the standings")}</button>
         <OpPoints opId={opId} onPosted={reload} only={pool.id} />
       </div>
     );
@@ -531,13 +543,13 @@ export function PointsStandings({ pool }: { pool: PoolInfo }) {
     <div className="flex flex-col gap-4" data-points-standings={pool.id}>
       {data.waiting.length > 0 && (
         <section className="panel flex flex-col gap-2 border-gold-dim p-4" data-points-waiting>
-          <h2 className="title title-rule text-sm text-gold">{t(`Operations waiting for their ${name}`)}</h2>
+          <h2 className="title title-rule text-sm text-gold">{t(`Operations waiting for their ${d(name)}`)}</h2>
           <ul className="flex flex-col divide-y divide-line">
             {data.waiting.map((w) => (
               <li key={w.id} className="flex items-center gap-3 py-1.5">
                 <span className="flex-1">{w.name}{w.eventType && <span className="text-xs text-text-muted"> · {w.eventType}</span>}</span>
                 <span className="text-xs text-text-muted">{day(w.endedAt)}</span>
-                <button type="button" className="btn text-sm" onClick={() => setOpId(w.id)} data-points-review={w.id}>Review and post</button>
+                <button type="button" className="btn text-sm" onClick={() => setOpId(w.id)} data-points-review={w.id}>{t("Review and post")}</button>
               </li>
             ))}
           </ul>
@@ -545,25 +557,25 @@ export function PointsStandings({ pool }: { pool: PoolInfo }) {
       )}
       <section className="panel flex flex-col gap-3 p-5">
         <div className="flex flex-wrap items-center gap-3">
-          <h2 className="title title-rule flex-1 text-sm text-gold">{t(`${name}: standings`)}</h2>
-          {data.pool.season > 1 && <span className="text-xs text-text-muted">{`Season ${data.pool.season}`}{data.pool.seasonAt ? `, since ${day(data.pool.seasonAt)}` : ""}</span>}
-          <button type="button" className="btn btn-quiet text-xs" onClick={() => setPlayer(info.user.id)} data-points-mine>My own lines</button>
+          <h2 className="title title-rule flex-1 text-sm text-gold">{t(`${d(name)}: standings`)}</h2>
+          {data.pool.season > 1 && <span className="text-xs text-text-muted">{data.pool.seasonAt ? t(`Season ${d(data.pool.season)}, since ${d(day(data.pool.seasonAt))}`) : t(`Season ${d(data.pool.season)}`)}</span>}
+          <button type="button" className="btn btn-quiet text-xs" onClick={() => setPlayer(info.user.id)} data-points-mine>{t("My own lines")}</button>
         </div>
-        {!data.pool.seeAll && <p className="text-xs text-text-muted">{data.rows.length > 1 ? t("You see your own clan's players.") : "You see your own points. The standings are not open to everyone."}</p>}
+        {!data.pool.seeAll && <p className="text-xs text-text-muted">{data.rows.length > 1 ? t("You see your own clan's players.") : t("You see your own points. The standings are not open to everyone.")}</p>}
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs text-text-muted">
                 <th className="py-1 pr-3 font-normal">#</th>
-                <th className="py-1 pr-3 font-normal">Player</th>
-                {epgp && <th className="py-1 pr-3 text-right font-normal">Priority</th>}
+                <th className="py-1 pr-3 font-normal">{t("Player")}</th>
+                {epgp && <th className="py-1 pr-3 text-right font-normal">{t("Priority")}</th>}
                 <th className="py-1 pr-3 text-right font-normal">{name}</th>
-                {epgp && <th className="py-1 pr-3 text-right font-normal">GP</th>}
+                {epgp && <th className="py-1 pr-3 text-right font-normal">{own("GP")}</th>}
                 <th className="py-1 pr-3 text-right font-normal">{t("From operations")}</th>
-                <th className="py-1 pr-3 text-right font-normal">By hand</th>
-                {spends && <th className="py-1 pr-3 text-right font-normal">On loot</th>}
-                {decays && <th className="py-1 pr-3 text-right font-normal">Decay and seasons</th>}
-                <th className="py-1 font-normal">Last change</th>
+                <th className="py-1 pr-3 text-right font-normal">{t("By hand")}</th>
+                {spends && <th className="py-1 pr-3 text-right font-normal">{t("On loot")}</th>}
+                {decays && <th className="py-1 pr-3 text-right font-normal">{t("Decay and seasons")}</th>}
+                <th className="py-1 font-normal">{t("Last change")}</th>
               </tr>
             </thead>
             <tbody>
@@ -575,7 +587,7 @@ export function PointsStandings({ pool }: { pool: PoolInfo }) {
                     {r.clanTag && <span className="text-[11px] text-text-muted"> [{r.clanTag}]</span>}
                   </td>
                   {epgp && (
-                    <td className={`py-1 pr-3 text-right font-semibold tabular-nums ${r.minReached === false ? "text-text-muted" : "text-gold"}`} title={r.minReached === false ? `Below the minimum of ${data.pool.settings.gear?.minEp ?? 0} ${name}` : undefined} data-points-pr>{r.priority ?? ""}</td>
+                    <td className={`py-1 pr-3 text-right font-semibold tabular-nums ${r.minReached === false ? "text-text-muted" : "text-gold"}`} title={r.minReached === false ? t(`Below the minimum of ${d(data.pool.settings.gear?.minEp ?? 0)} ${d(name)}`) : undefined} data-points-pr>{r.priority ?? ""}</td>
                   )}
                   <td className={`py-1 pr-3 text-right ${epgp ? "" : "font-semibold"} tabular-nums ${r.points < 0 ? "text-danger" : ""}`} data-points-total>{r.points}</td>
                   {epgp && <td className="py-1 pr-3 text-right tabular-nums" data-points-gp>{r.gp ?? 0}</td>}
@@ -589,7 +601,9 @@ export function PointsStandings({ pool }: { pool: PoolInfo }) {
             </tbody>
           </table>
         </div>
-        {epgp && <p className="text-xs text-text-muted">{`Priority is ${name} divided by (${data.pool.settings.gear?.baseGp ?? 100} + GP), highest first${(data.pool.settings.gear?.minEp ?? 0) > 0 ? `; players under ${data.pool.settings.gear?.minEp} ${name} come after everyone else` : ""}.`}</p>}
+        {epgp && <p className="text-xs text-text-muted">{(data.pool.settings.gear?.minEp ?? 0) > 0
+          ? t(`Priority is ${d(name)} divided by (${d(data.pool.settings.gear?.baseGp ?? 100)} + GP), highest first; players under ${d(data.pool.settings.gear?.minEp ?? 0)} ${d(name)} come after everyone else.`)
+          : t(`Priority is ${d(name)} divided by (${d(data.pool.settings.gear?.baseGp ?? 100)} + GP), highest first.`)}</p>}
         <RulesSummary s={data.pool.settings} />
       </section>
     </div>
@@ -614,7 +628,7 @@ function ListStandings({ data, onPlayer, onChange }: { data: Standings; onPlayer
     <section className="panel flex flex-col gap-3 p-5" data-points-standings={data.pool.id}>
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="title title-rule flex-1 text-sm text-gold">{data.pool.settings.name}</h2>
-        {manage && <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => send("shuffle")} data-points-shuffle>Shuffle</button>}
+        {manage && <button type="button" className="btn btn-quiet text-xs" disabled={act.busy} onClick={() => send("shuffle")} data-points-shuffle>{t("Shuffle")}</button>}
       </div>
       <p className="text-xs text-text-muted">{t("Whoever takes an item goes to the bottom; those below who were in voice at the operation move up one, and those who were not keep their place. Newcomers join at the bottom.")}</p>
       {!data.pool.seeAll && <p className="text-xs text-text-muted">{t("You see your own place. The list is not open to everyone.")}</p>}
@@ -628,8 +642,8 @@ function ListStandings({ data, onPlayer, onChange }: { data: Standings; onPlayer
             </button>
             {manage && (
               <>
-                <button type="button" className="btn btn-quiet px-2 py-0 text-xs" disabled={act.busy || i === 0} onClick={() => move(i, -1)} aria-label={`Move ${r.name} up`} data-points-up>↑</button>
-                <button type="button" className="btn btn-quiet px-2 py-0 text-xs" disabled={act.busy || i === rows.length - 1} onClick={() => move(i, 1)} aria-label={`Move ${r.name} down`} data-points-down>↓</button>
+                <button type="button" className="btn btn-quiet px-2 py-0 text-xs" disabled={act.busy || i === 0} onClick={() => move(i, -1)} aria-label={t(`Move ${d(r.name)} up`)} data-points-up>↑</button>
+                <button type="button" className="btn btn-quiet px-2 py-0 text-xs" disabled={act.busy || i === rows.length - 1} onClick={() => move(i, 1)} aria-label={t(`Move ${d(r.name)} down`)} data-points-down>↓</button>
               </>
             )}
           </li>
@@ -662,19 +676,19 @@ function PlayerLines({ poolId, userId, manage, onBack }: { poolId: number; userI
     ) : e.kind === "spent" || e.kind === "refund" || e.kind === "share" ? (
       <>
         {e.label}
-        <span className="text-xs text-text-muted">{e.kind === "spent" ? " · loot" : e.kind === "share" ? ` · ${e.reason === "Taken back" ? t("share taken back") : (e.reason ?? "share")}` : " · taken back"}</span>
+        <span className="text-xs text-text-muted">{" · "}{e.kind === "spent" ? t("loot") : e.kind === "share" ? (e.reason === "Taken back" ? t("share taken back") : (e.reason ?? t("share"))) : t("taken back")}</span>
       </>
     ) : e.kind === "adjust" ? (
       <>
         {e.reason}
-        <span className="text-xs text-text-muted"> · by hand</span>
+        <span className="text-xs text-text-muted"> · {t("by hand")}</span>
       </>
     ) : (
       <span className="text-text-muted">{e.label}</span>
     );
   return (
     <div className="flex flex-col gap-3" data-points-player={userId}>
-      <button type="button" className="btn btn-quiet self-start text-sm" onClick={onBack}>Back to the standings</button>
+      <button type="button" className="btn btn-quiet self-start text-sm" onClick={onBack}>{t("Back to the standings")}</button>
       {error && <p className="text-danger" role="alert">{error}</p>}
       {data && (
         <section className="panel flex flex-col gap-3 p-5">
@@ -685,13 +699,13 @@ function PlayerLines({ poolId, userId, manage, onBack }: { poolId: number; userI
             {data.pool.settings.spending === "epgp" && (
               <>
                 <span className="text-2xl font-semibold tabular-nums" data-points-gp-balance>{data.gp ?? 0}</span>
-                <span className="text-text-muted">GP</span>
+                <span className="text-text-muted">{own("GP")}</span>
               </>
             )}
           </div>
           {manage && <AdjustForm poolId={poolId} userId={userId} name={data.pool.settings.name} gear={data.pool.settings.spending === "epgp"} onDone={() => setAgain((n) => n + 1)} />}
           {data.entries.length === 0 ? (
-            <p className="text-text-muted">Nothing yet.</p>
+            <p className="text-text-muted">{t("Nothing yet.")}</p>
           ) : (
             <ul className="flex flex-col divide-y divide-line" data-points-lines>
               {data.entries.map((e) => (
@@ -723,23 +737,23 @@ function AdjustForm({ poolId, userId, name, gear, onDone }: { poolId: number; us
       if (ok) {
         setAmount("");
         setReason("");
-        setNote(written !== asked ? `The limits allowed ${signed(written)} of ${signed(asked)}.` : "");
+        setNote(written !== asked ? t(`The limits allowed ${d(signed(written))} of ${d(signed(asked))}.`) : "");
         onDone();
       }
     });
   };
   return (
     <form className="flex flex-wrap items-center gap-2 border-y border-line py-2" onSubmit={(e) => (e.preventDefault(), send())} data-points-adjust>
-      <span className="text-text-muted">Give or take</span>
-      <input className="field w-32" type="number" placeholder="+10 or -10" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label={`${track === "gp" ? "GP" : name} to give (negative to take)`} />
+      <span className="text-text-muted">{t("Give or take")}</span>
+      <input className="field w-32" type="number" placeholder={t("+10 or -10")} value={amount} onChange={(e) => setAmount(e.target.value)} aria-label={t(`${d(track === "gp" ? "GP" : name)} to give (negative to take)`)} />
       {gear && (
-        <select className="field w-auto" value={track} onChange={(e) => setTrack(e.target.value as "points" | "gp")} aria-label="Points or gear points" data-points-track>
+        <select className="field w-auto" value={track} onChange={(e) => setTrack(e.target.value as "points" | "gp")} aria-label={t("Points or gear points")} data-points-track>
           <option value="points">{name}</option>
-          <option value="gp">GP</option>
+          <option value="gp">{own("GP")}</option>
         </select>
       )}
-      <input className="field min-w-0 flex-1" maxLength={120} placeholder="Why (the player sees this)" value={reason} onChange={(e) => setReason(e.target.value)} aria-label="Reason" />
-      <button type="submit" className="btn text-sm" disabled={act.busy || !amount || Number(amount) === 0 || !reason.trim()}>Add the line</button>
+      <input className="field min-w-0 flex-1" maxLength={120} placeholder={t("Why (the player sees this)")} value={reason} onChange={(e) => setReason(e.target.value)} aria-label={t("Reason")} />
+      <button type="submit" className="btn text-sm" disabled={act.busy || !amount || Number(amount) === 0 || !reason.trim()}>{t("Add the line")}</button>
       {note && <span className="w-full text-xs text-text-muted" role="status" data-points-limited>{note}</span>}
       {act.error && <span className="w-full text-danger" role="alert">{act.error}</span>}
     </form>
@@ -785,10 +799,12 @@ function Posted({ p }: { p: OpPool }) {
   return (
     <>
       <p className="text-xs text-text-muted" data-points-posted>
-        Posted{p.posted?.by ? ` by ${p.posted.by}` : ""} on {day(p.posted!.at)}. Changes since then are made by hand and show on each player's lines.
+        {p.posted?.by
+          ? t(`Posted by ${d(p.posted.by)} on ${d(day(p.posted.at))}. Changes since then are made by hand and show on each player's lines.`)
+          : t(`Posted on ${d(day(p.posted!.at))}. Changes since then are made by hand and show on each player's lines.`)}
       </p>
       {got.length === 0 ? (
-        <p className="text-text-muted">Nobody you can see got any.</p>
+        <p className="text-text-muted">{t("Nobody you can see got any.")}</p>
       ) : (
         <ul className="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-x-4 gap-y-1 text-sm">
           {got.map((r) => (
@@ -828,7 +844,7 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
   const value = (r: OpRow) => (r.userId in edited ? Math.trunc(Number(edited[r.userId]) || 0) : computed(r));
   const why = (r: OpRow) => {
     const text = partsText(partsOf(r));
-    return r.userId in edited && value(r) !== computed(r) ? `${text ? `${text}; ` : ""}set to ${value(r)} by hand` : text;
+    return r.userId in edited && value(r) !== computed(r) ? `${text ? `${text}; ` : ""}${t(`set to ${d(value(r))} by hand`)}` : text;
   };
   const total = p.rows.reduce((t, r) => t + value(r), 0);
   const players = p.rows.filter((r) => value(r) !== 0).length;
@@ -840,11 +856,11 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
   return (
     <div className="flex flex-col gap-3" data-points-draft>
       <p className="text-sm text-text-muted">
-        {t(`A draft from who was in voice: the operation ran ${dur(op.seconds)}. Tick what applies, change any amount, then post. Nothing is added until you do, and it is posted once.`)}
+        {t(`A draft from who was in voice: the operation ran ${d(dur(op.seconds))}. Tick what applies, change any amount, then post. Nothing is added until you do, and it is posted once.`)}
       </p>
       {p.objectives.length > 0 && (
         <div className="flex flex-wrap items-center gap-3" data-points-objectives>
-          <span className="text-text-muted">Reached</span>
+          <span className="text-text-muted">{t("Reached")}</span>
           {p.objectives.map((o) => (
             <label key={o.label} className="flex items-center gap-1.5">
               <input type="checkbox" checked={ticked.includes(o.label)} onChange={() => setTicked((x) => toggle(x, o.label))} data-points-objective={o.label} />
@@ -854,20 +870,20 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-text-muted">Add to everyone who earned for being there</span>
-        <input className="field w-20" type="number" value={extraInput} onChange={(e) => setExtraInput(e.target.value)} placeholder="+5" aria-label="Add to everyone who earned for being there" data-points-extra />
-        <button type="button" className="btn btn-quiet text-sm" disabled={!Number(extraInput)} onClick={() => (setExtra((x) => x + Math.trunc(Number(extraInput))), setExtraInput(""))}>Add</button>
-        {extra !== 0 && <span className="text-xs text-text-muted">{`${signed(extra)} each so far`}</span>}
+        <span className="text-text-muted">{t("Add to everyone who earned for being there")}</span>
+        <input className="field w-20" type="number" value={extraInput} onChange={(e) => setExtraInput(e.target.value)} placeholder="+5" aria-label={t("Add to everyone who earned for being there")} data-points-extra />
+        <button type="button" className="btn btn-quiet text-sm" disabled={!Number(extraInput)} onClick={() => (setExtra((x) => x + Math.trunc(Number(extraInput))), setExtraInput(""))}>{t("Add")}</button>
+        {extra !== 0 && <span className="text-xs text-text-muted">{t(`${d(signed(extra))} each so far`)}</span>}
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-text-muted">
-              <th className="py-1 pr-3 font-normal">Player</th>
-              <th className="py-1 pr-3 text-right font-normal">In voice</th>
-              <th className="py-1 pr-3 font-normal">Said</th>
-              {p.standby !== null && <th className="py-1 pr-3 font-normal">Standby</th>}
-              <th className="py-1 pr-3 font-normal">Why</th>
+              <th className="py-1 pr-3 font-normal">{t("Player")}</th>
+              <th className="py-1 pr-3 text-right font-normal">{t("In voice")}</th>
+              <th className="py-1 pr-3 font-normal">{t("Said")}</th>
+              {p.standby !== null && <th className="py-1 pr-3 font-normal">{t("Standby")}</th>}
+              <th className="py-1 pr-3 font-normal">{t("Why")}</th>
               <th className="py-1 text-right font-normal">{name}</th>
             </tr>
           </thead>
@@ -875,11 +891,11 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
             {p.rows.map((r) => (
               <tr key={r.userId} className="border-t border-line" data-points-draft-row={r.userId}>
                 <td className="py-1 pr-3">{r.name}{r.clanTag && <span className="text-[11px] text-text-muted"> [{r.clanTag}]</span>}</td>
-                <td className="py-1 pr-3 text-right tabular-nums text-text-muted">{r.seconds > 0 ? dur(r.seconds) : "Not in voice"}</td>
-                <td className="py-1 pr-3 text-text-muted">{r.signup === "coming" ? "Coming" : r.signup === "out" ? "Can't come" : ""}</td>
+                <td className="py-1 pr-3 text-right tabular-nums text-text-muted">{r.seconds > 0 ? dur(r.seconds) : t("Not in voice")}</td>
+                <td className="py-1 pr-3 text-text-muted">{r.signup === "coming" ? t("Coming") : r.signup === "out" ? t("Can't come") : ""}</td>
                 {p.standby !== null && (
                   <td className="py-1 pr-3">
-                    <input type="checkbox" checked={standby.includes(r.userId)} onChange={() => setStandby((x) => toggle(x, r.userId))} aria-label={`${r.name} was on standby`} data-points-standby={r.userId} />
+                    <input type="checkbox" checked={standby.includes(r.userId)} onChange={() => setStandby((x) => toggle(x, r.userId))} aria-label={t(`${d(r.name)} was on standby`)} data-points-standby={r.userId} />
                   </td>
                 )}
                 <td className="py-1 pr-3 text-xs text-text-muted" data-points-why={r.userId}>{why(r) || "0"}</td>
@@ -889,7 +905,7 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
                     type="number"
                     value={r.userId in edited ? edited[r.userId] : String(computed(r))}
                     onChange={(e) => setEdited((x) => ({ ...x, [r.userId]: e.target.value }))}
-                    aria-label={`${name} for ${r.name}`}
+                    aria-label={t(`${d(name)} for ${d(r.name)}`)}
                     data-points-amount={r.userId}
                   />
                 </td>
@@ -900,12 +916,12 @@ function Draft({ p, op, onPosted }: { p: OpPool; op: OpPointsData["op"]; onPoste
       </div>
       <div className="flex flex-wrap items-center gap-3">
         {!sure ? (
-          <button type="button" className="btn" disabled={act.busy} onClick={() => setSure(true)} data-points-post>{`Post ${name}`}</button>
+          <button type="button" className="btn" disabled={act.busy} onClick={() => setSure(true)} data-points-post>{t(`Post ${d(name)}`)}</button>
         ) : (
           <Fragment>
-            <span>{`${players} ${players === 1 ? "player" : "players"}, ${total} ${name} in all. Post them?`}</span>
-            <button type="button" className="btn" disabled={act.busy} onClick={post} data-points-confirm>Post</button>
-            <button type="button" className="btn btn-quiet" disabled={act.busy} onClick={() => setSure(false)}>Not yet</button>
+            <span>{tn(players, `{n} player, ${d(total)} ${d(name)} in all. Post them?`, `{n} players, ${d(total)} ${d(name)} in all. Post them?`)}</span>
+            <button type="button" className="btn" disabled={act.busy} onClick={post} data-points-confirm>{t("Post")}</button>
+            <button type="button" className="btn btn-quiet" disabled={act.busy} onClick={() => setSure(false)}>{t("Not yet")}</button>
           </Fragment>
         )}
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}

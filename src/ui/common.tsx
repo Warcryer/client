@@ -312,3 +312,18 @@ export function PartyMode() {
 export function startTime(iso: string | null): string {
   return iso ? inLanguage(iso, { dateStyle: "medium", timeStyle: "short" }) : t("No start time");
 }
+
+/** A length of time in whole minutes: "under 1 min", "45 min", "1 h 05 min". */
+export function span(seconds: number): string {
+  const min = Math.round(seconds / 60);
+  if (min === 0) return seconds > 0 ? t("under 1 min") : t("0 min");
+  return min < 60 ? t(`${d(min)} min`) : t(`${d(Math.floor(min / 60))} h ${d(String(min % 60).padStart(2, "0"))} min`);
+}
+/** The time of day, to the minute. */
+export const clock = (iso: string | null): string => (iso ? inLanguage(iso, { hour: "2-digit", minute: "2-digit" }) : "");
+/** A day without its year ("22 Nov"), with it ("22 Nov 2026"), and in figures ("22/11/2026"). */
+export const dayShort = (iso: string): string => inLanguage(iso, { day: "numeric", month: "short" });
+export const dayFull = (iso: string): string => inLanguage(iso, { dateStyle: "medium" });
+export const dayFigures = (iso: string): string => inLanguage(iso, { year: "numeric", month: "numeric", day: "numeric" });
+/** Live, planned or ended, as an operation's badge says it. t() where shown. */
+export const STATE_LABEL = { live: "Live", planned: "Planned", ended: "Ended" } as const;

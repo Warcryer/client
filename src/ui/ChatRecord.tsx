@@ -6,12 +6,13 @@ import { useState } from "react";
 import { rpc } from "../api";
 import type { NetKind } from "../settings";
 import { t } from "../words";
+import { tn } from "../i18n";
+import { clock } from "./common";
 import { Help } from "./tips";
 import { NET_TEXT } from "./net-style";
 
 type Record = { keepDays: number; channels: { room: string; net: NetKind; label: string; lines: { id: number; name: string; tag: string | null; text: string; at: string; quick?: true; /** The line in the reader's language, where it was translated while the operation ran. */ tr?: string }[] }[] };
 
-const clock = (iso: string) => new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 
 export function ChatRecord({ opId }: { opId: number }) {
   const [rec, setRec] = useState<Record | null>(null);
@@ -26,20 +27,20 @@ export function ChatRecord({ opId }: { opId: number }) {
       .finally(() => setBusy(false));
   };
   const shown = rec?.channels.find((c) => c.room === room) ?? rec?.channels[0];
-  const kept = !rec ? "" : rec.keepDays >= 365 ? t("It is kept for a year after the operation ended.") : rec.keepDays === 0 ? "" : t(`It is kept for ${rec.keepDays} days after the operation ended.`);
+  const kept = !rec ? "" : rec.keepDays >= 365 ? t("It is kept for a year after the operation ended.") : rec.keepDays === 0 ? "" : tn(rec.keepDays, "It is kept for {n} day after the operation ended.", "It is kept for {n} days after the operation ended.");
 
   return (
-    <section className="panel flex flex-col gap-3 p-4" aria-label="Chat record" data-chat-record>
+    <section className="panel flex flex-col gap-3 p-4" aria-label={t("Chat record")} data-chat-record>
       <div className="flex items-center gap-2">
-        <h2 className="title text-sm text-gold">Chat</h2>
+        <h2 className="title text-sm text-gold">{t("Chat")}</h2>
         <Help text={t("What was written during this operation, on the nets you were on when it ended. A party's lines are read by that party only, also afterwards.\nHow long it is kept is your alliance's choice.")} />
-        {!rec && <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={load}>{busy ? "Loading…" : "Show the chat"}</button>}
+        {!rec && <button type="button" className="btn btn-quiet text-sm" disabled={busy} onClick={load}>{busy ? t("Loading…") : t("Show the chat")}</button>}
       </div>
       {error && <p className="text-danger" role="alert">{error}</p>}
-      {rec && rec.channels.length === 0 && <p className="text-text-muted">Nothing was written on your nets, or it is no longer kept.</p>}
+      {rec && rec.channels.length === 0 && <p className="text-text-muted">{t("Nothing was written on your nets, or it is no longer kept.")}</p>}
       {rec && shown && (
         <>
-          <div className="flex flex-wrap gap-1" role="tablist" aria-label="Chat channels">
+          <div className="flex flex-wrap gap-1" role="tablist" aria-label={t("Chat channels")}>
             {rec.channels.map((c) => (
               <button
                 key={c.room}

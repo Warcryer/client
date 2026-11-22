@@ -2,7 +2,8 @@
 // event leader or an alliance admin), its event leader and clans (an alliance
 // admin; the clans only before it starts), and deleting one planned by mistake.
 
-import { t } from "../words";
+import { d, t } from "../words";
+
 import { useState } from "react";
 import { rpc, type OpOptions, type OpView } from "../api";
 import { useGame } from "../game";
@@ -55,29 +56,29 @@ export function EditOperation({ op, onClose, onSaved, onDeleted }: { op: OpView;
     >
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex min-w-56 flex-1 flex-col gap-1 text-text-muted">
-          Name
+          {t("Name")}
           <input className="field" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} required />
         </label>
         {kinds.length > 0 && (
           <label className="flex flex-col gap-1 text-text-muted">
-            Kind of event
-            <select className="field" value={eventType} onChange={(e) => setEventType(e.target.value)} aria-label="Kind of event">
-              <option value="">Not said</option>
+            {t("Kind of event")}
+            <select className="field" value={eventType} onChange={(e) => setEventType(e.target.value)} aria-label={t("Kind of event")}>
+              <option value="">{t("Not said")}</option>
               {kinds.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
           </label>
         )}
         <label className="flex flex-col gap-1 text-text-muted">
           <span className="flex items-center gap-1">
-            Starts (your local time)
+            {t("Starts (your local time)")}
             <Help text={t("Each player sees the start in their own local time. Clear the field for no start time.\nThe operation does not start by itself: the event leader presses Start operation.")} />
           </span>
-          <input type="datetime-local" className="field" value={starts} onChange={(e) => setStarts(e.target.value)} aria-label="Starts" />
+          <input type="datetime-local" className="field" value={starts} onChange={(e) => setStarts(e.target.value)} aria-label={t("Starts")} />
         </label>
         {admin && data && (
           <label className="flex flex-col gap-1 text-text-muted">
-            Event leader
-            <select className="field" value={leader} onChange={(e) => setLeader(Number(e.target.value))} aria-label="Event leader">
+            {t("Event leader")}
+            <select className="field" value={leader} onChange={(e) => setLeader(Number(e.target.value))} aria-label={t("Event leader")}>
               {data.users.map((u) => (
                 <option key={u.id} value={u.id}>{u.name}{u.clanTag ? ` [${u.clanTag}]` : ""}</option>
               ))}
@@ -102,17 +103,17 @@ export function EditOperation({ op, onClose, onSaved, onDeleted }: { op: OpView;
       )}
       {leaving.length > 0 && (
         <p className="text-gold" role="status">
-          Taking out {leaving.map((c) => c.name).join(", ")}{t(": its members leave this operation's parties.")}
+          {t(`Taking out ${d(leaving.map((c) => c.name).join(", "))}: its members leave this operation's parties.`)}
         </p>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <button className="btn" disabled={act.busy || name.trim().length < 2 || clanIds.length === 0}>Save changes</button>
-        <button type="button" className="btn btn-quiet" onClick={onClose}>Cancel</button>
+        <button className="btn" disabled={act.busy || name.trim().length < 2 || clanIds.length === 0}>{t("Save changes")}</button>
+        <button type="button" className="btn btn-quiet" onClick={onClose}>{t("Cancel")}</button>
         {act.error && <span className="text-danger" role="alert">{act.error}</span>}
         {planned && (
           <span className="ml-auto flex items-center gap-1">
             <ConfirmButton
-              confirm="Delete it for good?"
+              confirm={t("Delete it for good?")}
               disabled={act.busy}
               onConfirm={() => void act.run(() => rpc("op.delete", { opId: op.id })).then((ok) => ok && onDeleted())}
             >

@@ -55,10 +55,10 @@ const technical = (s) => /^[@_]/.test(s) || /^(rgba?|hsla?|var|calc|url|translat
 // Text only this many letters long is a mark, not a sentence: "×", "·", "?", "▼".
 const sentence = (s) => /\p{L}{2,}/u.test(s) && !identifierLike(s) && !cssLike(s) && !technical(s);
 // Attributes whose text nobody reads, and calls whose strings are names for the program.
-const SKIP_ATTRS = new Set(["className", "class", "key", "id", "type", "name", "href", "src", "role", "htmlFor", "value", "d", "viewBox", "style", "fill", "stroke", "strokeLinecap", "strokeLinejoin", "autoComplete", "target", "rel", "method", "inputMode", "pattern", "accept", "lang", "dir", "points", "transform", "x", "y", "cx", "cy", "r", "width", "height", "in", "in2", "result", "values", "operator", "mode", "floodColor", "filter", "clipPath", "mask", "preserveAspectRatio", "xmlns"]);
+const SKIP_ATTRS = new Set(["className", "class", "key", "id", "type", "name", "href", "src", "role", "htmlFor", "value", "d", "viewBox", "style", "fill", "stroke", "strokeLinecap", "strokeLinejoin", "autoComplete", "target", "rel", "method", "inputMode", "pattern", "accept", "lang", "dir", "points", "transform", "x", "y", "cx", "cy", "r", "width", "height", "in", "in2", "result", "values", "operator", "mode", "floodColor", "filter", "clipPath", "mask", "preserveAspectRatio", "xmlns", "list"]);
 // code("West"): a name for the program that happens to look like a word; nobody is shown it.
 const WRAPPERS = new Set(["t", "tn", "tx", "m", "d", "reword", "own", "code"]);
-const QUIET_CALLS = /^(rpc|invoke|grip|import|require|fetch|log|warn|error|debug|info|getItem|setItem|removeItem|querySelector|querySelectorAll|addEventListener|removeEventListener|getAttribute|setAttribute|hasAttribute|closest|matches|createElement|postMessage|emit|listen|startsWith|endsWith|includes|indexOf|split|join|replace|replaceAll|match|test|exec|padStart|padEnd|toLocaleString|toLocaleDateString|toLocaleTimeString|localeCompare|RegExp|URL|Error|TypeError|BroadcastChannel|Set|Map|select|send|cue|play|reportVoice|getPropertyValue|setProperty|has|get|set|delete|add|classList)$/;
+const QUIET_CALLS = /^(rpc|invoke|grip|import|require|fetch|log|warn|error|debug|info|getItem|setItem|removeItem|querySelector|querySelectorAll|addEventListener|removeEventListener|getAttribute|setAttribute|hasAttribute|closest|matches|createElement|postMessage|emit|listen|startsWith|endsWith|includes|indexOf|split|join|replace|replaceAll|match|test|exec|padStart|padEnd|toLocaleString|toLocaleDateString|toLocaleTimeString|localeCompare|RegExp|URL|BroadcastChannel|Set|Map|select|send|cue|play|reportVoice|getPropertyValue|setProperty|has|get|set|delete|add|classList)$/;
 
 const files = [];
 (function walk(dir) {
@@ -183,6 +183,7 @@ for (const file of files) {
       }
       return false;
     };
+    const inside = (node, outer) => node.getStart(sf) >= outer.getStart(sf) && node.getEnd() <= outer.getEnd();
     const skipped = (node) => {
       const p = node.parent;
       if (ts.isImportDeclaration(p) || ts.isExportDeclaration(p) || ts.isLiteralTypeNode(p) || ts.isCaseClause(p) || ts.isTypeOfExpression?.(p)) return true;
@@ -196,7 +197,8 @@ for (const file of files) {
         if (ts.isCallExpression(a) || ts.isNewExpression(a)) {
           const callee = a.expression;
           const name = ts.isIdentifier(callee) ? callee.text : ts.isPropertyAccessExpression(callee) ? callee.name.text : "";
-          if (QUIET_CALLS.test(name)) return true;
+          // Not the list that join() puts together: sentences joined with "\n" are read. What is handed to join() is not.
+          if (QUIET_CALLS.test(name) && !(name === "join" && inside(node, callee))) return true;
         }
         if (ts.isFunctionLike(a) || ts.isJsxElement(a)) break;
       }
@@ -255,8 +257,12 @@ for (const file of files) {
         // row of class names are put together the same way and are none.
         const parts = [node.head.text, ...node.templateSpans.map((s) => s.literal.text)].map((p) => p.trim()).filter(Boolean);
         const quasis = parts.join(" ");
-        const wordy = parts.some((p) => !cssLike(p) && !identifierLike(p) && !technical(p) && (/\p{L}{2,}[,.:;!?]?\s+\p{L}{2,}/u.test(p) || /^\p{Lu}\p{Ll}{2,}/u.test(p) || /\p{Ll}{3,}[.!?…]$/u.test(p)));
-        if (wordy && sentence(quasis)) {
+        // In a tag's label or among its children even one word is read by someone: `${title}: points`, `${n} min`.
+        let shownAt = node.parent;
+        while (shownAt && (ts.isConditionalExpression(shownAt) || ts.isParenthesizedExpression(shownAt) || ts.isBinaryExpression(shownAt))) shownAt = shownAt.parent;
+        const inTag = !!shownAt && ts.isJsxExpression(shownAt);
+        const wordy = parts.some((p) => !cssLike(p) && !identifierLike(p) && !technical(p) && (/\p{L}{2,}[,.:;!?]?\s+\p{L}{2,}/u.test(p) || /^\p{Lu}\p{Ll}{2,}/u.test(p) || /\p{Ll}{3,}[.!?…]$/u.test(p) )) || (inTag && parts.some((p) => !technical(p) && /\p{L}{3,}/u.test(p) && !/^[a-z]+(?:-[a-z0-9]+)+$/.test(p)));
+        if (wordy && (sentence(quasis) || inTag)) {
           if (!insideFunction(node)) {
             if (!saidWhereShown(node)) report(node, "outside any function", quasis);
           } else if (!FIX) report(node, "template", quasis);

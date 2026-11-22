@@ -3,7 +3,7 @@
 
 export const isDesktop = "__TAURI_INTERNALS__" in window;
 
-/** Shown in the UI. */
+/** Shown in the UI. As a sentence to translate it is not shown: the name stays. */
 export const APP_NAME: string = import.meta.env.VITE_APP_NAME ?? "Warcryer";
 
 /** The site. In the browser the client is served from it, so it is simply our own origin. */

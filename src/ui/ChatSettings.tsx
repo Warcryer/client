@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { rpc } from "../api";
 import { t } from "../words";
+import { tn } from "../i18n";
 import { useAct } from "./app-context";
 
 export type ChatSettingsData = { clanAll: boolean; operationAll: boolean; /** Absent on a server before 0.23. */ readyCheck?: boolean; keepDays: number };
@@ -44,19 +45,19 @@ export function ChatSettings({ settings, choices, onChange }: { settings: ChatSe
       <label className="flex items-center gap-2">
         <input type="checkbox" checked={now.operationAll} disabled={act.busy} onChange={(e) => set({ operationAll: e.target.checked })} />
         {t("Members may write to the whole operation")}
-        <span className="text-xs text-text-muted">Off: only its event leader and deputies do.</span>
+        <span className="text-xs text-text-muted">{t("Off: only its event leader and deputies do.")}</span>
       </label>
       {now.readyCheck !== undefined && (
         <label className="flex items-center gap-2">
           <input type="checkbox" checked={now.readyCheck} disabled={act.busy} onChange={(e) => set({ readyCheck: e.target.checked })} />
           {t("Whoever runs an operation may ask for a ready check")}
-          <span className="text-xs text-text-muted">Off: the button is not offered.</span>
+          <span className="text-xs text-text-muted">{t("Off: the button is not offered.")}</span>
         </label>
       )}
       <label className="flex flex-wrap items-center gap-2 text-text-muted">
-        Kept
-        <select className="field w-auto" value={now.keepDays} disabled={act.busy} aria-label="How long chat is kept" onChange={(e) => set({ keepDays: Number(e.target.value) })}>
-          {choices.map((d) => <option key={d} value={d}>{t(KEEP[d] ?? `${d} days after it`)}</option>)}
+        {t("Kept")}
+        <select className="field w-auto" value={now.keepDays} disabled={act.busy} aria-label={t("How long chat is kept")} onChange={(e) => set({ keepDays: Number(e.target.value) })}>
+          {choices.map((days) => <option key={days} value={days}>{KEEP[days] ? t(KEEP[days]) : tn(days, "{n} day after it", "{n} days after it")}</option>)}
         </select>
       </label>
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}

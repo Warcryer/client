@@ -57,14 +57,15 @@ export function translate(catalogue: Catalogue, text: string): string | null {
 
 /**
  * A sentence with a count. `many` is its English for more than one, with `{n}` where the number goes
- * ("{n} members"), and is the key; `one` is its English for exactly one. Null when the language has
+ * ("{n} members"), and is the key; `one` is its English for exactly one. It may carry values marked
+ * with `d()` like any other sentence ("{n} players, {0} points in all"). Null when the language has
  * no entry for it.
  */
 export function translateCount(catalogue: Catalogue, rules: Intl.PluralRules, n: number, many: string, shown: string): string | null {
-  const hit = catalogue[many];
-  if (!hit || typeof hit === "string") return typeof hit === "string" && hit ? hit.replace(/\{n\}/g, shown) : null;
-  const form = hit[rules.select(n) as keyof Forms] ?? hit.other;
-  return form ? form.replace(/\{n\}/g, shown) : null;
+  const { key, values } = keyOf(many);
+  const hit = catalogue[key];
+  const form = !hit ? null : typeof hit === "string" ? hit : (hit[rules.select(n) as keyof Forms] ?? hit.other);
+  return form ? fill(form.replace(/\{n\}/g, shown), values) : null;
 }
 
 /** English's own two forms. */

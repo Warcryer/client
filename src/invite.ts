@@ -4,6 +4,7 @@
 // and asks (ui/InviteAsk); only a yes uses it. The outcome is shown on the
 // Clan screen.
 
+import { d, t } from "./words";
 import { useSyncExternalStore } from "react";
 import { rpc } from "./api";
 import { isDesktop, LINK_SCHEME } from "./config";
@@ -49,8 +50,8 @@ export function clearInviteOutcome() {
 type Redeemed = { clanId: number; clanName: string; status: "active" | "pending" };
 const said = (r: Redeemed) =>
   r.status === "active"
-    ? `Welcome to ${r.clanName}. You are in its lounge now.`
-    : `Your request to join ${r.clanName} is in. A leader or officer approves it.`;
+    ? t(`Welcome to ${d(r.clanName)}. You are in its lounge now.`)
+    : t(`Your request to join ${d(r.clanName)} is in. A leader or officer approves it.`);
 
 /** Uses an invite (a link or a bare code). Resolves with what to tell the player; throws with the reason if it could not be used. */
 export async function redeemInvite(text: string): Promise<string> {
@@ -75,7 +76,7 @@ export async function redeemPending(): Promise<void> {
   try {
     outcome = { ok: true, text: await redeemInvite(code) };
   } catch (e) {
-    outcome = { ok: false, text: e instanceof Error ? e.message : "That invite could not be used." };
+    outcome = { ok: false, text: e instanceof Error ? e.message : t("That invite could not be used.") };
   }
   changed();
 }

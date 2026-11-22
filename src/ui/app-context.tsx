@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { ApiError, type Info } from "../api";
+import { code } from "../i18n";
 import type { ControlState, GroupInfo, NetSet, PresenceEntry } from "../control";
 
 export type Tab = "voice" | "roster" | "clan" | "alliance" | "history" | "guides";
@@ -34,7 +35,7 @@ export const AppContext = createContext<AppState | null>(null);
 
 export function useApp(): AppState {
   const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("AppContext missing");
+  if (!ctx) throw new Error(code("AppContext missing"));
   return ctx;
 }
 

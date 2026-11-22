@@ -19,6 +19,7 @@ const SIGNUP_HELP = [
   "Your answer does not change your voice: when the operation starts, everyone on the roster is pulled in as before.",
 ].join("\n");
 
+// t() where shown.
 const OTHER_HELP = [
   "Use this when you bring a different character than the one on your profile, for this event only.",
   "Leave a field empty to use what your profile says.",
@@ -120,7 +121,7 @@ export function SignupControl({
         >
           <span className="flex items-center gap-1 text-text-muted">
             {t("Coming with another character")}
-            <Help text={OTHER_HELP} />
+            <Help text={t(OTHER_HELP)} />
           </span>
           {mine.length > 0 && (
             <div className="flex flex-wrap items-center gap-2" data-pick-character>

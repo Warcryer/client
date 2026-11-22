@@ -4,7 +4,9 @@
 // without the secret. So a sign-in link someone else sends you cannot hand
 // them your account.
 
+import { t } from "./words";
 import { isDesktop, LINK_SCHEME, SERVER } from "./config";
+import { code } from "./i18n";
 
 const TOKEN_KEY = "session";
 const VERIFIER_KEY = "signin.verifier";
@@ -24,7 +26,7 @@ function b64url(bytes: Uint8Array): string {
 /** Opens the system browser at the Discord sign-in. */
 export async function beginSignIn(): Promise<void> {
   const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
-  const challenge = b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier))));
+  const challenge = b64url(new Uint8Array(await crypto.subtle.digest(code("SHA-256"), new TextEncoder().encode(verifier))));
   localStorage.setItem(VERIFIER_KEY, verifier);
   const url = `${SERVER}/api/auth/discord/login?desktop=${challenge}`;
   if (isDesktop) {
@@ -38,13 +40,13 @@ export async function beginSignIn(): Promise<void> {
 /** Trades the one-time code for a session. Throws with a message for the player. */
 export async function redeem(code: string): Promise<string> {
   const verifier = localStorage.getItem(VERIFIER_KEY);
-  if (!verifier) throw new Error("Start the sign-in from this app first.");
+  if (!verifier) throw new Error(t("Start the sign-in from this app first."));
   const res = await fetch(`${SERVER}/api/auth/desktop/exchange`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ code: code.trim(), verifier }),
   });
-  if (!res.ok) throw new Error("That sign-in code is not valid or has expired. Try signing in again.");
+  if (!res.ok) throw new Error(t("That sign-in code is not valid or has expired. Try signing in again."));
   const { token } = (await res.json()) as { token: string };
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.removeItem(VERIFIER_KEY);

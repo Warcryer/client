@@ -32,6 +32,10 @@ test("a count takes the form its language has for that number", () => {
   assert.equal(translateCount(pl, rules, 22, "{n} members", "22"), "22 członków: kilku");
   assert.equal(translateCount(pl, rules, 1200, "{n} members", "1 200"), "1 200 członków");
   assert.equal(translateCount(pl, rules, 2, "{n} groups", "2"), null);
+  // A counted sentence carries marked values like any other: the key has their places, the forms move them.
+  const posted: Catalogue = { "{n} players, {0} {1} in all": { one: "{1}: {0} dla {n} gracza", few: "{1}: {0} dla {n} graczy", many: "{1}: {0} dla {n} graczy", other: "{1}: {0} dla {n} gracza" } };
+  assert.equal(translateCount(posted, rules, 1, `{n} players, ${d(40)} ${d("DKP")} in all`, "1"), "DKP: 40 dla 1 gracza");
+  assert.equal(translateCount(posted, rules, 12, `{n} players, ${d(40)} ${d("DKP")} in all`, "12"), "DKP: 40 dla 12 graczy");
   assert.equal(englishCount(1, "{n} member", "{n} members", "1"), "1 member");
   assert.equal(englishCount(0, "{n} member", "{n} members", "0"), "0 members");
 });

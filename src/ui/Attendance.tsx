@@ -8,13 +8,9 @@ import { useState } from "react";
 import { rpc, type Attendance, type AttendanceRow } from "../api";
 import { useLoad } from "./app-context";
 import { Help } from "./tips";
+import { tx } from "../i18n";
+import { clock, span } from "./common";
 
-const span = (seconds: number) => {
-  const m = Math.round(seconds / 60);
-  if (m === 0) return seconds > 0 ? "under 1 min" : "0 min";
-  return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")} min`;
-};
-const clock = (iso: string | null) => (iso ? new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }) : "");
 const share = (row: AttendanceRow, total: number) => (total > 0 ? Math.min(100, Math.round((row.seconds / total) * 100)) : 0);
 
 // Labels: t() where shown.
@@ -33,9 +29,9 @@ const cell = (v: string | number) => (typeof v === "number" ? String(v) : (/^[=+
 
 /** The table as text a spreadsheet takes: one line per player, columns separated by tabs. */
 function asText(a: Attendance, rows: AttendanceRow[]): string {
-  const head = ["Name", "Usual name", "Class", "Level", t("Clan"), t("Party"), "Minutes in voice", t("Percent of operation"), "Joined", "Left", "Signed up"];
+  const head = [t("Name"), t("Usual name"), t("Class"), t("Level"), t("Clan"), t("Party"), t("Minutes in voice"), t("Percent of operation"), t("Joined"), t("Left"), t("Signed up")];
   const lines = rows.map((r) =>
-    [r.name, r.usualName ?? "", r.className ?? "", r.levelBand ?? "", r.clanTag ?? "", r.party ?? "", Math.round(r.seconds / 60), share(r, a.seconds), clock(r.firstAt), clock(r.lastAt), r.signup === "coming" ? "Coming" : r.signup === "out" ? "Can't come" : ""].map(cell).join("\t"),
+    [r.name, r.usualName ?? "", r.className ?? "", r.levelBand ?? "", r.clanTag ?? "", r.party ?? "", Math.round(r.seconds / 60), share(r, a.seconds), clock(r.firstAt), clock(r.lastAt), r.signup === "coming" ? t("Coming") : r.signup === "out" ? t("Can't come") : ""].map(cell).join("\t"),
   );
   return [head.join("\t"), ...lines].join("\n");
 }
@@ -50,7 +46,7 @@ export function AttendancePanel({ opId, live }: { opId: number; live: boolean })
   if (!open) {
     return (
       <div>
-        <button type="button" className="btn btn-quiet text-sm" onClick={() => setOpen(true)}>Attendance so far</button>
+        <button type="button" className="btn btn-quiet text-sm" onClick={() => setOpen(true)}>{t("Attendance so far")}</button>
       </div>
     );
   }
@@ -69,38 +65,38 @@ export function AttendancePanel({ opId, live }: { opId: number; live: boolean })
     <div className="panel flex flex-col gap-3 p-3" data-attendance>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <h2 className="title flex items-center gap-1 text-sm text-gold-bright">
-          Attendance
+          {t("Attendance")}
           <Help text={t("Who was in voice while the operation ran, from Start operation to End operation.\nIn voice: the time the player was connected to the operation's nets. Time before it started does not count.\nNo show: the player said they were coming and was never in voice.\nCopy: puts the table on your clipboard as text. Paste it into a spreadsheet and it lands in columns.\nOrganisers see everyone; clan leaders and officers see their own clan.")} />
         </h2>
         {data && (
           <span className="text-text-muted" data-attendance-summary>
-            {live ? "Running for" : "Ran for"} {span(data.seconds)} · <span className="text-net-party">{came}</span> of {rows.length} in voice
+            {live ? t(`Running for ${d(span(data.seconds))}`) : t(`Ran for ${d(span(data.seconds))}`)} · {tx(`{came} of ${d(rows.length)} in voice`, { came: <span className="text-net-party">{came}</span> })}
           </span>
         )}
         <span className="ml-auto flex flex-wrap items-center gap-2">
-          {copied && <span className="text-net-party" role="status">Copied. Paste it into your sheet.</span>}
-          <select className="field w-auto py-0.5" value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label="Sort attendance by">
+          {copied && <span className="text-net-party" role="status">{t("Copied. Paste it into your sheet.")}</span>}
+          <select className="field w-auto py-0.5" value={sort} onChange={(e) => setSort(e.target.value as keyof typeof SORTS)} aria-label={t("Sort attendance by")}>
             {Object.entries(SORTS).map(([k, s]) => <option key={k} value={k}>{t(s.label)}</option>)}
           </select>
-          <button type="button" className="btn text-sm" disabled={!data || rows.length === 0} onClick={copy}>Copy for a spreadsheet</button>
-          {live && <button type="button" className="text-text-muted hover:text-text cursor-pointer" onClick={() => setOpen(false)}>Close</button>}
+          <button type="button" className="btn text-sm" disabled={!data || rows.length === 0} onClick={copy}>{t("Copy for a spreadsheet")}</button>
+          {live && <button type="button" className="text-text-muted hover:text-text cursor-pointer" onClick={() => setOpen(false)}>{t("Close")}</button>}
         </span>
       </div>
       {error && !data && <p className="text-danger">{error}</p>}
-      {!data && !error && <p className="text-text-muted">Loading…</p>}
-      {data && rows.length === 0 && <p className="text-text-muted">Nobody to list.</p>}
+      {!data && !error && <p className="text-text-muted">{t("Loading…")}</p>}
+      {data && rows.length === 0 && <p className="text-text-muted">{t("Nobody to list.")}</p>}
       {data && rows.length > 0 && (
         <div className="max-h-96 overflow-auto">
           <table className="w-full text-left">
             <thead className="sticky top-0 bg-bg-1 text-xs uppercase tracking-wider text-text-muted">
               <tr>
-                <th className="py-1 pr-3 font-normal">Player</th>
-                <th className="py-1 pr-3 font-normal">Class</th>
+                <th className="py-1 pr-3 font-normal">{t("Player")}</th>
+                <th className="py-1 pr-3 font-normal">{t("Class")}</th>
                 <th className="py-1 pr-3 font-normal">{t("Clan")}</th>
                 <th className="py-1 pr-3 font-normal">{t("Party")}</th>
-                <th className="py-1 pr-3 font-normal">In voice</th>
-                <th className="py-1 pr-3 font-normal">Joined</th>
-                <th className="py-1 font-normal">Signed up</th>
+                <th className="py-1 pr-3 font-normal">{t("In voice")}</th>
+                <th className="py-1 pr-3 font-normal">{t("Joined")}</th>
+                <th className="py-1 font-normal">{t("Signed up")}</th>
               </tr>
             </thead>
             <tbody>
@@ -118,7 +114,7 @@ export function AttendancePanel({ opId, live }: { opId: number; live: boolean })
                       {r.levelBand && <span className="ml-1 text-xs text-text-muted tabular-nums">{r.levelBand}</span>}
                     </td>
                     <td className="py-1 pr-3 text-text-muted">{r.clanTag ?? ""}</td>
-                    <td className="py-1 pr-3 text-text-muted">{r.party ?? "Reserve"}</td>
+                    <td className="py-1 pr-3 text-text-muted">{r.party ?? t("Reserve")}</td>
                     <td className="py-1 pr-3 tabular-nums">
                       {r.seconds > 0 ? (
                         <span className="flex items-center gap-2">
@@ -128,13 +124,13 @@ export function AttendancePanel({ opId, live }: { opId: number; live: boolean })
                           {span(r.seconds)} <span className="text-text-muted">{pct}%</span>
                         </span>
                       ) : noShow ? (
-                        <span className="text-danger">No show</span>
+                        <span className="text-danger">{t("No show")}</span>
                       ) : (
-                        "Not in voice"
+                        t("Not in voice")
                       )}
                     </td>
                     <td className="py-1 pr-3 tabular-nums text-text-muted">{clock(r.firstAt)}</td>
-                    <td className="py-1 text-text-muted">{r.signup === "coming" ? "Coming" : r.signup === "out" ? "Can't come" : ""}</td>
+                    <td className="py-1 text-text-muted">{r.signup === "coming" ? t("Coming") : r.signup === "out" ? t("Can't come") : ""}</td>
                   </tr>
                 );
               })}

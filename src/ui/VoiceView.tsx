@@ -116,7 +116,7 @@ function NetCard({
       : key === null && !voice
         ? t("Bind a key in Settings to speak here.")
         : t("Change how you speak in Settings.");
-  const help = [netTip(net.net), howTip, net.lowered ? "Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority." : "", onTalkHere && !talkHere ? "Talk here makes this the room your key and voice go to. You keep hearing the others." : ""].filter(Boolean).join("\n");
+  const help = [netTip(net.net), howTip, net.lowered ? t("Lowered: a higher net is live, so you hear this one quieter until it stops. Nothing is muted. Change this under Settings, Priority.") : "", onTalkHere && !talkHere ? t("Talk here makes this the room your key and voice go to. You keep hearing the others.") : ""].filter(Boolean).join("\n");
   // A clan's own rooms carry its crest.
   const clanRoom = /^lounge-clan(?:net)?-(\d+)$|^op-\d+-clan-(\d+)$/.exec(net.room);
   const clanId = clanRoom ? Number(clanRoom[1] ?? clanRoom[2]) : null;

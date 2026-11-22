@@ -68,7 +68,7 @@ export function GuidesView() {
 
   return (
     <div className="flex h-full min-h-0 gap-4 p-4">
-      <nav className="flex w-64 shrink-0 flex-col gap-2" aria-label="Guides">
+      <nav className="flex w-64 shrink-0 flex-col gap-2" aria-label={t("Guides")}>
         {GUIDES.map((g) => (
           <button
             key={g.file}
@@ -79,12 +79,12 @@ export function GuidesView() {
           >
             <span className="flex items-center gap-2">
               <span className={`font-medium ${g.file === file ? "text-gold-bright" : ""}`}>{t(g.label)}</span>
-              {yours.has(g.file) && g.file !== "members.md" && <span className="ml-auto text-xs uppercase tracking-wider text-net-party">Your role</span>}
+              {yours.has(g.file) && g.file !== "members.md" && <span className="ml-auto text-xs uppercase tracking-wider text-net-party">{t("Your role")}</span>}
             </span>
             <span className="text-xs text-text-muted">{t(g.who)}</span>
           </button>
         ))}
-        <p className="px-1 text-xs text-text-muted">These match the version of the app you have installed.</p>
+        <p className="px-1 text-xs text-text-muted">{t("These match the version of the app you have installed.")}</p>
       </nav>
       {/* eslint-disable-next-line react/no-danger */}
       <div ref={page} className="panel prose min-w-0 flex-1 overflow-y-auto p-6" onClick={follow} dangerouslySetInnerHTML={{ __html: html }} />
