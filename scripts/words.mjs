@@ -18,7 +18,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "src");
 const FIX = process.argv.includes("--fix");
 // The rules themselves and the type declarations speak about the words; they are not sentences shown to anyone.
-const SKIP = new Set(["reword.ts", "words.ts", "api.ts", "vite-env.d.ts"]);
+const SKIP = new Set(["reword.ts", "words.ts", "api.ts", "vite-env.d.ts", "i18n-core.ts"]);
 const TERM = /\b(constant part(?:y|ies)|alliances?|clans?|part(?:y|ies)|operations?)\b/i;
 
 const files = [];
@@ -26,7 +26,7 @@ const files = [];
   for (const name of readdirSync(dir)) {
     const full = path.join(dir, name);
     if (statSync(full).isDirectory()) walk(full);
-    else if (/\.tsx?$/.test(name) && !SKIP.has(name)) files.push(full);
+    else if (/\.tsx?$/.test(name) && !/\.test\.ts$/.test(name) && !SKIP.has(name)) files.push(full); // tests speak about sentences; they show none
   }
 })(SRC);
 
