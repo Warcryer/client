@@ -79,7 +79,7 @@ export function WherePicker() {
       >
         <option value="lounge">{t("Lounge")}</option>
         {set.operations.map((o) => (
-          <option key={o.id} value={o.id}>{o.name} ({o.state === "live" ? "live" : "planned"})</option>
+          <option key={o.id} value={o.id}>{o.name} ({o.state === "live" ? t("live") : t("planned")})</option>
         ))}
       </select>
       <Help text={t("Between operations you are in your clan's lounge. A live operation pulls you onto its nets by itself and returns you when it ends.\nPick the lounge to sit an operation out, or a planned operation to form up early.")} />

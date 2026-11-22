@@ -49,7 +49,7 @@ export function Said({ line, compact }: { line: { text: string; tr?: string; qui
           onClick={() => setOriginal(!original)}
           data-chat-translated={original ? "original" : "translated"}
         >
-          {original ? "original" : "translated"}
+          {original ? t("original") : t("translated")}
         </button>
       )}
     </>

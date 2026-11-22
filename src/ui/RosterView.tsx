@@ -4,7 +4,7 @@ import { useState } from "react";
 import { rpc, type OpOptions, type OpSummary } from "../api";
 import { useAct, useApp, useLoad } from "./app-context";
 import { Board } from "./Board";
-import { ClanCrest } from "./common";
+import { ClanCrest, startTime } from "./common";
 import { SignupControl } from "./Signup";
 import { Help } from "./tips";
 
@@ -21,9 +21,8 @@ const OPERATIONS_HELP = [
   "Alliance admins create operations. Open one to see its board.",
 ].join("\n");
 
-export function when(iso: string | null): string {
-  return iso ? new Date(iso).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "No start time";
-}
+/** An operation's start as it is shown everywhere. */
+export const when = startTime;
 
 function NewOperation({ onCreated }: { onCreated: (id: number) => void }) {
   const { info } = useApp();

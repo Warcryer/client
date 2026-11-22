@@ -46,7 +46,7 @@ function MemberCard({ m, colour, open, onToggle }: { m: Member; colour: string; 
         <span className={`truncate font-medium ${m.self ? "text-gold-bright" : m.muted ? "text-text-muted line-through" : "text-text"}`}>{m.name}</span>
         {m.classTag && <span className="text-xs text-gold">{m.classTag}</span>}
         <span className="ml-auto flex items-center gap-2 text-xs text-text-muted">
-          {quiet && <span>{m.muted ? "muted" : `${Math.round(m.volume * 100)}%`}</span>}
+          {quiet && <span>{m.muted ? t("muted") : `${Math.round(m.volume * 100)}%`}</span>}
           {!m.canSpeak && <span>{t("listening")}</span>}
           {m.headsetOff && (
             <span className="flex items-center text-danger" role="img" aria-label={m.self ? t("Your headset is off: you hear no one") : t(`${d(m.name)} has their headset off and hears no one`)} data-headset-off>

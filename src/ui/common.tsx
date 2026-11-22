@@ -1,3 +1,4 @@
+import { when as inLanguage } from "../i18n";
 import { d, t } from "../words";
 import { useEffect, useRef, useState } from "react";
 import { APP_NAME, isDesktop } from "../config";
@@ -305,4 +306,9 @@ export function PartyMode() {
       )}
     </div>
   );
+}
+
+/** An operation's start, in the player's language and written its way; shown on the Voice screen's notice line and on the boards. */
+export function startTime(iso: string | null): string {
+  return iso ? inLanguage(iso, { dateStyle: "medium", timeStyle: "short" }) : t("No start time");
 }

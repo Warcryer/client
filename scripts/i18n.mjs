@@ -202,6 +202,13 @@ for (const file of files) {
       }
       return false;
     };
+    // A string that is itself what a tag shows, whichever branch is taken ({on ? "original" : "translated"}): read
+    // by someone even when it is one lower-case word, which elsewhere would be a name in the code.
+    const shownAsChild = (node) => {
+      let a = node.parent;
+      while (a && (ts.isConditionalExpression(a) || ts.isParenthesizedExpression(a) || (ts.isBinaryExpression(a) && [ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken, ts.SyntaxKind.QuestionQuestionToken].includes(a.operatorToken.kind)))) a = a.parent;
+      return !!a && ts.isJsxExpression(a) && !!a.parent && (ts.isJsxElement(a.parent) || ts.isJsxFragment(a.parent));
+    };
     const report = (node, why, text) => {
       unwrapped++;
       console.log(`${at(node)}  ${why}: ${JSON.stringify(text.slice(0, 100))}`);
@@ -235,7 +242,7 @@ for (const file of files) {
         }
         return;
       }
-      if ((ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && sentence(node.text) && !skipped(node) && !wrapped(node)) {
+      if ((ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && (sentence(node.text) || (shownAsChild(node) && /\p{L}{2,}/u.test(node.text) && !technical(node.text))) && !skipped(node) && !wrapped(node)) {
         if (!insideFunction(node)) {
           if (!saidWhereShown(node)) report(node, 'outside any function (wrap where it is shown and mark its list "t() where shown", or "not shown")', node.text);
         } else if (!FIX) report(node, "string", node.text);
