@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Ustawienia",
    "note": "plural only"
+  },
+  {
+   "en": "points",
+   "term": "punkty",
+   "note": "Masculine plural (sg. punkt); usually used in plural. Replace with the alliance's own name where given."
+  },
+  {
+   "en": "set of points",
+   "term": "pula punktów",
+   "note": "Feminine; only 'pula' declines (pule punktów)."
+  },
+  {
+   "en": "standings",
+   "term": "ranking",
+   "note": "Masculine; gen. rankingu."
+  },
+  {
+   "en": "season",
+   "term": "sezon",
+   "note": "Masculine."
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "Masculine; kept in English; declines informally (decayu) or left undeclined."
+  },
+  {
+   "en": "gear points",
+   "term": "punkty GP",
+   "note": "Masculine plural; 'GP' not declined."
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "Masculine; gen. lootu."
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "Masculine; gen. dropu, pl. dropy."
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "Kept in English, not declined; masculine agreement."
+  },
+  {
+   "en": "price list",
+   "term": "cennik",
+   "note": "Masculine."
+  },
+  {
+   "en": "standby",
+   "term": "ławka",
+   "note": "Feminine; 'na ławce' = on standby. Not 'rezerwa', which is the Reserve net."
+  },
+  {
+   "en": "attendance",
+   "term": "obecność",
+   "note": "Feminine."
+  },
+  {
+   "en": "turnout",
+   "term": "frekwencja",
+   "note": "Feminine."
+  },
+  {
+   "en": "crest",
+   "term": "herb",
+   "note": "Masculine; gen. herbu."
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "Masculine; gen. bana; verb banować."
+  },
+  {
+   "en": "game setup",
+   "term": "konfiguracja gry",
+   "note": "Feminine; only 'konfiguracja' declines."
+  },
+  {
+   "en": "role",
+   "term": "rola",
+   "note": "Feminine; gen. pl. ról."
+  },
+  {
+   "en": "class",
+   "term": "klasa",
+   "note": "Feminine."
+  },
+  {
+   "en": "character",
+   "term": "postać",
+   "note": "Feminine; pl. postacie."
+  },
+  {
+   "en": "preset",
+   "term": "preset",
+   "note": "Masculine; gen. presetu."
+  },
+  {
+   "en": "log",
+   "term": "log",
+   "note": "Masculine; often used in plural 'logi'."
+  },
+  {
+   "en": "History",
+   "term": "Historia",
+   "note": "Tab name, capitalised."
+  },
+  {
+   "en": "roster",
+   "term": "skład",
+   "note": "Masculine; pl. składy, as in 'tablica składów'."
   }
  ]
 }

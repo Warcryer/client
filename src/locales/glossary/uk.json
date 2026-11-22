@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Налаштування",
    "note": "neuter"
+  },
+  {
+   "en": "points",
+   "term": "бали",
+   "note": "Masculine plural; singular бал. Use the alliance's own name, such as DKP, where one is set."
+  },
+  {
+   "en": "set of points",
+   "term": "рахунок",
+   "note": "Masculine; plural рахунки. Say рахунок балів where the context is unclear."
+  },
+  {
+   "en": "standings",
+   "term": "рейтинг",
+   "note": "Masculine singular."
+  },
+  {
+   "en": "season",
+   "term": "сезон",
+   "note": ""
+  },
+  {
+   "en": "decay",
+   "term": "декей",
+   "note": "Masculine; declined (декею)."
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Kept in Latin letters and not declined; may be glossed as бали за спорядження."
+  },
+  {
+   "en": "loot",
+   "term": "лут",
+   "note": "Masculine; uncountable."
+  },
+  {
+   "en": "drop",
+   "term": "дроп",
+   "note": "Masculine; plural дропи."
+  },
+  {
+   "en": "loot council",
+   "term": "лут-рада",
+   "note": "Feminine; only рада is declined (лут-ради)."
+  },
+  {
+   "en": "price list",
+   "term": "прайс-лист",
+   "note": "Masculine; only лист is declined."
+  },
+  {
+   "en": "standby",
+   "term": "бенч",
+   "note": "Masculine; на бенчі = on standby. Distinct from Резерв."
+  },
+  {
+   "en": "attendance",
+   "term": "відвідуваність",
+   "note": "Feminine."
+  },
+  {
+   "en": "turnout",
+   "term": "явка",
+   "note": "Feminine."
+  },
+  {
+   "en": "crest",
+   "term": "емблема",
+   "note": "Feminine."
+  },
+  {
+   "en": "ban",
+   "term": "бан",
+   "note": "Masculine; verb забанити."
+  },
+  {
+   "en": "game setup",
+   "term": "сетап гри",
+   "note": "Masculine; avoids a clash with Налаштування (Settings)."
+  },
+  {
+   "en": "role",
+   "term": "роль",
+   "note": "Feminine."
+  },
+  {
+   "en": "class",
+   "term": "клас",
+   "note": ""
+  },
+  {
+   "en": "character",
+   "term": "персонаж",
+   "note": "Masculine; colloquially перс."
+  },
+  {
+   "en": "preset",
+   "term": "пресет",
+   "note": "Masculine."
+  },
+  {
+   "en": "log",
+   "term": "журнал",
+   "note": "Masculine."
+  },
+  {
+   "en": "History",
+   "term": "Історія",
+   "note": "Tab name; capitalised."
+  },
+  {
+   "en": "roster",
+   "term": "склад",
+   "note": "Masculine; matches дошка складу."
   }
  ]
 }

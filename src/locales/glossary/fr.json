@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Paramètres",
    "note": "Masculine plural."
+  },
+  {
+   "en": "points",
+   "term": "points",
+   "note": "Masculine plural; the alliance's own name may replace it (e.g. points DKP)."
+  },
+  {
+   "en": "set of points",
+   "term": "compteur",
+   "note": "Masculine; e.g. compteur raid, compteur siège."
+  },
+  {
+   "en": "standings",
+   "term": "classement",
+   "note": "Masculine singular."
+  },
+  {
+   "en": "season",
+   "term": "saison",
+   "note": "Feminine."
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "Kept in English; masculine, invariable (le decay)."
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Kept as abbreviation; masculine, invariable (les GP); may be glossed as points d'équipement."
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "Masculine; plural loots; verb looter."
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "Masculine; plural drops."
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "Kept in English; masculine (le loot council)."
+  },
+  {
+   "en": "price list",
+   "term": "grille de prix",
+   "note": "Feminine; plural grilles de prix."
+  },
+  {
+   "en": "standby",
+   "term": "banc",
+   "note": "Masculine; used as sur le banc; players on it are les remplaçants. Distinct from Réserve, which is a net."
+  },
+  {
+   "en": "attendance",
+   "term": "présence",
+   "note": "Feminine; often plural (les présences) for the record."
+  },
+  {
+   "en": "turnout",
+   "term": "taux de participation",
+   "note": "Masculine."
+  },
+  {
+   "en": "crest",
+   "term": "blason",
+   "note": "Masculine."
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "Masculine; verb bannir."
+  },
+  {
+   "en": "game setup",
+   "term": "configuration du jeu",
+   "note": "Feminine; short form config."
+  },
+  {
+   "en": "role",
+   "term": "rôle",
+   "note": "Masculine; keeps the circumflex."
+  },
+  {
+   "en": "class",
+   "term": "classe",
+   "note": "Feminine."
+  },
+  {
+   "en": "character",
+   "term": "personnage",
+   "note": "Masculine; informal short form perso."
+  },
+  {
+   "en": "preset",
+   "term": "préréglage",
+   "note": "Masculine."
+  },
+  {
+   "en": "log",
+   "term": "journal",
+   "note": "Masculine; irregular plural journaux."
+  },
+  {
+   "en": "History",
+   "term": "Historique",
+   "note": "Masculine (l'historique)."
+  },
+  {
+   "en": "roster",
+   "term": "composition",
+   "note": "Feminine; players often say compo."
   }
  ]
 }

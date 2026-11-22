@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Nustatymai",
    "note": "Masculine, plural only."
+  },
+  {
+   "en": "points",
+   "term": "taškai",
+   "note": "masculine, used in the plural (sg. taškas)"
+  },
+  {
+   "en": "set of points",
+   "term": "taškų įskaita",
+   "note": "feminine (įskaita); plural taškų įskaitos"
+  },
+  {
+   "en": "standings",
+   "term": "reitingas",
+   "note": "masculine"
+  },
+  {
+   "en": "season",
+   "term": "sezonas",
+   "note": "masculine"
+  },
+  {
+   "en": "decay",
+   "term": "nurašymas",
+   "note": "masculine; means periodic point reduction"
+  },
+  {
+   "en": "gear points",
+   "term": "GP taškai",
+   "note": "GP is not declined; taškai is masculine plural"
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "kept in English, not declined"
+  },
+  {
+   "en": "drop",
+   "term": "dropas",
+   "note": "masculine, gamer slang, declined normally (dropo, dropai)"
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "kept in English, not declined"
+  },
+  {
+   "en": "price list",
+   "term": "kainoraštis",
+   "note": "masculine"
+  },
+  {
+   "en": "standby",
+   "term": "atsarginiai",
+   "note": "masculine plural adjective used as a noun; do not confuse with the Rezervas net"
+  },
+  {
+   "en": "attendance",
+   "term": "lankomumas",
+   "note": "masculine"
+  },
+  {
+   "en": "turnout",
+   "term": "aktyvumas",
+   "note": "masculine"
+  },
+  {
+   "en": "crest",
+   "term": "herbas",
+   "note": "masculine"
+  },
+  {
+   "en": "ban",
+   "term": "banas",
+   "note": "masculine; verb: užbaninti"
+  },
+  {
+   "en": "game setup",
+   "term": "žaidimo aprašas",
+   "note": "masculine; not 'nustatymai', which is reserved for Settings"
+  },
+  {
+   "en": "role",
+   "term": "rolė",
+   "note": "feminine"
+  },
+  {
+   "en": "class",
+   "term": "klasė",
+   "note": "feminine"
+  },
+  {
+   "en": "character",
+   "term": "personažas",
+   "note": "masculine"
+  },
+  {
+   "en": "preset",
+   "term": "šablonas",
+   "note": "masculine"
+  },
+  {
+   "en": "log",
+   "term": "žurnalas",
+   "note": "masculine"
+  },
+  {
+   "en": "History",
+   "term": "Istorija",
+   "note": "feminine"
+  },
+  {
+   "en": "roster",
+   "term": "sudėtis",
+   "note": "feminine, genitive sudėties (as in sudėties lenta)"
   }
  ]
 }

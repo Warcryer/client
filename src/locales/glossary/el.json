@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Ρυθμίσεις",
    "note": "feminine plural"
+  },
+  {
+   "en": "points",
+   "term": "πόντοι",
+   "note": "Masculine; singular ο πόντος, plural οι πόντοι."
+  },
+  {
+   "en": "set of points",
+   "term": "κατηγορία πόντων",
+   "note": "Feminine; plural κατηγορίες πόντων."
+  },
+  {
+   "en": "standings",
+   "term": "κατάταξη",
+   "note": "Feminine, singular."
+  },
+  {
+   "en": "season",
+   "term": "σεζόν",
+   "note": "Feminine, not declined (η σεζόν, οι σεζόν)."
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "Neuter (το decay), not declined."
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Neuter plural (τα GP), not declined; spell out as gear points only if needed."
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "Neuter (το loot), not declined."
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "Neuter (το drop); plural τα drops."
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "Neuter (το loot council), not declined."
+  },
+  {
+   "en": "price list",
+   "term": "τιμοκατάλογος",
+   "note": "Masculine; plural τιμοκατάλογοι."
+  },
+  {
+   "en": "standby",
+   "term": "standby",
+   "note": "Not declined; used as «σε standby» / «οι παίκτες σε standby». Do not confuse with the Εφεδρεία net."
+  },
+  {
+   "en": "attendance",
+   "term": "παρουσίες",
+   "note": "Feminine, usually plural (οι παρουσίες); singular η παρουσία."
+  },
+  {
+   "en": "turnout",
+   "term": "προσέλευση",
+   "note": "Feminine."
+  },
+  {
+   "en": "crest",
+   "term": "έμβλημα",
+   "note": "Neuter; plural εμβλήματα."
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "Neuter (το ban), not declined; verb: μπανάρω or κάνω ban."
+  },
+  {
+   "en": "game setup",
+   "term": "προφίλ παιχνιδιού",
+   "note": "Neuter; προφίλ is not declined. Avoid ρυθμίσεις, which is Settings."
+  },
+  {
+   "en": "role",
+   "term": "ρόλος",
+   "note": "Masculine; plural ρόλοι."
+  },
+  {
+   "en": "class",
+   "term": "κλάση",
+   "note": "Feminine; plural κλάσεις."
+  },
+  {
+   "en": "character",
+   "term": "χαρακτήρας",
+   "note": "Masculine; plural χαρακτήρες."
+  },
+  {
+   "en": "preset",
+   "term": "preset",
+   "note": "Neuter (το preset); plural τα presets."
+  },
+  {
+   "en": "log",
+   "term": "log",
+   "note": "Neuter (το log); plural τα logs. Distinct from the Ιστορικό tab."
+  },
+  {
+   "en": "History",
+   "term": "Ιστορικό",
+   "note": "Neuter, tab name."
+  },
+  {
+   "en": "roster",
+   "term": "σύνθεση",
+   "note": "Feminine; plural συνθέσεις. Matches πίνακας σύνθεσης."
   }
  ]
 }

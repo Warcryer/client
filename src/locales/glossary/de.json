@@ -160,6 +160,121 @@
    "en": "Voice",
    "term": "Sprachchat",
    "note": "the app's main screen, where the player's nets are; not 'Sprache', which is what the Language setting is called"
+  },
+  {
+   "en": "points",
+   "term": "Punkte",
+   "note": "masculine plural (der Punkt, die Punkte); usually used in the plural"
+  },
+  {
+   "en": "set of points",
+   "term": "Punktekonto",
+   "note": "neuter; plural Punktekonten"
+  },
+  {
+   "en": "standings",
+   "term": "Rangliste",
+   "note": "feminine"
+  },
+  {
+   "en": "season",
+   "term": "Saison",
+   "note": "feminine; plural Saisons"
+  },
+  {
+   "en": "decay",
+   "term": "Decay",
+   "note": "masculine (der Decay); no plural"
+  },
+  {
+   "en": "gear points",
+   "term": "Gear Points (GP)",
+   "note": "plural; keep English, abbreviation GP"
+  },
+  {
+   "en": "loot",
+   "term": "Loot",
+   "note": "masculine (der Loot); no plural"
+  },
+  {
+   "en": "drop",
+   "term": "Drop",
+   "note": "masculine; plural Drops"
+  },
+  {
+   "en": "loot council",
+   "term": "Loot Council",
+   "note": "masculine (der Loot Council); genitive des Loot Councils"
+  },
+  {
+   "en": "price list",
+   "term": "Preisliste",
+   "note": "feminine"
+  },
+  {
+   "en": "standby",
+   "term": "Standby",
+   "note": "neuter; mostly used as \"auf Standby\""
+  },
+  {
+   "en": "attendance",
+   "term": "Anwesenheit",
+   "note": "feminine"
+  },
+  {
+   "en": "turnout",
+   "term": "Beteiligung",
+   "note": "feminine"
+  },
+  {
+   "en": "crest",
+   "term": "Wappen",
+   "note": "neuter; plural unchanged (die Wappen)"
+  },
+  {
+   "en": "ban",
+   "term": "Bann",
+   "note": "masculine; verb: bannen"
+  },
+  {
+   "en": "game setup",
+   "term": "Spiel-Setup",
+   "note": "neuter"
+  },
+  {
+   "en": "role",
+   "term": "Rolle",
+   "note": "feminine"
+  },
+  {
+   "en": "class",
+   "term": "Klasse",
+   "note": "feminine"
+  },
+  {
+   "en": "character",
+   "term": "Charakter",
+   "note": "masculine; plural Charaktere; casual short form Char"
+  },
+  {
+   "en": "preset",
+   "term": "Vorlage",
+   "note": "feminine"
+  },
+  {
+   "en": "log",
+   "term": "Protokoll",
+   "note": "neuter"
+  },
+  {
+   "en": "History",
+   "term": "Verlauf",
+   "note": "masculine"
+  },
+  {
+   "en": "roster",
+   "term": "Besetzung",
+   "note": "feminine; keep distinct from Aufstellung (roster board)"
   }
  ]
 }

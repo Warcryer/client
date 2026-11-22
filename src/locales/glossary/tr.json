@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Ayarlar",
    "note": "Always plural."
+  },
+  {
+   "en": "points",
+   "term": "puan",
+   "note": "Usually plural \"puanlar\"; can follow an alliance's own name, e.g. \"DKP puanı\"."
+  },
+  {
+   "en": "set of points",
+   "term": "puan hesabı",
+   "note": "Compound; possessive forms: \"puan hesabı\" → \"puan hesabını\", plural \"puan hesapları\"."
+  },
+  {
+   "en": "standings",
+   "term": "sıralama",
+   "note": ""
+  },
+  {
+   "en": "season",
+   "term": "sezon",
+   "note": ""
+  },
+  {
+   "en": "decay",
+   "term": "puan erimesi",
+   "note": "Compound noun (accusative \"puan erimesini\"). Verb: \"puanlar erir\"."
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Kept as the abbreviation; suffixes take an apostrophe: GP'si, GP'yi (read \"ge-pe\")."
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "Pronounced \"lut\"; suffixes take an apostrophe: loot'u, loot'lar."
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "Suffixes take an apostrophe: drop'u, drop'lar. Verb: \"düşmek\" (an item drops = \"eşya düştü\")."
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "Kept in English; suffixes take an apostrophe: loot council'ı."
+  },
+  {
+   "en": "price list",
+   "term": "fiyat listesi",
+   "note": "Compound (accusative \"fiyat listesini\")."
+  },
+  {
+   "en": "standby",
+   "term": "yedek kadro",
+   "note": "Do not shorten to \"Yedek\", which is the Reserve net."
+  },
+  {
+   "en": "attendance",
+   "term": "yoklama",
+   "note": "Not \"katılım\", which is the settled term for sign-up."
+  },
+  {
+   "en": "turnout",
+   "term": "katılım oranı",
+   "note": "Compound (accusative \"katılım oranını\")."
+  },
+  {
+   "en": "crest",
+   "term": "arma",
+   "note": ""
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "Verb \"banlamak\". Suffixes are added directly (banı, banlar); \"banı kaldır\" = unban."
+  },
+  {
+   "en": "game setup",
+   "term": "oyun yapısı",
+   "note": "Not \"ayarlar\", which is Settings. Accusative \"oyun yapısını\"."
+  },
+  {
+   "en": "role",
+   "term": "rol",
+   "note": "Final consonant doubles before vowel suffixes: rolü, rolleri."
+  },
+  {
+   "en": "class",
+   "term": "sınıf",
+   "note": "Accusative \"sınıfı\"."
+  },
+  {
+   "en": "character",
+   "term": "karakter",
+   "note": ""
+  },
+  {
+   "en": "preset",
+   "term": "hazır ayar",
+   "note": "Plural \"hazır ayarlar\"."
+  },
+  {
+   "en": "log",
+   "term": "kayıt",
+   "note": "Irregular stem: kaydı, kayıtlar. Usually plural as a heading: \"Kayıtlar\"."
+  },
+  {
+   "en": "History",
+   "term": "Geçmiş",
+   "note": "Tab name; possessive \"geçmişi\"."
+  },
+  {
+   "en": "roster",
+   "term": "kadro",
+   "note": "Matches \"kadro panosu\" (roster board)."
   }
  ]
 }

@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Настройки",
    "note": "plural only"
+  },
+  {
+   "en": "points",
+   "term": "очки",
+   "note": "Neuter plural, used only in plural (очки ДКП); do not use singular очко."
+  },
+  {
+   "en": "set of points",
+   "term": "пул очков",
+   "note": "Masculine; only пул is declined (пулы очков)."
+  },
+  {
+   "en": "standings",
+   "term": "таблица очков",
+   "note": "Feminine; only таблица is declined."
+  },
+  {
+   "en": "season",
+   "term": "сезон",
+   "note": ""
+  },
+  {
+   "en": "decay",
+   "term": "декей",
+   "note": "Masculine, declined (декея, декеем)."
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "Kept in Latin letters, not declined; read as «гэ-пэ»."
+  },
+  {
+   "en": "loot",
+   "term": "лут",
+   "note": "Masculine, uncountable."
+  },
+  {
+   "en": "drop",
+   "term": "дроп",
+   "note": "Masculine, declined (дропа, дропы)."
+  },
+  {
+   "en": "loot council",
+   "term": "лут-совет",
+   "note": "Masculine, hyphenated; only совет is declined."
+  },
+  {
+   "en": "price list",
+   "term": "прайс",
+   "note": "Masculine, declined (прайса)."
+  },
+  {
+   "en": "standby",
+   "term": "скамейка",
+   "note": "Feminine; players are «на скамейке», not «в резерве» (Резерв is the voice net)."
+  },
+  {
+   "en": "attendance",
+   "term": "посещаемость",
+   "note": "Feminine, no plural."
+  },
+  {
+   "en": "turnout",
+   "term": "явка",
+   "note": "Feminine, no plural."
+  },
+  {
+   "en": "crest",
+   "term": "эмблема",
+   "note": "Feminine."
+  },
+  {
+   "en": "ban",
+   "term": "бан",
+   "note": "Masculine; verb забанить."
+  },
+  {
+   "en": "game setup",
+   "term": "сетап игры",
+   "note": "Masculine; only сетап is declined. Do not confuse with Настройки."
+  },
+  {
+   "en": "role",
+   "term": "роль",
+   "note": "Feminine (роли, ролей)."
+  },
+  {
+   "en": "class",
+   "term": "класс",
+   "note": ""
+  },
+  {
+   "en": "character",
+   "term": "персонаж",
+   "note": "Masculine, animate (персонажа in accusative)."
+  },
+  {
+   "en": "preset",
+   "term": "пресет",
+   "note": "Masculine, declined."
+  },
+  {
+   "en": "log",
+   "term": "лог",
+   "note": "Masculine, declined (лога, логи)."
+  },
+  {
+   "en": "History",
+   "term": "История",
+   "note": "Feminine; capitalized as a tab name."
+  },
+  {
+   "en": "roster",
+   "term": "состав",
+   "note": "Masculine; not расстановка, which is the roster board."
   }
  ]
 }

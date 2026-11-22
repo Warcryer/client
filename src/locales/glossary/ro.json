@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Setări",
    "note": "Feminine plural."
+  },
+  {
+   "en": "points",
+   "term": "puncte",
+   "note": "neuter plural of 'punct'; usually used in the plural"
+  },
+  {
+   "en": "set of points",
+   "term": "set de puncte",
+   "note": "'set' is neuter, plural 'seturi de puncte'"
+  },
+  {
+   "en": "standings",
+   "term": "clasament",
+   "note": "neuter, plural 'clasamente'"
+  },
+  {
+   "en": "season",
+   "term": "sezon",
+   "note": "neuter, plural 'sezoane'"
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "English loan, neuter; article with hyphen: 'decay-ul'"
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "keep the abbreviation; in running text 'puncte GP'"
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "neuter, no plural; article with hyphen: 'loot-ul'"
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "neuter; 'drop-ul', plural 'drop-uri'"
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "kept in English, not declined"
+  },
+  {
+   "en": "price list",
+   "term": "listă de prețuri",
+   "note": "feminine; articled 'lista de prețuri'"
+  },
+  {
+   "en": "standby",
+   "term": "standby",
+   "note": "kept in English, not declined; distinct from the 'Rezervă' net"
+  },
+  {
+   "en": "attendance",
+   "term": "prezență",
+   "note": "feminine, plural 'prezențe'"
+  },
+  {
+   "en": "turnout",
+   "term": "rată de participare",
+   "note": "feminine; expressed as a percentage; distinct from 'prezență' (attendance)"
+  },
+  {
+   "en": "crest",
+   "term": "emblemă",
+   "note": "feminine, plural 'embleme'"
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "neuter; 'ban-ul', plural 'ban-uri'; verb 'a da ban'"
+  },
+  {
+   "en": "game setup",
+   "term": "configurație de joc",
+   "note": "feminine; articled 'configurația jocului'"
+  },
+  {
+   "en": "role",
+   "term": "rol",
+   "note": "neuter, plural 'roluri'"
+  },
+  {
+   "en": "class",
+   "term": "clasă",
+   "note": "feminine, plural 'clase'"
+  },
+  {
+   "en": "character",
+   "term": "personaj",
+   "note": "neuter, plural 'personaje'"
+  },
+  {
+   "en": "preset",
+   "term": "preset",
+   "note": "neuter; plural 'preseturi'"
+  },
+  {
+   "en": "log",
+   "term": "jurnal",
+   "note": "neuter, plural 'jurnale'"
+  },
+  {
+   "en": "History",
+   "term": "Istoric",
+   "note": "tab label, capitalized; neuter"
+  },
+  {
+   "en": "roster",
+   "term": "componență",
+   "note": "feminine; 'componența operațiunii'; distinct from 'roster' (roster board)"
   }
  ]
 }

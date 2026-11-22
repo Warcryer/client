@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Ajustes",
    "note": "masculine plural"
+  },
+  {
+   "en": "points",
+   "term": "puntos",
+   "note": "masculine plural; may be replaced by the alliance's own name"
+  },
+  {
+   "en": "set of points",
+   "term": "contador de puntos",
+   "note": "masculine; plural contadores de puntos"
+  },
+  {
+   "en": "standings",
+   "term": "clasificación",
+   "note": "feminine singular"
+  },
+  {
+   "en": "season",
+   "term": "temporada",
+   "note": "feminine"
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "masculine; not declined (el decay)"
+  },
+  {
+   "en": "gear points",
+   "term": "GP",
+   "note": "masculine plural (los GP); not declined"
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "masculine, uncountable (el loot)"
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "masculine; plural drops"
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "masculine (el loot council); not declined"
+  },
+  {
+   "en": "price list",
+   "term": "lista de precios",
+   "note": "feminine"
+  },
+  {
+   "en": "standby",
+   "term": "banquillo",
+   "note": "masculine; players there are 'en el banquillo'"
+  },
+  {
+   "en": "attendance",
+   "term": "asistencia",
+   "note": "feminine"
+  },
+  {
+   "en": "turnout",
+   "term": "participación",
+   "note": "feminine"
+  },
+  {
+   "en": "crest",
+   "term": "emblema",
+   "note": "masculine despite -a (el emblema)"
+  },
+  {
+   "en": "ban",
+   "term": "baneo",
+   "note": "masculine; verb banear"
+  },
+  {
+   "en": "game setup",
+   "term": "configuración del juego",
+   "note": "feminine"
+  },
+  {
+   "en": "role",
+   "term": "rol",
+   "note": "masculine; plural roles"
+  },
+  {
+   "en": "class",
+   "term": "clase",
+   "note": "feminine"
+  },
+  {
+   "en": "character",
+   "term": "personaje",
+   "note": "masculine"
+  },
+  {
+   "en": "preset",
+   "term": "plantilla",
+   "note": "feminine"
+  },
+  {
+   "en": "log",
+   "term": "registro",
+   "note": "masculine"
+  },
+  {
+   "en": "History",
+   "term": "Historial",
+   "note": "masculine; tab name, capitalized"
+  },
+  {
+   "en": "roster",
+   "term": "roster",
+   "note": "masculine; plural rosters"
   }
  ]
 }

@@ -155,6 +155,121 @@
    "en": "Settings",
    "term": "Configurações",
    "note": "feminine plural"
+  },
+  {
+   "en": "points",
+   "term": "pontos",
+   "note": "masculine plural (singular: ponto)"
+  },
+  {
+   "en": "set of points",
+   "term": "pontuação",
+   "note": "feminine; plural pontuações"
+  },
+  {
+   "en": "standings",
+   "term": "ranking",
+   "note": "masculine; plural rankings"
+  },
+  {
+   "en": "season",
+   "term": "temporada",
+   "note": "feminine"
+  },
+  {
+   "en": "decay",
+   "term": "decay",
+   "note": "masculine; English word kept, invariable"
+  },
+  {
+   "en": "gear points",
+   "term": "gear points",
+   "note": "masculine plural; English kept, abbreviated GP"
+  },
+  {
+   "en": "loot",
+   "term": "loot",
+   "note": "masculine; uncountable, no plural"
+  },
+  {
+   "en": "drop",
+   "term": "drop",
+   "note": "masculine; plural drops"
+  },
+  {
+   "en": "loot council",
+   "term": "loot council",
+   "note": "masculine; English kept"
+  },
+  {
+   "en": "price list",
+   "term": "tabela de preços",
+   "note": "feminine"
+  },
+  {
+   "en": "standby",
+   "term": "banco",
+   "note": "masculine; 'ficar no banco'; avoid 'reserva', which is the Reserve net"
+  },
+  {
+   "en": "attendance",
+   "term": "presença",
+   "note": "feminine"
+  },
+  {
+   "en": "turnout",
+   "term": "comparecimento",
+   "note": "masculine"
+  },
+  {
+   "en": "crest",
+   "term": "brasão",
+   "note": "masculine; plural brasões"
+  },
+  {
+   "en": "ban",
+   "term": "ban",
+   "note": "masculine; plural bans; verb is banir"
+  },
+  {
+   "en": "game setup",
+   "term": "configuração do jogo",
+   "note": "feminine; not the Configurações (Settings) screen"
+  },
+  {
+   "en": "role",
+   "term": "função",
+   "note": "feminine; plural funções"
+  },
+  {
+   "en": "class",
+   "term": "classe",
+   "note": "feminine"
+  },
+  {
+   "en": "character",
+   "term": "personagem",
+   "note": "masculine in games (o personagem); plural personagens"
+  },
+  {
+   "en": "preset",
+   "term": "preset",
+   "note": "masculine; plural presets"
+  },
+  {
+   "en": "log",
+   "term": "log",
+   "note": "masculine; plural logs"
+  },
+  {
+   "en": "History",
+   "term": "Histórico",
+   "note": "masculine"
+  },
+  {
+   "en": "roster",
+   "term": "escalação",
+   "note": "feminine; plural escalações"
   }
  ]
 }
