@@ -6,6 +6,7 @@ import { getToken, signOut } from "./auth";
 import { CONTROL_URLS, isDesktop, SERVER } from "./config";
 import { ControlClient, type ControlState, type GroupInfo, type NetSet, type PresenceEntry } from "./control";
 import { refreshGame, useGame } from "./game";
+import { setLanguage, useLanguage } from "./i18n";
 import { usePendingInvite } from "./invite";
 import { engine } from "./runtime";
 import { useSettings } from "./settings";
@@ -270,6 +271,13 @@ export default function App() {
   }, [allianceId]);
   // Read here so that the whole app is drawn again when the alliance's words change.
   useGame();
+  // The player's language (server decision 66): the app is shown in it once it has a catalogue for it. Read
+  // here so that the whole app is drawn again when it changes.
+  useLanguage();
+  const lang = info?.user.lang;
+  useEffect(() => {
+    if (lang !== undefined) void setLanguage(lang);
+  }, [lang]);
 
   if (phase === "signin") {
     return (

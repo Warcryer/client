@@ -11,6 +11,8 @@
 // `npm run check:words` fails if a sentence that names one of the five is not
 // passed through `t()`; `node scripts/words.mjs --fix` wraps what it finds.
 
+import { catalogue } from "./i18n";
+import { translate } from "./i18n-core";
 import { d, DEFAULT_WORDS, reword, type Words } from "./reword";
 
 let current: Words = DEFAULT_WORDS;
@@ -20,8 +22,14 @@ export const setWords = (words: Words | null | undefined): void => {
   current = words ?? DEFAULT_WORDS;
 };
 
-/** A sentence written in the app's words, said in the alliance's. */
-export const t = (text: string): string => reword(current, text);
+/**
+ * A sentence written in English and in the app's words, said in the player's language (src/i18n.tsx), or,
+ * in English, in the alliance's own words. A sentence its language has no translation for is said in English.
+ */
+export const t = (text: string): string => {
+  const other = catalogue();
+  return (other && translate(other, text)) ?? reword(current, text);
+};
 
 /**
  * Marks a word that is meant in the app's own sense and must stay as written: where an admin

@@ -1,12 +1,15 @@
 // The app itself: every screen, the voice engine and the key capture.
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { rememberedLanguage, setLanguage } from "./i18n";
 import { startInviteLinks } from "./invite";
 import { startShell } from "./shell";
 import { startStrip } from "./strip/publish";
 import { Boot } from "./ui/Boot";
 import { TipLayer } from "./ui/tips";
 
+// The language chosen last time on this computer, for the screens that come before the server has said who this is.
+void setLanguage(rememberedLanguage());
 startShell();
 startStrip();
 void startInviteLinks().catch(() => {});
