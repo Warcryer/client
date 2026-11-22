@@ -7,6 +7,9 @@
 //   node scripts/translate.mjs --spend         does it, as one batch at half price (minutes to an hour)
 //   node scripts/translate.mjs --spend --now   does it at once at full price (for a few sentences)
 //   LANGS=ru,el node scripts/translate.mjs     only these languages
+//   MODEL=sonnet node scripts/translate.mjs    Claude Sonnet 5.5 instead of Opus 5.5 (half the price)
+//   KEYS=<file> LOCALES=<folder> node ...      another set of sentences into another folder: the server's
+//                                              (its scripts/i18n.mjs --keys writes the file; see its e2e/README.md)
 //
 // How: per language, first a short list of the app's own terms in that language (kept in
 // src/locales/glossary/<code>.json and used from then on, so that a net is called the same thing on every
@@ -14,7 +17,7 @@
 // only if it is usable (the same places as the English, a form for every count the language has); what is
 // not is asked once more, and then reported.
 //
-// The model is Claude Opus 5.5 (the owner's choice, 2026-11-22). The key is read from
+// The model is Claude Opus 5.5 unless MODEL says otherwise (the owner's choice, 2026-11-22). The key is read from
 // ~/.config/voice/anthropic.env and never printed. The Anthropic SDK is taken from the server's checkout
 // (ANTHROPIC_SDK_FROM, default ~/voice-backend/web): the app itself does not depend on it.
 import { execFileSync } from "node:child_process";
@@ -26,20 +29,28 @@ import { fileURLToPath } from "node:url";
 import { categoriesOf, problemWith } from "../src/i18n-core.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const LOCALES = path.join(ROOT, "src/locales");
+// The terms are the app's, kept with its catalogues, whichever sentences are being translated.
+const GLOSSARIES = path.join(ROOT, "src/locales/glossary");
+const LOCALES = process.env.LOCALES ? path.resolve(process.env.LOCALES) : path.join(ROOT, "src/locales");
 const SPEND = process.argv.includes("--spend");
 const NOW = process.argv.includes("--now");
-const MODEL = "claude-opus-5-5";
+const MODELS = {
+  opus: { id: "claude-opus-5-5", name: "Opus 5.5", price: { in: 4, out: 20, cacheRead: 0.2, cacheWrite: 5 } },
+  sonnet: { id: "claude-sonnet-5-5", name: "Sonnet 5.5", price: { in: 2, out: 10, cacheRead: 0.1, cacheWrite: 2.5 } },
+};
+const CHOSEN = MODELS[process.env.MODEL || "opus"];
+if (!CHOSEN) throw new Error(`MODEL is one of: ${Object.keys(MODELS).join(", ")}`);
+const MODEL = CHOSEN.id;
 // Dollars per million tokens for that model; a batch is half.
-const PRICE = { in: 4, out: 20, cacheRead: 0.2, cacheWrite: 5 };
+const PRICE = CHOSEN.price;
 
 /** The languages the app is translated into, by code, with their English names for the model. */
 const ALL = { fr: "French", de: "German", es: "Spanish", "pt-BR": "Brazilian Portuguese", ro: "Romanian", pl: "Polish", lt: "Lithuanian", el: "Greek", ru: "Russian", uk: "Ukrainian", tr: "Turkish" };
 const LANGS = (process.env.LANGS ? process.env.LANGS.split(",") : Object.keys(ALL)).filter((l) => ALL[l]);
 
 // ---- What there is to translate ----
-const keysFile = path.join(os.tmpdir(), `warcryer-keys-${process.pid}.json`);
-execFileSync(process.execPath, [path.join(ROOT, "scripts/i18n.mjs"), "--loose", "--keys", keysFile], { stdio: "ignore" });
+const keysFile = process.env.KEYS ? path.resolve(process.env.KEYS) : path.join(os.tmpdir(), `warcryer-keys-${process.pid}.json`);
+if (!process.env.KEYS) execFileSync(process.execPath, [path.join(ROOT, "scripts/i18n.mjs"), "--loose", "--keys", keysFile], { stdio: "ignore" });
 /** @type {{ key: string; counted: boolean; where: string[] }[]} */
 const sentences = JSON.parse(readFileSync(keysFile, "utf8"));
 const read = (file) => (existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {});
@@ -79,6 +90,30 @@ const TERMS = [
   ["away", "a player marked as not at their computer"],
   ["invite link", "a link that brings a new player into a clan"],
   ["Settings", "the app's settings panel"],
+  // The other tabs (stage 2).
+  ["points", "what players earn at operations and spend on loot (DKP is one kind); an alliance gives its points a name of its own"],
+  ["set of points", "one separately kept score, such as one for raids and one for sieges"],
+  ["standings", "the table of every player's points"],
+  ["season", "a period after which everyone's points start again"],
+  ["decay", "a share of everyone's points taken away every week or month"],
+  ["gear points", "in EPGP, the points that count what a player has been given (GP)"],
+  ["loot", "items won at an operation"],
+  ["drop", "one item that dropped at an operation and is to be given out"],
+  ["loot council", "the leaders decide who gets an item; it costs no points"],
+  ["price list", "the alliance's list of items with their prices in points"],
+  ["standby", "players kept on the bench for an operation, who still earn points"],
+  ["attendance", "who was in voice during an operation and for how long"],
+  ["turnout", "the share of the expected players who were there"],
+  ["crest", "a clan's small emblem image"],
+  ["ban", "shutting a player out of the alliance"],
+  ["game setup", "the alliance's description of its game: classes, roles, party size"],
+  ["role", "what a class does in a party: healer, tank, damage dealer"],
+  ["class", "a character's class in the game"],
+  ["character", "a player's character in the game"],
+  ["preset", "a ready-made setup to start from"],
+  ["log", "the record of who did what in the alliance"],
+  ["History", "the tab with past operations and their attendance"],
+  ["roster", "an operation's list of parties and who is in them"],
 ];
 
 const RULES = (lang, glossary) => `You translate the interface of Warcryer, a Windows and browser app with which clans and alliances of online role-playing games (MMORPGs) run their events and talk by voice. Its users are players. You translate from English into ${ALL[lang]}.
@@ -170,12 +205,14 @@ function requestsFor(lang, glossary, list) {
 // ---- What it would cost ----
 const tokens = (text) => Math.ceil(text.length / 3.2);
 const estimate = () => {
-  let inTok = 0, outTok = 0, calls = 0;
+  let inTok = 0, outTok = 0, calls = 0, atOnce = 0;
   for (const lang of LANGS) {
     if (missing[lang].length === 0) continue;
-    const glossary = read(path.join(LOCALES, "glossary", `${lang}.json`));
+    const glossary = read(path.join(GLOSSARIES, `${lang}.json`));
     const stand = glossary.terms ? glossary : { address: "x".repeat(60), terms: TERMS.map(([en]) => ({ en, term: en, note: "" })) };
-    if (!glossary.terms) { inTok += 900; outTok += 1500; calls++; }
+    // Settling the terms is asked at once, at the full price: all of them for a new language, the new ones otherwise.
+    const fresh = glossary.terms ? TERMS.filter(([en]) => !glossary.terms.some((t) => t.en === en)).length : TERMS.length;
+    if (fresh) { atOnce += ((900 + fresh * 30) * PRICE.in + (700 + fresh * 45) * PRICE.out) / 1e6; calls++; }
     for (const r of requestsFor(lang, stand, missing[lang])) {
       calls++;
       inTok += tokens(r.params.system[0].text) + tokens(r.params.messages[0].content);
@@ -184,7 +221,7 @@ const estimate = () => {
     }
   }
   const rate = NOW ? 1 : 0.5;
-  return { calls, inTok, outTok, dollars: ((inTok * PRICE.in + outTok * PRICE.out) / 1e6) * rate };
+  return { calls, inTok, outTok, dollars: ((inTok * PRICE.in + outTok * PRICE.out) / 1e6) * rate + atOnce };
 };
 const est = estimate();
 for (const lang of LANGS) console.log(`${lang.padEnd(6)} ${String(missing[lang].length).padStart(4)} of ${sentences.length} sentences to translate`);
@@ -214,12 +251,41 @@ const textOf = (message) => message.content.flatMap((b) => (b.type === "text" ? 
 const parse = (text) => { try { return JSON.parse(text); } catch { return null; } };
 
 // 1. The terms, for a language that has none yet.
-mkdirSync(path.join(LOCALES, "glossary"), { recursive: true });
+mkdirSync(GLOSSARIES, { recursive: true });
 const glossaries = {};
 for (const lang of LANGS) {
-  const file = path.join(LOCALES, "glossary", `${lang}.json`);
+  const file = path.join(GLOSSARIES, `${lang}.json`);
   const had = read(file);
-  if (had.terms) { glossaries[lang] = had; continue; }
+  if (had.terms) {
+    glossaries[lang] = had;
+    // Terms a later stage brought (points, loot, attendance): settled once too, in keeping with the ones there are.
+    const fresh = TERMS.filter(([en]) => !had.terms.some((t) => t.en === en));
+    if (fresh.length === 0 || missing[lang].length === 0) continue;
+    const more = await client.messages.create({
+      model: MODEL,
+      max_tokens: 8000,
+      output_config: { effort: "medium", format: { type: "json_schema", schema: GLOSSARY_SCHEMA } },
+      system: `You are settling the vocabulary of an app's ${ALL[lang]} edition before more of it is translated. The app is Warcryer: with it, clans and alliances of online role-playing games (MMORPGs) plan their events, build parties, keep points and loot, and talk by voice. Its users are players.`,
+      messages: [{
+        role: "user",
+        content: [
+          `These terms of the app are settled in ${ALL[lang]} already:`,
+          ...had.terms.map((t) => `- ${t.en} = ${t.term}`),
+          "",
+          `In keeping with them, give the ${ALL[lang]} term for each of the new English terms below, in its dictionary form: the word players of ${ALL[lang]} really use for it in games. Where players simply use the English word (DKP, EPGP, loot), keep it. In "note", say in a few English words anything a translator must know to use it right (its gender, an irregular plural, that it is not declined); leave it empty otherwise. Repeat the "address" line as it is: ${had.address}`,
+          "",
+          ...fresh.map(([en, what]) => `- ${en}${what ? `: ${what}` : ""}`),
+        ].join("\n"),
+      }],
+    });
+    count(more.usage, false);
+    const added = parse(textOf(more))?.terms?.filter((t) => fresh.some(([en]) => en === t.en)) ?? [];
+    if (more.stop_reason === "refusal" || added.length === 0) throw new Error(`no new terms for ${lang}: ${more.stop_reason}`);
+    glossaries[lang] = { ...had, terms: [...had.terms, ...added] };
+    writeFileSync(file, JSON.stringify(glossaries[lang], null, 1) + "\n");
+    console.log(`${lang}: ${added.length} more terms settled`);
+    continue;
+  }
   if (missing[lang].length === 0) continue;
   const res = await client.messages.create({
     model: MODEL,
@@ -300,10 +366,10 @@ for (const lang of LANGS) {
   const tidy = Object.fromEntries(Object.entries(catalogues[lang]).filter(([k]) => known.has(k)).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
   const left = sentences.filter((s) => problemWith(s.key, tidy[s.key], lang, s.counted) !== "");
   writeFileSync(path.join(LOCALES, `${lang}.json`), JSON.stringify(tidy, null, 1) + "\n");
-  console.log(`${lang}: ${Object.keys(tidy).length} sentences in src/locales/${lang}.json${left.length ? `; ${left.length} STILL MISSING: ${left.slice(0, 3).map((s) => JSON.stringify(s.key.slice(0, 40))).join(", ")}` : ""}`);
+  console.log(`${lang}: ${Object.keys(tidy).length} sentences in ${path.relative(process.cwd(), path.join(LOCALES, `${lang}.json`))}${left.length ? `; ${left.length} STILL MISSING: ${left.slice(0, 3).map((s) => JSON.stringify(s.key.slice(0, 40))).join(", ")}` : ""}`);
 }
 const dollars =
   (used.in * PRICE.in + used.out * PRICE.out + used.cacheRead * PRICE.cacheRead + used.cacheWrite * PRICE.cacheWrite) / 1e6 +
   ((used.batchIn * PRICE.in + used.batchOut * PRICE.out + used.batchCacheRead * PRICE.cacheRead + used.batchCacheWrite * PRICE.cacheWrite) / 1e6) * 0.5;
 console.log(`used: ${JSON.stringify(used)}`);
-console.log(`cost: about $${dollars.toFixed(2)} (Opus 5.5 at $${PRICE.in} in and $${PRICE.out} out per million tokens, half for the batch)`);
+console.log(`cost: about $${dollars.toFixed(2)} (${CHOSEN.name} at $${PRICE.in} in and $${PRICE.out} out per million tokens, half for the batch)`);
