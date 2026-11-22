@@ -23,6 +23,8 @@ export type StripState = {
   locked: boolean;
   /** The operation's text chat, for the chat window the strip opens into. */
   chat?: ChatView;
+  /** The language the app is shown in: the strip is a window of its own and follows the main one. */
+  lang?: string;
 };
 
 export type ToStrip = { type: "state"; state: StripState };

@@ -6,7 +6,7 @@ import { getToken, signOut } from "./auth";
 import { CONTROL_URLS, isDesktop, SERVER } from "./config";
 import { ControlClient, type ControlState, type GroupInfo, type NetSet, type PresenceEntry } from "./control";
 import { refreshGame, useGame } from "./game";
-import { setLanguage, useLanguage } from "./i18n";
+import { language, setLanguage, useLanguage } from "./i18n";
 import { usePendingInvite } from "./invite";
 import { engine } from "./runtime";
 import { useSettings } from "./settings";
@@ -221,6 +221,7 @@ export default function App() {
             return { name: sp.name, crest: sp.clanId !== null && version ? crestUrl(sp.clanId, version) : null, tag: sp.clanTag };
           }),
         })),
+      lang: language(),
       muted: eng.muteAll,
       deafened: eng.deafened,
       locked: eng.broadcastLocked,

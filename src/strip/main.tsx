@@ -6,6 +6,7 @@
 // in a window that can be sized and made see-through, so that it can sit on
 // the game where the game's own chat box was. A chat key (Settings, Keys)
 // puts the keyboard in its line; Enter sends and gives the keyboard back.
+import { rememberedLanguage, setLanguage, useLanguage } from "../i18n";
 import { d, t } from "../words";
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
@@ -25,6 +26,7 @@ const PADDING = 12;
 const STALE_MS = 4000;
 
 function Strip() {
+  useLanguage();
   const [state, setState] = useState<StripState | null>(null);
   const [stale, setStale] = useState(false);
   const channel = useRef<BroadcastChannel | null>(null);
@@ -98,6 +100,8 @@ function Strip() {
       last.current = Date.now();
       setStale(false);
       setState(e.data.state);
+      // The strip has its own copy of the app's sentences: it shows them in the language the main window is in.
+      if (e.data.state.lang) void setLanguage(e.data.state.lang === "en" ? null : e.data.state.lang);
     };
     ch.postMessage({ type: "hello" } satisfies FromStrip);
     const timer = window.setInterval(() => {
@@ -325,6 +329,8 @@ function Close({ channel }: { channel: React.RefObject<BroadcastChannel | null> 
 
 // The window itself is see-through (tauri.conf.json); only what is drawn here covers the game.
 for (const el of [document.documentElement, document.body, document.getElementById("root")!]) el.style.background = "transparent";
+// The language chosen last time, until the main window says which it is in now.
+void setLanguage(rememberedLanguage());
 // not shown: the strip has no title bar.
 document.title = "Compact strip";
 createRoot(document.getElementById("root")!).render(<Strip />);
