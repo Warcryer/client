@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest   # GitHub-hosted runner, as SignPath requires
+    runs-on: windows-latest   # a GitHub-hosted runner: a clean machine for every build
     environment: ${{ startsWith(github.ref, 'refs/tags/v') && 'release' || '' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -178,7 +178,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          notes="Not code-signed yet, so Windows SmartScreen warns on a first install: choose More info, then Run anyway. This build passed the automated test of the installed app on Windows."
+          notes="Not code-signed, so Windows SmartScreen warns on a first install: choose More info, then Run anyway. This build passed the automated test of the installed app on Windows."
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             gh release create "$GITHUB_REF_NAME" installer/*.exe installer/*.sig installer/latest.json -R "$GITHUB_REPOSITORY" \
               --title "$GITHUB_REF_NAME" --prerelease --notes "Test build; not offered as an automatic update. $notes"
