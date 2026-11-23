@@ -11,6 +11,7 @@ import { partySizeOf, useGame } from "../game";
 import { d, t } from "../words";
 import { useApp } from "./app-context";
 import { Help } from "./tips";
+import { TargetsButton } from "./Targets";
 
 type Who = { id: number; name: string; classTag: string | null };
 /** An operation's parties for looking at (`op.glance`): far less than the board's `op.get`, which is asked for by a few. */
@@ -124,9 +125,13 @@ export function OperationPanel() {
       </div>
       <div className="flex shrink-0 flex-col gap-2 border-b border-line px-3 py-2">
         <WherePicker />
-        <button type="button" className="btn btn-quiet py-1 text-sm" onClick={() => go("roster", op.id)}>
-          {t("Open the roster board")}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className="btn btn-quiet min-w-0 flex-1 py-1 text-sm" onClick={() => go("roster", op.id)}>
+            {t("Open the roster board")}
+          </button>
+          {/* The operation's priority targets: the whole list, and for its leaders the way to change it mid-fight. */}
+          <TargetsButton opId={op.id} />
+        </div>
       </div>
       {data !== "none" && (
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto" data-op-parties>

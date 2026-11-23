@@ -5,7 +5,7 @@
 
 import { d, t } from "../words";
 import { useState } from "react";
-import { rpc, type CpPlaced, type OpDetail, type Party, type Person } from "../api";
+import { rpc, type CpPlaced, type OpDetail, type Party, type Person, type TargetsBoard } from "../api";
 import { partySizeOf, roleOf, useGame } from "../game";
 import { ConfirmButton, useAct, useApp, useLoad } from "./app-context";
 import { AttendancePanel } from "./Attendance";
@@ -19,6 +19,7 @@ import { tn, tx } from "../i18n";
 import { CharacterLine } from "./MyCharacters";
 import { SignupControl } from "./Signup";
 import { Help } from "./tips";
+import { TargetsBox, TargetsTitle } from "./Targets";
 
 /** What the marks on a player's card mean, shown behind the board's help icon. */
 const legend = (PARTY_SIZE: number, needs: string[]) => [
@@ -71,6 +72,11 @@ export function Board({ opId, onBack }: { opId: number; onBack: () => void }) {
   const online = new Set(data.onlineIds);
   const person = new Map(op.people.map((p) => [p.userId, p]));
   const partyOf = (userId: number) => op.parties.find((p) => p.memberIds.includes(userId)) ?? null;
+  // The priority targets, with the names the list needs taken from the board itself. A server before 0.42 sends none.
+  const targetsData: TargetsBoard | null = data.targets
+    ? { ...data.targets, parties: op.parties.map((p) => ({ id: p.id, name: p.name })), clans: op.clans, people: op.people.map((p) => ({ id: p.userId, name: p.name, clanTag: p.clanTag })) }
+    : null;
+  const canTarget = !!targetsData && targetsData.open && (targetsData.may.all || targetsData.may.clanIds.length > 0 || targetsData.may.partyIds.length > 0 || targetsData.may.userIds.length > 0);
 
   // Who is coming, and as which character: a sign-up may name another character than the profile's.
   const signup = new Map((op.signups ?? []).map((x) => [x.userId, x]));
@@ -332,6 +338,14 @@ export function Board({ opId, onBack }: { opId: number; onBack: () => void }) {
         <p className="text-xs text-text-muted -mt-2">
           {t("Players stay in their lounge until you start the operation; starting it pulls everyone into their party automatically.")}
         </p>
+      )}
+
+      {/* Priority targets: enemies' names given to the operation, a clan, a party or a player. Shown once there are any, and always to whoever may set them. */}
+      {targetsData && (targetsData.targets.length > 0 || canTarget) && (
+        <div className="panel flex flex-col gap-2 px-3 py-2" data-board-targets>
+          <TargetsTitle />
+          <TargetsBox opId={opId} data={targetsData} onChanged={reload} />
+        </div>
       )}
 
       {/* Who was in voice, once it has started: for the organisers, and clan leadership about their own */}

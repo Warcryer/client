@@ -8,7 +8,7 @@
 // own.
 
 import { d, t } from "./words";
-import type { ChatEvent, ChatOrder, ControlClient, NetSet, ReadyAsk, ReadyState } from "./control";
+import type { ChatEvent, ChatOrder, ChatTarget, ControlClient, NetSet, ReadyAsk, ReadyState } from "./control";
 import type { NetKind } from "./settings";
 
 export type ChatChannel = { room: string; net: NetKind; label: string; /** As NetGrant's: the name's sentence, for said(). */ say?: string; write: boolean };
@@ -36,6 +36,8 @@ export type ChatView = {
   readyCheck: boolean;
   /** The order pinned on the operation, if there is one. */
   order: ChatOrder | null;
+  /** The priority targets that apply to this player, nearest first (their own, their party's, their clan's, everyone's). */
+  targets: ChatTarget[];
   /** A ready check this player has been asked and has not answered. `endsAt` is on this computer's clock. */
   ready: ReadyAsk | null;
   /** How the ready check stands or ended, for a little while after it ends. Names only for those who run the operation. */
@@ -46,7 +48,7 @@ export type ChatView = {
   called: { id: number; name: string; text: string; own: boolean } | null;
 };
 
-const EMPTY: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, ready: null, tally: null, calls: [], called: null };
+const EMPTY: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, targets: [], ready: null, tally: null, calls: [], called: null };
 /** Tabs in the order a player reaches for them: their own party first, the orders last and always in sight. */
 const ORDER: NetKind[] = ["party", "reserve", "clan", "command", "broadcast", "group", "lounge"];
 const KEEP = 300;
@@ -79,6 +81,19 @@ const add = (room: string, line: ChatLineView, unread: boolean) => {
   if (line.id > 0 && had.some((l) => l.id === line.id)) return;
   set({ ...view, lines: { ...view.lines, [room]: [...had, line].slice(-KEEP) }, unread: unread && room !== watching ? { ...view.unread, [room]: true } : view.unread });
 };
+
+/** What makes a list of targets a different list: its names and notes, in order. */
+export const targetsKey = (targets: ChatTarget[]): string => targets.map((x) => `${x.name}\n${x.note ?? ""}`).join("\n\n");
+/**
+ * The player's targets changed while they were on the operation: a sound, and a note where their party
+ * talks, so that it is noticed in a fight. (The names stand at the top of the chat either way.)
+ */
+function targetsChanged(targets: ChatTarget[]) {
+  const find = (net: NetKind) => view.channels.find((c) => c.net === net)?.room;
+  const where = find("party") ?? find("reserve") ?? find("broadcast") ?? view.channels[0]?.room;
+  if (where) add(where, note(targets.length ? t(`Your targets now: ${d(targets.map((x) => x.name).join(", "))}`) : t("You have no targets now.")), false);
+  chat.onCue("order");
+}
 
 function onEvent(e: ChatEvent) {
   if (e.type === "chat") {
@@ -115,6 +130,11 @@ function onEvent(e: ChatEvent) {
     const fresh = e.order !== null && e.order.at !== view.order?.at;
     set({ ...view, order: e.order });
     if (fresh) chat.onCue("order");
+  } else if (e.type === "targets") {
+    if (!view.operation || !Array.isArray(e.targets)) return;
+    const fresh = targetsKey(e.targets) !== targetsKey(view.targets);
+    set({ ...view, targets: e.targets });
+    if (fresh) targetsChanged(e.targets);
   } else if (e.type === "ready") {
     if (!view.operation) return;
     set({ ...view, ready: { ...e.check, endsAt: Date.now() + READY_MS } });
@@ -173,6 +193,10 @@ export const chat = {
       }
     }
     if (watching && !channels.some((c) => c.room === watching)) watching = null;
+    // As the net set says, when it says: an older server says nothing of targets.
+    const targets = !op ? [] : next.chat && Array.isArray(next.chat.targets) ? next.chat.targets : sameOp ? view.targets : [];
+    // Moved to a party with other names: said like any other change. Arriving on the operation says nothing; the names are there to read.
+    const retargeted = op !== null && sameOp && targetsKey(targets) !== targetsKey(view.targets);
     set({
       operation: op,
       between,
@@ -188,11 +212,13 @@ export const chat = {
       readyCheck: next.chat?.readyCheck === true,
       // As the net set says, when it says: an older server says nothing, and what the app knows stays.
       order: !op ? null : next.chat && "order" in next.chat ? (next.chat.order ?? null) : sameOp ? view.order : null,
+      targets,
       ready: !op ? null : next.chat?.ready ? { ...next.chat.ready, endsAt: view.ready?.id === next.chat.ready.id ? view.ready.endsAt : Date.now() + READY_MS } : sameOp ? view.ready : null,
       tally: sameOp ? view.tally : null,
       calls: next.calls ?? [],
       called: sameOp ? view.called : null,
     });
+    if (retargeted) targetsChanged(targets);
   },
   /** The connection is back after a gap: ask again for what was said meanwhile. */
   resync() {

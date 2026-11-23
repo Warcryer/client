@@ -5,7 +5,8 @@
 
 import { tn } from "../i18n";
 import { useEffect, useRef, useState } from "react";
-import type { ChatChannel, ChatLineView, ChatView } from "../chat";
+import { targetsKey, type ChatChannel, type ChatLineView, type ChatView } from "../chat";
+import { TargetChips } from "./TargetChips";
 import { d, said, t } from "../words";
 import { NET_TEXT } from "./net-style";
 
@@ -134,6 +135,19 @@ export function ChatPanel({
     const timer = window.setTimeout(() => setFlash(false), 6000);
     return () => window.clearTimeout(timer);
   }, [orderAt]);
+  // So do the player's targets when they change (not when the chat first shows them).
+  const targets = view.targets ?? [];
+  const targetsNow = targetsKey(targets);
+  const targetsSeen = useRef(targetsNow);
+  const [flashTargets, setFlashTargets] = useState(false);
+  useEffect(() => {
+    if (targetsSeen.current === targetsNow) return;
+    targetsSeen.current = targetsNow;
+    if (!targetsNow) return;
+    setFlashTargets(true);
+    const timer = window.setTimeout(() => setFlashTargets(false), 6000);
+    return () => window.clearTimeout(timer);
+  }, [targetsNow]);
   // While a ready check runs, the seconds left are counted down here.
   const running = view.ready !== null || (view.tally !== null && !view.tally.done);
   const [, tick] = useState(0);
@@ -183,6 +197,12 @@ export function ChatPanel({
               {t("clear")}
             </button>
           )}
+        </div>
+      )}
+      {view.operation && targets.length > 0 && (
+        <div className={`flex shrink-0 items-baseline gap-2 border-b border-gold-dim/40 px-2 py-0.5 transition-colors duration-700 ${flashTargets ? "bg-danger/20" : ""}`} data-chat-targets>
+          <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-danger">{t("Targets")}</span>
+          <TargetChips targets={targets} compact={compact} onCopied={onHandBack} />
         </div>
       )}
       {view.ready && (

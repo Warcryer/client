@@ -14,10 +14,11 @@ import { NET_TEXT } from "../ui/net-style";
 import type { ChatView } from "../chat";
 import { AudioToggles } from "../ui/AudioToggles";
 import { ChatPanel, type ChatActions } from "../ui/ChatPanel";
+import { TargetChips } from "../ui/TargetChips";
 import { loadPrefs, PREFS_KEY, savePrefs, STRIP_W, type ChatPrefs } from "./prefs";
 import { CHANNEL, POSITION_KEY, type FromStrip, type StripState, type ToStrip } from "./feed";
 
-const NO_CHAT: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, ready: null, tally: null, calls: [], called: null };
+const NO_CHAT: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, targets: [], ready: null, tally: null, calls: [], called: null };
 const invoke = (cmd: string, args?: Record<string, unknown>) =>
   import("@tauri-apps/api/core").then(({ invoke }) => invoke<unknown>(cmd, args)).catch(() => undefined);
 const LINE = 22;
@@ -140,7 +141,9 @@ function Strip() {
     void invoke("chat_return");
   };
   const lines = !stale && state ? state.lines : [];
-  const rows = Math.max(1, lines.length) + (state?.locked && !stale ? 1 : 0) + (chatNow.order ? 1 : 0) + (chatNow.ready ? 1 : 0) + (chatNow.called ? 1 : 0);
+  // The player's priority targets, while they are on an operation: one line of the folded strip.
+  const stripTargets = chatNow.operation ? (chatNow.targets ?? []) : [];
+  const rows = Math.max(1, lines.length) + (state?.locked && !stale ? 1 : 0) + (chatNow.order ? 1 : 0) + (stripTargets.length ? 1 : 0) + (chatNow.ready ? 1 : 0) + (chatNow.called ? 1 : 0);
 
   // Open, the window is the size the player gave it, set once as it opens and then left alone: what
   // happens in the chat (a call, an order, someone speaking) never resizes it. Folded, it is as tall as
@@ -275,6 +278,12 @@ function Strip() {
     </div>
     {!prefs.open && chatNow.order && (
       <div className="truncate px-2 font-semibold leading-[22px] text-net-broadcast" data-strip-order>{chatNow.order.text}</div>
+    )}
+    {!prefs.open && stripTargets.length > 0 && (
+      <div className="flex items-baseline gap-2 px-2 leading-[22px]" data-strip-targets>
+        <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-danger">{t("Targets")}</span>
+        <TargetChips targets={stripTargets} oneLine onCopied={() => void invoke("chat_return")} />
+      </div>
     )}
     {!prefs.open && chatNow.called && (
       <div className="truncate px-2 leading-[22px]" data-strip-call>

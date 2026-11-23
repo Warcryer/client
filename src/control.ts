@@ -37,7 +37,13 @@ export type NetSet = {
  * alliance allows it (`readyCheck`), ask whether everyone is ready. `order` and `ready` are how things stand
  * as the net set is sent; changes after that come as events. The last four are absent on a server before 0.23.
  */
-export type ChatInfo = { moderates: boolean; muted: boolean; mutedIds?: number[]; organises?: boolean; readyCheck?: boolean; order?: ChatOrder | null; ready?: ReadyAsk | null; /** Between operations: rooms where this player may remove others' lines. */ modRooms?: string[] };
+export type ChatInfo = { moderates: boolean; muted: boolean; mutedIds?: number[]; organises?: boolean; readyCheck?: boolean; order?: ChatOrder | null; ready?: ReadyAsk | null; /** The priority targets that apply to this player (server decision 73); absent on a server before 0.42. */ targets?: ChatTarget[]; /** Between operations: rooms where this player may remove others' lines. */ modRooms?: string[] };
+/**
+ * A priority target as a player is shown it: an enemy's name, exactly as their leader typed it, with a few
+ * words about them if the leader gave any. `scope` says whom it was given to: this player, their party, their
+ * clan, or everyone on the operation.
+ */
+export type ChatTarget = { id: number; name: string; note: string | null; scope: "all" | "clan" | "party" | "player" };
 /** One player of the alliance with the app open (decision 64, step 1b). */
 export type PresenceEntry = { userId: number; name: string; classTag: string | null; clanId: number | null; clanTag: string | null; where: "lounge" | "operation"; groupId: number | null; away: boolean };
 /** Who is online: the whole list (`full`), or what changed since the last. */
@@ -59,6 +65,8 @@ export type ChatEvent =
   | { type: "chat.translated"; room: string; id: number; lang: string; text: string }
   | { type: "chat.refused"; n: number | null; why: string }
   | { type: "order"; order: ChatOrder | null }
+  /** This player's priority targets changed: the whole list as it now stands. */
+  | { type: "targets"; targets: ChatTarget[] }
   | { type: "ready"; check: ReadyAsk }
   | ({ type: "ready.state" } & ReadyState)
   | ({ type: "ready.done" } & ReadyState);
@@ -310,7 +318,7 @@ export class ControlClient {
         this.onHello(msg.user as Me);
       } else if (msg.type === "netset") {
         this.onNetSet(msg as unknown as NetSet);
-      } else if (typeof msg.type === "string" && /^(chat|order|ready)(\.|$)/.test(msg.type)) {
+      } else if (typeof msg.type === "string" && /^(chat|order|ready|targets)(\.|$)/.test(msg.type)) {
         this.onChat(msg as unknown as ChatEvent);
       } else if (msg.type === "presence" && Array.isArray(msg.set) && Array.isArray(msg.gone)) {
         this.onPresence({ full: msg.full === true, set: msg.set as PresenceEntry[], gone: msg.gone as number[] });

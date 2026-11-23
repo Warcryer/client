@@ -178,12 +178,22 @@ export type OpView = {
   signups?: Signup[];
 };
 export type OpPerms = { isOrganiser: boolean; leadClanIds: number[]; canView: boolean; canEditParties: boolean };
+/** Whom a priority target is given to (server decision 73): everyone on the operation, a clan, a party or one player. */
+export type TargetScope = "all" | "clan" | "party" | "player";
+/** One entry of an operation's list of priority targets: an enemy's name, exactly as typed, and whom it is given to. */
+export type TargetRow = { id: number; name: string; note: string | null; scope: TargetScope; clanId: number | null; partyId: number | null; userId: number | null };
+/** An operation's priority targets for the viewer, with whom they may give targets to. */
+export type TargetsView = { targets: TargetRow[]; /** False once the operation has ended. */ open: boolean; may: { all: boolean; clanIds: number[]; partyIds: number[]; userIds: number[] } };
+/** The same with the names around it (`op.targets`), for a screen that has not loaded the board. */
+export type TargetsBoard = TargetsView & { parties: { id: number; name: string }[]; clans: { id: number; name: string; tag: string }[]; people: { id: number; name: string; clanTag: string | null }[] };
 export type OpDetail = {
   op: OpView;
   perms: OpPerms;
   canRunOp: boolean;
   onlineIds: number[];
   cps: BoardCp[];
+  /** The operation's priority targets; absent on a server before 0.42. */
+  targets?: TargetsView;
   /** Constant parties I lead in this operation's clans, and how many of their members have answered. */
   myCps?: { id: number; name: string; members: number; answered: number }[];
 };
