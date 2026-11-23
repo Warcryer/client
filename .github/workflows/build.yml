@@ -178,7 +178,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          notes="Not code-signed, so Windows SmartScreen warns on a first install: choose More info, then Run anyway. This build passed the automated test of the installed app on Windows."
+          notes="Not code-signed yet, so Windows SmartScreen warns on a first install: choose More info, then Run anyway. This build passed the automated test of the installed app on Windows."
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             gh release create "$GITHUB_REF_NAME" installer/*.exe installer/*.sig installer/latest.json -R "$GITHUB_REPOSITORY" \
               --title "$GITHUB_REF_NAME" --prerelease --notes "Test build; not offered as an automatic update. $notes"

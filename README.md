@@ -50,7 +50,7 @@ The hosted service has [terms of use](TERMS.md), a [privacy policy](PRIVACY.md) 
 
 Download the latest installer from [Releases](../../releases) and run it. It installs for the current Windows user only and needs no administrator rights.
 
-The installer is not code-signed, so Windows SmartScreen warns: choose **More info**, then **Run anyway**. Why, and what stands in for a signature, is under [Code signing policy](#code-signing-policy).
+The installer is not code-signed yet, so Windows SmartScreen warns: choose **More info**, then **Run anyway**. Why, and what stands in for a signature, is under [Code signing policy](#code-signing-policy).
 
 ## Updates
 
@@ -66,9 +66,9 @@ Open **Windows Settings → Apps → Installed apps**, find **Warcryer** and cho
 
 ## Code signing policy
 
-Releases are not code-signed. A certificate that Windows trusts has to be bought, and this project does not buy one; it applied for the free signing that the SignPath Foundation gives to open-source projects and was not accepted. So Windows SmartScreen warns on a first install.
+Releases are not code-signed yet, so Windows SmartScreen warns on a first install. The project applied for the free signing that the SignPath Foundation gives to open-source projects and was not accepted; signing with a certificate of its own is being arranged.
 
-What stands in for a signature:
+Until then, what stands in for a signature:
 
 - Every release is built from this repository by [GitHub Actions](.github/workflows/build.yml) on GitHub-hosted runners, only from a commit on `main`, and only after the project's owner has approved that build.
 - It is published only after the installed app passes an [automated test](.github/workflows/test-windows.yml) on a clean Windows machine.
