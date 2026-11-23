@@ -108,7 +108,7 @@ function Entry({ opId, target, data, may, onChanged }: { opId: number; target: T
           <input className="field min-w-0 flex-1 py-1" value={note} maxLength={40} onChange={(e) => setNote(e.target.value)} placeholder={t("A few words, if you like")} aria-label={t("A few words about the target")} autoComplete="off" />
           <ForSelect data={data} value={to} onChange={setTo} label={t("Whom the target is for")} />
           <button type="submit" className="btn px-2 py-0.5 text-xs" disabled={act.busy || !name.trim()}>{t("Save")}</button>
-          <button type="button" className="btn btn-quiet px-2 py-0.5 text-xs" disabled={act.busy} onClick={() => run("op.target.change", { first: true })} data-target-first>{t("Put first")}</button>
+          <button type="button" className="btn btn-quiet px-2 py-0.5 text-xs" disabled={act.busy} onClick={() => run("op.target.change", { first: true })} data-target-first>{t("Put first on the list")}</button>
           <button type="button" className="cursor-pointer text-xs text-text-muted hover:text-gold" onClick={() => setEditing(false)}>{t("Cancel")}</button>
         </form>
         {act.error && <p className="text-xs text-danger" role="alert">{act.error}</p>}
@@ -136,7 +136,7 @@ function Entry({ opId, target, data, may, onChanged }: { opId: number; target: T
       {may && (
         <>
           <button type="button" className="cursor-pointer text-[11px] text-text-muted hover:text-gold" onClick={() => setEditing(true)} aria-label={t(`Change the target ${d(target.name)}`)} data-target-change>
-            {t("change")}
+            {t("Edit")}
           </button>
           <button type="button" className="cursor-pointer text-text-muted hover:text-danger" disabled={act.busy} onClick={() => run("op.target.remove", {})} aria-label={t(`Remove the target ${d(target.name)}`)} data-target-remove>
             ×
@@ -198,7 +198,7 @@ export function TargetsBox({
           }}
           data-targets-add
         >
-          <span className="text-xs text-text-muted">{t("For")}</span>
+          <span className="text-xs text-text-muted">{t("Target for")}</span>
           <ForSelect data={data} value={chosen} onChange={setTo} label={t("Whom the target is for")} attr="data-targets-for" />
           <input
             ref={input}
