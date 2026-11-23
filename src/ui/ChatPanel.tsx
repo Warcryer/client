@@ -135,19 +135,21 @@ export function ChatPanel({
     const timer = window.setTimeout(() => setFlash(false), 6000);
     return () => window.clearTimeout(timer);
   }, [orderAt]);
-  // So do the player's targets when they change (not when the chat first shows them).
+  // So do the player's targets when they change (not when the chat first shows them). An empty list is not
+  // remembered: a chat window that loses its app for a moment shows none, and the same names coming back are no news.
   const targets = view.targets ?? [];
   const targetsNow = targetsKey(targets);
   const targetsSeen = useRef(targetsNow);
   const [flashTargets, setFlashTargets] = useState(false);
+  const flashTimer = useRef<number | undefined>(undefined);
   useEffect(() => {
-    if (targetsSeen.current === targetsNow) return;
+    if (!targetsNow || targetsSeen.current === targetsNow) return;
     targetsSeen.current = targetsNow;
-    if (!targetsNow) return;
     setFlashTargets(true);
-    const timer = window.setTimeout(() => setFlashTargets(false), 6000);
-    return () => window.clearTimeout(timer);
+    window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlashTargets(false), 6000);
   }, [targetsNow]);
+  useEffect(() => () => window.clearTimeout(flashTimer.current), []);
   // While a ready check runs, the seconds left are counted down here.
   const running = view.ready !== null || (view.tally !== null && !view.tally.done);
   const [, tick] = useState(0);
