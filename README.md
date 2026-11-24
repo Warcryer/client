@@ -2,7 +2,7 @@
 
 # Warcryer
 
-Voice chat for large gaming alliances and clans: an open-source alternative to TeamSpeak, where the event roster decides who hears whom. The hosted service is in beta and free while it is. Website: <https://warcryer.org>.
+Warcryer is clan and alliance management for MMORPG players, with voice built in: planning operations, the roster, voice where the event roster decides who hears whom, attendance, points and loot. The hosted service is in beta and free while it is. Website: <https://warcryer.org>. What it is, in plain facts: <https://warcryer.org/about/>.
 
 This is the Windows client, built on [Tauri](https://tauri.app) and [LiveKit](https://livekit.io). MIT licensed.
 
