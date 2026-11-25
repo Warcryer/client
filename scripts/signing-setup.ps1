@@ -54,9 +54,12 @@ $probe = Join-Path $work "probe.exe"
 Copy-Item "$env:SystemRoot\System32\where.exe" $probe
 & "$PSScriptRoot\sign.ps1" $probe
 if ($LASTEXITCODE -ne 0) { throw "signing-setup: the trial signature failed. Check the three SIGNING_ variables, that the endpoint is the region the account and the profile were made in, and that the app registration has the role 'Artifact Signing Certificate Profile Signer' on the certificate profile." }
-$sig = Get-AuthenticodeSignature $probe
-if ($sig.Status -ne "Valid") { throw "signing-setup: the trial signature is '$($sig.Status)': $($sig.StatusMessage)" }
-Write-Host "Signing works. Publisher on the certificate: $($sig.SignerCertificate.Subject)"
+# Asked of SignTool, which reads the signature in the file itself (Windows' own check would answer with the
+# catalogue signature Microsoft gives its programs, whatever was added to the copy).
+$verify = & $env:SIGNTOOL verify /pa /v $probe 2>&1 | Out-String
+if ($LASTEXITCODE -ne 0) { throw "signing-setup: the trial signature does not verify:`n$verify" }
+$publisher = ([regex]::Match($verify, "Issued to:\s*(.+)")).Groups[1].Value.Trim()
+Write-Host "Signing works. Publisher on the certificate: $publisher"
 
 # For the build: where the tools are, and the piece of Tauri configuration that makes it sign.
 $sign = (Join-Path $PSScriptRoot "sign.ps1")
