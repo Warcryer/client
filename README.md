@@ -51,7 +51,7 @@ The hosted service has [terms of use](TERMS.md), a [privacy policy](PRIVACY.md) 
 
 Download the latest installer from [Releases](../../releases) and run it. It installs for the current Windows user only and needs no administrator rights.
 
-The installer is not code-signed yet, so Windows SmartScreen warns: choose **More info**, then **Run anyway**. Why, and what stands in for a signature, is under [Code signing policy](#code-signing-policy).
+The installer and the app are code-signed. The signature is new, so until it has built up standing with Windows SmartScreen a first install may still show a warning: choose **More info**, then **Run anyway**. See [Code signing policy](#code-signing-policy).
 
 ## Updates
 
@@ -67,9 +67,11 @@ Open **Windows Settings → Apps → Installed apps**, find **Warcryer** and cho
 
 ## Code signing policy
 
-Releases are not code-signed yet, so Windows SmartScreen warns on a first install. The project applied for the free signing that the SignPath Foundation gives to open-source projects and was not accepted; signing with a certificate of its own is being arranged.
+From version 0.42.1, releases are code-signed with a certificate issued through Microsoft's Azure Artifact Signing, after an identity check by Microsoft. The signing key never leaves Azure: the release build signs in to Azure with a one-time pass that GitHub gives only to builds of a version tag, after the project's owner has approved that build, and no password for it is stored anywhere. The build signs the app, its uninstaller and the installer, and checks that the installer and the app inside it carry a valid, time-stamped signature before anything is published. Builds of ordinary commits are not code-signed.
 
-Until then, what stands in for a signature:
+A new signature has no standing with Windows SmartScreen at first, so for a while a first install may still show a warning: choose **More info**, then **Run anyway**.
+
+Beside the signature:
 
 - Every release is built from this repository by [GitHub Actions](.github/workflows/build.yml) on GitHub-hosted runners, only from a commit on `main`, and only after the project's owner has approved that build.
 - It is published only after the installed app passes an [automated test](.github/workflows/test-windows.yml) on a clean Windows machine.
