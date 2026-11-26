@@ -50,7 +50,7 @@ export type ChatView = {
 
 const EMPTY: ChatView = { operation: null, between: false, modRooms: [], channels: [], lines: {}, unread: {}, moderates: false, muted: false, mutedIds: [], me: null, organises: false, readyCheck: false, order: null, targets: [], ready: null, tally: null, calls: [], called: null };
 /** Tabs in the order a player reaches for them: their own party first, the orders last and always in sight. */
-const ORDER: NetKind[] = ["party", "reserve", "clan", "command", "broadcast", "group", "lounge"];
+const ORDER: NetKind[] = ["party", "reserve", "clan", "command", "allies", "broadcast", "group", "lounge"];
 const KEEP = 300;
 
 let view: ChatView = EMPTY;

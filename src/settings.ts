@@ -2,9 +2,9 @@
 
 import { useSyncExternalStore } from "react";
 
-export type NetKind = "broadcast" | "command" | "clan" | "party" | "reserve" | "lounge" | "group";
+export type NetKind = "broadcast" | "command" | "clan" | "party" | "reserve" | "lounge" | "group" | "allies";
 /** Highest priority first. */
-export const NET_ORDER: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "group", "lounge"];
+export const NET_ORDER: NetKind[] = ["broadcast", "command", "allies", "clan", "party", "reserve", "group", "lounge"];
 /** What a key can be bound to. A lounge and a group use the Party key: all three are "talk to the people around me". */
 /** "broadcastLock" is a toggle for the event leader: Broadcast stays open for a briefing without a key held. */
 /** "chat" (trial) puts the keyboard in the chat line of the strip's window; it is not a talk key. */
@@ -66,12 +66,12 @@ const DEFAULTS: Settings = {
   echoCancellation: true,
   noiseSuppression: true,
   autoGainControl: true,
-  bindings: { broadcast: null, command: null, clan: null, party: null, reserve: null, muteAll: null, deafen: null, broadcastLock: null, chat: null, ready: null, call1: null, call2: null, call3: null, call4: null, call5: null, call6: null, call7: null, call8: null },
+  bindings: { broadcast: null, command: null, allies: null, clan: null, party: null, reserve: null, muteAll: null, deafen: null, broadcastLock: null, chat: null, ready: null, call1: null, call2: null, call3: null, call4: null, call5: null, call6: null, call7: null, call8: null },
   source: "auto",
   partyMode: "ptt",
   vadThresholdDb: -45,
   vadHoldMs: 400,
-  netVolume: { broadcast: 1, command: 1, clan: 1, party: 1, reserve: 1, lounge: 1, group: 1 },
+  netVolume: { broadcast: 1, command: 1, allies: 1, clan: 1, party: 1, reserve: 1, lounge: 1, group: 1 },
   cues: true,
   cueVolume: 0.5,
   alwaysAdmin: false,

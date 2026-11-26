@@ -19,6 +19,7 @@ import { SUPPORT_URL } from "../config";
 import { ClanCrest, ClanMark, openInBrowser } from "./common";
 import { Help } from "./tips";
 import { AuditLog } from "./AuditLog";
+import { AlliesSection } from "./Allies";
 
 function Section({ title, help, children }: { title: string; help?: string; children: React.ReactNode }) {
   return (
@@ -175,6 +176,8 @@ export function AllianceView() {
       {act.error && <p className="text-danger" role="alert">{act.error}</p>}
 
       {data.alliance && <AllianceSelf alliance={data.alliance} loungeOn={!!data.loungeOn} broadcastOn={!!data.broadcastOn} users={data.users} owner={owner} busy={act.busy} call={call} plan={data.plan ?? null} />}
+
+      <AlliesSection users={data.users} />
 
       <Section title={t("Clans")} help={t("Every player belongs to one clan, and voice follows it: a clan has its own lounge between operations and its own Clan net during them.\nRename changes a clan's name and tag; its members, constant parties, crest and invite links stay. Delete is offered once a clan is empty or has only its leader left.\nCreate the clan here, then appoint its leader. The leader approves members and appoints officers. Appointing a new leader makes the previous one an ordinary member.")}>
         {data.clans.length === 0 && <p className="text-text-muted">{t("No clans yet. Create the first one below, then appoint its leader.")}</p>}

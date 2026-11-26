@@ -17,6 +17,7 @@ import { Help } from "./tips";
 const KEYS: { target: Exclude<BindTarget, CallTarget>; label: string; note: string }[] = [
   { target: "broadcast", label: "Broadcast", note: "Event leader and deputies" },
   { target: "command", label: "Command", note: "Leaders" },
+  { target: "allies", label: "Allies", note: "Leaders of the alliances in your pact" },
   { target: "clan", label: "Clan", note: "Clan leader and officers" },
   { target: "party", label: "Party", note: "Your party, and the lounge" },
   { target: "reserve", label: "Reserve", note: "While you have no party" },

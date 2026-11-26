@@ -90,7 +90,8 @@ export type NetView = {
 /** How long the mic stays open after a push-to-talk key is released, so word endings are not clipped. */
 const RELEASE_TAIL_MS = 200;
 /** Lower number = higher priority. A live net lowers every net below it for the listener. */
-const PRIORITY: Record<NetKind, number> = { broadcast: 0, command: 1, clan: 2, party: 3, reserve: 3, group: 3, lounge: 4 };
+/** Allies (decision 76) sits with Command: leaders talking to leaders, above the clan and the party. */
+const PRIORITY: Record<NetKind, number> = { broadcast: 0, command: 1, allies: 1, clan: 2, party: 3, reserve: 3, group: 3, lounge: 4 };
 /** A net counts as live for this long after its last speaker closes their mic, so gaps between words do not pump the volume. */
 const LIVE_HOLD_MS = 400;
 /**
@@ -106,7 +107,7 @@ const VOICE_PEAK_FALL_DB = 1;
 /** How often volumes are re-evaluated. */
 const VOLUME_TICK_MS = 50;
 /** Holding one of these sends your voice to that net only; voice activation pauses meanwhile. */
-const KEYED_ONLY: NetKind[] = ["broadcast", "command", "clan"];
+const KEYED_ONLY: NetKind[] = ["broadcast", "command", "allies", "clan"];
 /** A Broadcast left locked open is released by itself after this long, in case it was forgotten. */
 export const BROADCAST_LOCK_MAX_MS = 10 * 60 * 1000;
 
@@ -133,8 +134,10 @@ type Net = {
 
 function meta(p: Participant): { classTag: string | null; clanTag: string | null; clanId: number | null; senior: boolean } {
   try {
-    const m = JSON.parse(p.metadata || "{}") as { classTag?: string | null; clanTag?: string | null; clanId?: number | null; senior?: boolean };
-    return { classTag: m.classTag ?? null, clanTag: m.clanTag ?? null, clanId: typeof m.clanId === "number" ? m.clanId : null, senior: m.senior === true };
+    // On the Allies net (decision 76) a player of another alliance comes with their alliance's name and nothing
+    // else of theirs; it stands where a clan's tag would.
+    const m = JSON.parse(p.metadata || "{}") as { classTag?: string | null; clanTag?: string | null; clanId?: number | null; senior?: boolean; alliance?: string };
+    return { classTag: m.classTag ?? null, clanTag: m.clanTag ?? (m.alliance || null), clanId: typeof m.clanId === "number" ? m.clanId : null, senior: m.senior === true };
   } catch {
     return { classTag: null, clanTag: null, clanId: null, senior: false };
   }
@@ -798,7 +801,7 @@ export class VoiceEngine {
   }
 
   view(): NetView[] {
-    const order: NetKind[] = ["broadcast", "command", "clan", "party", "reserve", "group", "lounge"];
+    const order: NetKind[] = ["broadcast", "command", "allies", "clan", "party", "reserve", "group", "lounge"];
     return [...this.nets.values()]
       .sort((a, b) => order.indexOf(a.grant.net) - order.indexOf(b.grant.net))
       .map((net) => {

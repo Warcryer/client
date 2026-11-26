@@ -18,6 +18,7 @@ export const NET_BORDER: Record<NetKind, string> = {
   clan: "border-l-net-clan",
   party: "border-l-net-party",
   reserve: "border-l-net-reserve",
+  allies: "border-l-net-allies",
   lounge: "border-l-gold-dim",
   group: "border-l-net-party",
 };
@@ -28,6 +29,7 @@ const NET_TIP: Record<NetKind, string> = {
   clan: "Clan: the clan leader and officers speak, the whole clan hears.",
   party: "Party: you and your party talk here.",
   reserve: "Reserve: players without a party, and the organisers placing them.",
+  allies: "Allies: the leaders of the alliances in your pact talk to each other. Only they hear it; nobody else of any alliance does.",
   lounge: "Lounge: your clan's room between operations. Everyone in it can talk.",
   group: "Group: a small room anyone in the alliance can start or join between operations. You still hear your lounge underneath, quieter.",
 };
@@ -40,6 +42,7 @@ export const NET_VAR: Record<NetKind, string> = {
   clan: "var(--color-net-clan)",
   party: "var(--color-net-party)",
   reserve: "var(--color-net-reserve)",
+  allies: "var(--color-net-allies)",
   lounge: "var(--color-gold)",
   group: "var(--color-net-party)",
 };

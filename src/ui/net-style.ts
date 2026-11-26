@@ -10,6 +10,7 @@ export const NET_TEXT: Record<NetKind, string> = {
   clan: "text-net-clan",
   party: "text-net-party",
   reserve: "text-net-reserve",
+  allies: "text-net-allies",
   lounge: "text-text",
   group: "text-net-party",
 };
@@ -21,6 +22,7 @@ const NET_NAME: Record<NetKind, string> = {
   clan: "Clan",
   party: "Party",
   reserve: "Reserve",
+  allies: "Allies",
   lounge: "Lounge",
   group: "Group",
 };
