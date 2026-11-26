@@ -172,7 +172,9 @@ export function ChatPanel({
     input.current?.blur();
     onDone?.(sent);
   };
-  const cannot = view.muted ? t("Your writing is switched off for this operation. You can still read.") : !channel.write ? t("You read here. You do not write here.") : "";
+  // An operation's switch on a player's writing does not reach the Allies chat, which no operation runs (decision 76).
+  const allies = channel.net === "allies";
+  const cannot = view.muted && !allies ? t("Your writing is switched off for this operation. You can still read.") : !channel.write ? t("You read here. You do not write here.") : "";
   // Pinning an order is done from the channel the organisers give their orders on.
   const canPin = view.organises && channel.net === "broadcast" && !cannot;
   const pinning = pin && canPin;
@@ -259,9 +261,11 @@ export function ChatPanel({
             <li key={l.id} className="group break-words" data-chat-line={l.id} data-quick={l.quick ? "" : undefined}>
               {!compact && <span className="text-[11px] tabular-nums text-text-muted">{hhmm(l.at)} </span>}
               <span className={`font-semibold ${own ? "text-gold-bright" : "text-gold"}`}>{l.name}</span>
-              {l.tag && !compact && <span className="text-[11px] text-text-muted"> [{l.tag}]</span>}{" "}
+              {/* On the Allies chat the tag is the writer's alliance, which matters even in the small window. */}
+              {l.tag && (!compact || allies) && <span className="text-[11px] text-text-muted"> [{l.tag}]</span>}{" "}
               <Said line={l} compact={compact} />
-              {(own || view.moderates || view.modRooms.includes(channel.room)) && (
+              {/* On the Allies chat each writer removes only their own lines; nobody moderates it. */}
+              {(own || (!allies && (view.moderates || view.modRooms.includes(channel.room)))) && (
                 <span className="ml-2 hidden gap-2 align-middle text-[11px] group-hover:inline-flex group-focus-within:inline-flex">
                   <button type="button" className="cursor-pointer text-text-muted hover:text-danger" onClick={() => act.remove(l.id)} aria-label={t(`Remove this line of ${d(l.name)}`)}>
                     {t("remove")}

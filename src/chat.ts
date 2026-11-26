@@ -170,13 +170,15 @@ export const chat = {
   onNetSet(next: NetSet, me: number | null) {
     const op = next.operation && !next.lounge ? { id: next.operation.id, name: next.operation.name } : null;
     // Between operations the lounges and the group have channels too (decision 64): the group first, then the
-    // clan's lounge, then the alliance's.
+    // clan's lounge, then the alliance's. The Allies net (decision 76) has one in both, and between operations
+    // it comes last, so that the player's own room stays the one the chat opens on.
     const between = !op && next.lounge === true;
+    const rank = (c: ChatChannel) => (between && c.net === "allies" ? ORDER.length : ORDER.indexOf(c.net));
     const channels: ChatChannel[] = op || between
       ? next.nets
-          .filter((n) => (op ? n.room.startsWith("op-") : n.net === "lounge" || n.net === "group"))
+          .filter((n) => n.net === "allies" || (op ? n.room.startsWith("op-") : n.net === "lounge" || n.net === "group"))
           .map((n) => ({ room: n.room, net: n.net, label: n.label, say: n.say, write: n.write === true }))
-          .sort((a, b) => ORDER.indexOf(a.net) - ORDER.indexOf(b.net) || (a.room.startsWith("lounge-alliance") ? 1 : 0) - (b.room.startsWith("lounge-alliance") ? 1 : 0))
+          .sort((a, b) => rank(a) - rank(b) || (a.room.startsWith("lounge-alliance") ? 1 : 0) - (b.room.startsWith("lounge-alliance") ? 1 : 0))
       : [];
     const sameOp = (op !== null && view.operation?.id === op.id) || (between && view.between);
     const had = new Set(sameOp ? view.channels.map((c) => c.room) : []);
